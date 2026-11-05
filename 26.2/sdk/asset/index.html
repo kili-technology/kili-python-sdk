@@ -617,6 +617,15 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#kili.entrypoints.mutations.asset.__init__.MutationsAsset.remove_metadata" class="md-nav__link">
+    <span class="md-ellipsis">
+      remove_metadata()
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#kili.entrypoints.mutations.asset.__init__.MutationsAsset.send_back_to_queue" class="md-nav__link">
     <span class="md-ellipsis">
       send_back_to_queue()
@@ -2180,6 +2189,15 @@
   <a href="#kili.entrypoints.mutations.asset.__init__.MutationsAsset.delete_many_from_dataset" class="md-nav__link">
     <span class="md-ellipsis">
       delete_many_from_dataset()
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#kili.entrypoints.mutations.asset.__init__.MutationsAsset.remove_metadata" class="md-nav__link">
+    <span class="md-ellipsis">
+      remove_metadata()
     </span>
   </a>
   
@@ -5339,22 +5357,35 @@ has opened and started the asset yet.</p></td>
     <span class="nd">@typechecked</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">add_metadata</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
-        <span class="n">json_metadata</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">int</span><span class="p">,</span> <span class="nb">float</span><span class="p">]]],</span>
+        <span class="n">json_metadata</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]],</span>
         <span class="n">project_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
         <span class="n">asset_ids</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="n">external_ids</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="nb">dict</span><span class="p">[</span><span class="n">Literal</span><span class="p">[</span><span class="s2">"id"</span><span class="p">],</span> <span class="nb">str</span><span class="p">]]:</span>
 <span class="w">        </span><span class="sd">"""Add metadata to assets without overriding existing metadata.</span>
 
+<span class="sd">        Each dictionary is merged into the metadata of the asset given at the same position: its</span>
+<span class="sd">        keys are added, or changed when the asset already has them, and the other keys are kept. A</span>
+<span class="sd">        stored `ocrMetadata` key is the asset's OCR, not metadata: it is left out, and the OCR is</span>
+<span class="sd">        unchanged. The metadata is read, then written whole: two calls at once on the same asset may</span>
+<span class="sd">        lose the keys of one of them.</span>
+
 <span class="sd">        Args:</span>
-<span class="sd">            json_metadata: List of metadata dictionaries to add to each asset.</span>
-<span class="sd">                Each dictionary contains key/value pairs to be added to the asset's metadata.</span>
+<span class="sd">            json_metadata: List of metadata dictionaries to add to each asset, one per asset, in</span>
+<span class="sd">                the order of `asset_ids` or `external_ids`. Values can be nested dicts and lists.</span>
 <span class="sd">            project_id: The project ID.</span>
 <span class="sd">            asset_ids: The asset IDs to modify.</span>
 <span class="sd">            external_ids: The external asset IDs to modify (if `asset_ids` is not already provided).</span>
+<span class="sd">                They are matched exactly.</span>
 
 <span class="sd">        Returns:</span>
 <span class="sd">            A list of dictionaries with the asset ids.</span>
+
+<span class="sd">        Raises:</span>
+<span class="sd">            MissingArgumentError: If both or neither of `asset_ids` and `external_ids` are given.</span>
+<span class="sd">            IncompatibleArgumentsError: If `json_metadata` and the ids do not have the same length.</span>
+<span class="sd">            NotFound: If an asset ID or an external ID matches no asset of the project, or an</span>
+<span class="sd">                external ID several.</span>
 
 <span class="sd">        Examples:</span>
 <span class="sd">            &gt;&gt;&gt; kili.add_metadata(</span>
@@ -5379,56 +5410,53 @@ has opened and started the asset yet.</p></td>
         <span class="k">if</span> <span class="n">is_empty_list_with_warning</span><span class="p">(</span><span class="s2">"add_metadata"</span><span class="p">,</span> <span class="s2">"json_metadata"</span><span class="p">,</span> <span class="n">json_metadata</span><span class="p">):</span>
             <span class="k">return</span> <span class="p">[]</span>
 
-        <span class="k">if</span> <span class="p">(</span><span class="n">asset_ids</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">external_ids</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">)</span> <span class="ow">or</span> <span class="p">(</span>
-            <span class="n">asset_ids</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">external_ids</span> <span class="ow">is</span> <span class="kc">None</span>
-        <span class="p">):</span>
-            <span class="k">raise</span> <span class="n">MissingArgumentError</span><span class="p">(</span><span class="s2">"Please provide either `asset_ids` or `external_ids`."</span><span class="p">)</span>
-
-        <span class="n">assets</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">kili_api_gateway</span><span class="o">.</span><span class="n">list_assets</span><span class="p">(</span>
-            <span class="n">AssetFilters</span><span class="p">(</span>
-                <span class="n">project_id</span><span class="o">=</span><span class="n">ProjectId</span><span class="p">(</span><span class="n">project_id</span><span class="p">),</span>
-                <span class="n">asset_id_in</span><span class="o">=</span><span class="n">cast</span><span class="p">(</span><span class="nb">list</span><span class="p">[</span><span class="n">AssetId</span><span class="p">],</span> <span class="n">asset_ids</span><span class="p">),</span>
-                <span class="n">external_id_in</span><span class="o">=</span><span class="n">cast</span><span class="p">(</span><span class="nb">list</span><span class="p">[</span><span class="n">AssetExternalId</span><span class="p">],</span> <span class="n">external_ids</span><span class="p">),</span>
-            <span class="p">),</span>
-            <span class="p">[</span><span class="s2">"id"</span><span class="p">,</span> <span class="s2">"jsonMetadata"</span><span class="p">],</span>
-            <span class="n">QueryOptions</span><span class="p">(</span><span class="n">disable_tqdm</span><span class="o">=</span><span class="kc">True</span><span class="p">),</span>
-        <span class="p">)</span>
-
-        <span class="n">resolved_asset_ids</span> <span class="o">=</span> <span class="p">[]</span>
-        <span class="n">json_metadatas</span> <span class="o">=</span> <span class="p">[]</span>
-        <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">asset</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">assets</span><span class="p">):</span>
-            <span class="n">current_metadata</span> <span class="o">=</span> <span class="n">asset</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"jsonMetadata"</span><span class="p">,</span> <span class="p">{})</span> <span class="k">if</span> <span class="n">asset</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"jsonMetadata"</span><span class="p">)</span> <span class="k">else</span> <span class="p">{}</span>
-            <span class="n">new_metadata</span> <span class="o">=</span> <span class="n">json_metadata</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="k">if</span> <span class="n">i</span> <span class="o">&lt;</span> <span class="nb">len</span><span class="p">(</span><span class="n">json_metadata</span><span class="p">)</span> <span class="k">else</span> <span class="p">{}</span>
-
-            <span class="n">current_metadata</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">new_metadata</span><span class="p">)</span>
-
-            <span class="n">json_metadatas</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">current_metadata</span><span class="p">)</span>
-            <span class="n">resolved_asset_ids</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">asset</span><span class="p">[</span><span class="s2">"id"</span><span class="p">])</span>
+        <span class="n">asset_ids_in_order</span><span class="p">,</span> <span class="n">current_metadata</span> <span class="o">=</span> <span class="n">AssetUseCasesUtils</span><span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">kili_api_gateway</span>
+        <span class="p">)</span><span class="o">.</span><span class="n">get_metadata_targets</span><span class="p">(</span><span class="n">ProjectId</span><span class="p">(</span><span class="n">project_id</span><span class="p">),</span> <span class="n">asset_ids</span><span class="p">,</span> <span class="n">external_ids</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">json_metadata</span><span class="p">))</span>
+        <span class="c1"># an asset given twice gets both dictionaries, in order, in one update</span>
+        <span class="n">new_metadata</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">dict</span><span class="p">]</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="k">for</span> <span class="n">asset_id</span><span class="p">,</span> <span class="n">metadata</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">asset_ids_in_order</span><span class="p">,</span> <span class="n">json_metadata</span><span class="p">,</span> <span class="n">strict</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
+            <span class="n">new_metadata</span><span class="p">[</span><span class="n">asset_id</span><span class="p">]</span> <span class="o">=</span> <span class="p">{</span>
+                <span class="o">**</span><span class="n">new_metadata</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">asset_id</span><span class="p">,</span> <span class="n">current_metadata</span><span class="p">[</span><span class="n">asset_id</span><span class="p">]),</span>
+                <span class="o">**</span><span class="n">metadata</span><span class="p">,</span>
+            <span class="p">}</span>
 
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">update_properties_in_assets</span><span class="p">(</span>
-            <span class="n">asset_ids</span><span class="o">=</span><span class="n">cast</span><span class="p">(</span><span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">],</span> <span class="n">resolved_asset_ids</span><span class="p">),</span>
-            <span class="n">json_metadatas</span><span class="o">=</span><span class="n">json_metadatas</span><span class="p">,</span>
+            <span class="n">asset_ids</span><span class="o">=</span><span class="nb">list</span><span class="p">(</span><span class="n">new_metadata</span><span class="p">),</span>
+            <span class="n">json_metadatas</span><span class="o">=</span><span class="nb">list</span><span class="p">(</span><span class="n">new_metadata</span><span class="o">.</span><span class="n">values</span><span class="p">()),</span>
         <span class="p">)</span>
 
     <span class="nd">@typechecked</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">set_metadata</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
-        <span class="n">json_metadata</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">int</span><span class="p">,</span> <span class="nb">float</span><span class="p">]]],</span>
+        <span class="n">json_metadata</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]],</span>
         <span class="n">project_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
         <span class="n">asset_ids</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="n">external_ids</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="nb">dict</span><span class="p">[</span><span class="n">Literal</span><span class="p">[</span><span class="s2">"id"</span><span class="p">],</span> <span class="nb">str</span><span class="p">]]:</span>
-<span class="w">        </span><span class="sd">"""Set metadata on assets, replacing any existing metadata.</span>
+<span class="w">        </span><span class="sd">"""Set metadata on assets, replacing their existing metadata.</span>
+
+<span class="sd">        Each dictionary replaces the metadata of the asset given at the same position, except the</span>
+<span class="sd">        keys `text`, `imageUrl`, `url` and `processingParameters`, which the asset keeps unless the</span>
+<span class="sd">        dictionary gives them. The metadata is read, then written whole: two calls at once on the</span>
+<span class="sd">        same asset may lose the keys of one of them.</span>
 
 <span class="sd">        Args:</span>
-<span class="sd">            json_metadata: List of metadata dictionaries to set on each asset.</span>
-<span class="sd">                Each dictionary contains key/value pairs to be set as the asset's metadata.</span>
+<span class="sd">            json_metadata: List of metadata dictionaries to set on each asset, one per asset, in</span>
+<span class="sd">                the order of `asset_ids` or `external_ids`. Values can be nested dicts and lists.</span>
 <span class="sd">            project_id: The project ID.</span>
 <span class="sd">            asset_ids: The asset IDs to modify (if `external_ids` is not already provided).</span>
 <span class="sd">            external_ids: The external asset IDs to modify (if `asset_ids` is not already provided).</span>
+<span class="sd">                They are matched exactly.</span>
 
 <span class="sd">        Returns:</span>
 <span class="sd">            A list of dictionaries with the asset ids.</span>
+
+<span class="sd">        Raises:</span>
+<span class="sd">            MissingArgumentError: If both or neither of `asset_ids` and `external_ids` are given.</span>
+<span class="sd">            IncompatibleArgumentsError: If `json_metadata` and the ids do not have the same length.</span>
+<span class="sd">            NotFound: If an asset ID or an external ID matches no asset of the project, or an</span>
+<span class="sd">                external ID several.</span>
 
 <span class="sd">        Examples:</span>
 <span class="sd">            &gt;&gt;&gt; kili.set_metadata(</span>
@@ -5436,7 +5464,7 @@ has opened and started the asset yet.</p></td>
 <span class="sd">                        {"key1": "value1", "key2": "value2"},</span>
 <span class="sd">                        {"key3": "value3"}</span>
 <span class="sd">                    ],</span>
-<span class="sd">                    project_id="cm92to3cx012u7l0w6kij9qvx"</span>
+<span class="sd">                    project_id="cm92to3cx012u7l0w6kij9qvx",</span>
 <span class="sd">                    asset_ids=["ckg22d81r0jrg0885unmuswj8", "ckg22d81s0jrh0885pdxfd03n"]</span>
 <span class="sd">                )</span>
 
@@ -5453,40 +5481,96 @@ has opened and started the asset yet.</p></td>
         <span class="k">if</span> <span class="n">is_empty_list_with_warning</span><span class="p">(</span><span class="s2">"set_metadata"</span><span class="p">,</span> <span class="s2">"json_metadata"</span><span class="p">,</span> <span class="n">json_metadata</span><span class="p">):</span>
             <span class="k">return</span> <span class="p">[]</span>
 
-        <span class="k">if</span> <span class="p">(</span><span class="n">asset_ids</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">external_ids</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">)</span> <span class="ow">or</span> <span class="p">(</span>
-            <span class="n">asset_ids</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">external_ids</span> <span class="ow">is</span> <span class="kc">None</span>
-        <span class="p">):</span>
-            <span class="k">raise</span> <span class="n">MissingArgumentError</span><span class="p">(</span><span class="s2">"Please provide either `asset_ids` or `external_ids`."</span><span class="p">)</span>
-
-        <span class="n">assets</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">kili_api_gateway</span><span class="o">.</span><span class="n">list_assets</span><span class="p">(</span>
-            <span class="n">AssetFilters</span><span class="p">(</span>
-                <span class="n">project_id</span><span class="o">=</span><span class="n">ProjectId</span><span class="p">(</span><span class="n">project_id</span><span class="p">),</span>
-                <span class="n">asset_id_in</span><span class="o">=</span><span class="n">cast</span><span class="p">(</span><span class="nb">list</span><span class="p">[</span><span class="n">AssetId</span><span class="p">],</span> <span class="n">asset_ids</span><span class="p">),</span>
-                <span class="n">external_id_in</span><span class="o">=</span><span class="n">cast</span><span class="p">(</span><span class="nb">list</span><span class="p">[</span><span class="n">AssetExternalId</span><span class="p">],</span> <span class="n">external_ids</span><span class="p">),</span>
-            <span class="p">),</span>
-            <span class="p">[</span><span class="s2">"id"</span><span class="p">,</span> <span class="s2">"jsonMetadata"</span><span class="p">],</span>
-            <span class="n">QueryOptions</span><span class="p">(</span><span class="n">disable_tqdm</span><span class="o">=</span><span class="kc">True</span><span class="p">),</span>
-        <span class="p">)</span>
-
-        <span class="n">resolved_asset_ids</span> <span class="o">=</span> <span class="p">[]</span>
-        <span class="n">json_metadatas</span> <span class="o">=</span> <span class="p">[]</span>
-        <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">asset</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">assets</span><span class="p">):</span>
-            <span class="n">current_metadata</span> <span class="o">=</span> <span class="n">asset</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"jsonMetadata"</span><span class="p">,</span> <span class="p">{})</span> <span class="k">if</span> <span class="n">asset</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"jsonMetadata"</span><span class="p">)</span> <span class="k">else</span> <span class="p">{}</span>
-            <span class="n">new_metadata</span> <span class="o">=</span> <span class="n">json_metadata</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="k">if</span> <span class="n">i</span> <span class="o">&lt;</span> <span class="nb">len</span><span class="p">(</span><span class="n">json_metadata</span><span class="p">)</span> <span class="k">else</span> <span class="p">{}</span>
-
-            <span class="n">special_keys</span> <span class="o">=</span> <span class="p">[</span><span class="s2">"text"</span><span class="p">,</span> <span class="s2">"imageUrl"</span><span class="p">,</span> <span class="s2">"url"</span><span class="p">,</span> <span class="s2">"processingParameters"</span><span class="p">]</span>
-            <span class="n">preserved_metadata</span> <span class="o">=</span> <span class="p">{</span>
-                <span class="n">k</span><span class="p">:</span> <span class="n">current_metadata</span><span class="p">[</span><span class="n">k</span><span class="p">]</span> <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="n">special_keys</span> <span class="k">if</span> <span class="n">k</span> <span class="ow">in</span> <span class="n">current_metadata</span>
+        <span class="n">asset_ids_in_order</span><span class="p">,</span> <span class="n">current_metadata</span> <span class="o">=</span> <span class="n">AssetUseCasesUtils</span><span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">kili_api_gateway</span>
+        <span class="p">)</span><span class="o">.</span><span class="n">get_metadata_targets</span><span class="p">(</span><span class="n">ProjectId</span><span class="p">(</span><span class="n">project_id</span><span class="p">),</span> <span class="n">asset_ids</span><span class="p">,</span> <span class="n">external_ids</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">json_metadata</span><span class="p">))</span>
+        <span class="c1"># an asset given twice gets both dictionaries in turn, as two calls would</span>
+        <span class="n">new_metadata</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">dict</span><span class="p">]</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="k">for</span> <span class="n">asset_id</span><span class="p">,</span> <span class="n">metadata</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">asset_ids_in_order</span><span class="p">,</span> <span class="n">json_metadata</span><span class="p">,</span> <span class="n">strict</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
+            <span class="n">kept_metadata</span> <span class="o">=</span> <span class="p">{</span>
+                <span class="n">key</span><span class="p">:</span> <span class="n">value</span>
+                <span class="k">for</span> <span class="n">key</span><span class="p">,</span> <span class="n">value</span> <span class="ow">in</span> <span class="n">new_metadata</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">asset_id</span><span class="p">,</span> <span class="n">current_metadata</span><span class="p">[</span><span class="n">asset_id</span><span class="p">])</span><span class="o">.</span><span class="n">items</span><span class="p">()</span>
+                <span class="k">if</span> <span class="n">key</span> <span class="ow">in</span> <span class="n">METADATA_KEYS_KEPT_BY_SET</span>
             <span class="p">}</span>
-
-            <span class="n">preserved_metadata</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">new_metadata</span><span class="p">)</span>
-
-            <span class="n">json_metadatas</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">preserved_metadata</span><span class="p">)</span>
-            <span class="n">resolved_asset_ids</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">asset</span><span class="p">[</span><span class="s2">"id"</span><span class="p">])</span>
+            <span class="n">new_metadata</span><span class="p">[</span><span class="n">asset_id</span><span class="p">]</span> <span class="o">=</span> <span class="p">{</span><span class="o">**</span><span class="n">kept_metadata</span><span class="p">,</span> <span class="o">**</span><span class="n">metadata</span><span class="p">}</span>
 
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">update_properties_in_assets</span><span class="p">(</span>
-            <span class="n">asset_ids</span><span class="o">=</span><span class="n">cast</span><span class="p">(</span><span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">],</span> <span class="n">resolved_asset_ids</span><span class="p">),</span>
-            <span class="n">json_metadatas</span><span class="o">=</span><span class="n">json_metadatas</span><span class="p">,</span>
+            <span class="n">asset_ids</span><span class="o">=</span><span class="nb">list</span><span class="p">(</span><span class="n">new_metadata</span><span class="p">),</span>
+            <span class="n">json_metadatas</span><span class="o">=</span><span class="nb">list</span><span class="p">(</span><span class="n">new_metadata</span><span class="o">.</span><span class="n">values</span><span class="p">()),</span>
+        <span class="p">)</span>
+
+    <span class="nd">@typechecked</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">remove_metadata</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">keys</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">],</span>
+        <span class="n">project_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+        <span class="n">asset_ids</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">external_ids</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="nb">dict</span><span class="p">[</span><span class="n">Literal</span><span class="p">[</span><span class="s2">"id"</span><span class="p">],</span> <span class="nb">str</span><span class="p">]]:</span>
+<span class="w">        </span><span class="sd">"""Remove metadata keys from assets, keeping their other keys.</span>
+
+<span class="sd">        A stored `ocrMetadata` key is the asset's OCR, not metadata: it is left out, and the OCR is</span>
+<span class="sd">        unchanged. The metadata is read, then written whole: two calls at once on the same asset may</span>
+<span class="sd">        lose the keys of one of them.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            keys: The metadata keys to remove from each asset. A key an asset does not have is</span>
+<span class="sd">                ignored.</span>
+<span class="sd">            project_id: The project ID.</span>
+<span class="sd">            asset_ids: The asset IDs to modify (if `external_ids` is not already provided).</span>
+<span class="sd">            external_ids: The external asset IDs to modify (if `asset_ids` is not already provided).</span>
+<span class="sd">                They are matched exactly.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            A list of dictionaries with the asset ids.</span>
+
+<span class="sd">        Raises:</span>
+<span class="sd">            ValueError: If `keys` holds `processingParameters`, which Kili keeps to process the</span>
+<span class="sd">                asset: change it with `add_metadata`, which keeps the asset's other metadata.</span>
+<span class="sd">            MissingArgumentError: If both or neither of `asset_ids` and `external_ids` are given.</span>
+<span class="sd">            NotFound: If an asset ID or an external ID matches no asset of the project, or an</span>
+<span class="sd">                external ID several.</span>
+
+<span class="sd">        Examples:</span>
+<span class="sd">            &gt;&gt;&gt; kili.remove_metadata(</span>
+<span class="sd">                    keys=["reviewed_by", "split"],</span>
+<span class="sd">                    project_id="cm92to3cx012u7l0w6kij9qvx",</span>
+<span class="sd">                    asset_ids=["ckg22d81r0jrg0885unmuswj8", "ckg22d81s0jrh0885pdxfd03n"]</span>
+<span class="sd">                )</span>
+
+<span class="sd">                # Or using external IDs</span>
+<span class="sd">            &gt;&gt;&gt; kili.remove_metadata(</span>
+<span class="sd">                    keys=["reviewed_by"],</span>
+<span class="sd">                    project_id="cm92to3cx012u7l0w6kij9qvx",</span>
+<span class="sd">                    external_ids=["asset1", "asset2"]</span>
+<span class="sd">                )</span>
+<span class="sd">        """</span>
+        <span class="k">if</span> <span class="p">(</span>
+            <span class="n">is_empty_list_with_warning</span><span class="p">(</span><span class="s2">"remove_metadata"</span><span class="p">,</span> <span class="s2">"keys"</span><span class="p">,</span> <span class="n">keys</span><span class="p">)</span>
+            <span class="ow">or</span> <span class="n">is_empty_list_with_warning</span><span class="p">(</span><span class="s2">"remove_metadata"</span><span class="p">,</span> <span class="s2">"asset_ids"</span><span class="p">,</span> <span class="n">asset_ids</span><span class="p">)</span>
+            <span class="ow">or</span> <span class="n">is_empty_list_with_warning</span><span class="p">(</span><span class="s2">"remove_metadata"</span><span class="p">,</span> <span class="s2">"external_ids"</span><span class="p">,</span> <span class="n">external_ids</span><span class="p">)</span>
+        <span class="p">):</span>
+            <span class="k">return</span> <span class="p">[]</span>
+        <span class="k">if</span> <span class="s2">"processingParameters"</span> <span class="ow">in</span> <span class="n">keys</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+                <span class="s2">"`processingParameters` cannot be removed: Kili keeps it to process the asset."</span>
+                <span class="s1">' Change it with `add_metadata(json_metadata=[{"processingParameters": {...}}], ...)`,'</span>
+                <span class="s2">" which keeps the asset's other metadata."</span>
+            <span class="p">)</span>
+
+        <span class="n">asset_ids_in_order</span><span class="p">,</span> <span class="n">current_metadata</span> <span class="o">=</span> <span class="n">AssetUseCasesUtils</span><span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">kili_api_gateway</span>
+        <span class="p">)</span><span class="o">.</span><span class="n">get_metadata_targets</span><span class="p">(</span><span class="n">ProjectId</span><span class="p">(</span><span class="n">project_id</span><span class="p">),</span> <span class="n">asset_ids</span><span class="p">,</span> <span class="n">external_ids</span><span class="p">)</span>
+        <span class="n">new_metadata</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="n">asset_id</span><span class="p">:</span> <span class="p">{</span>
+                <span class="n">key</span><span class="p">:</span> <span class="n">value</span> <span class="k">for</span> <span class="n">key</span><span class="p">,</span> <span class="n">value</span> <span class="ow">in</span> <span class="n">current_metadata</span><span class="p">[</span><span class="n">asset_id</span><span class="p">]</span><span class="o">.</span><span class="n">items</span><span class="p">()</span> <span class="k">if</span> <span class="n">key</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">keys</span>
+            <span class="p">}</span>
+            <span class="k">for</span> <span class="n">asset_id</span> <span class="ow">in</span> <span class="n">asset_ids_in_order</span>
+        <span class="p">}</span>
+
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">update_properties_in_assets</span><span class="p">(</span>
+            <span class="n">asset_ids</span><span class="o">=</span><span class="nb">list</span><span class="p">(</span><span class="n">new_metadata</span><span class="p">),</span>
+            <span class="n">json_metadatas</span><span class="o">=</span><span class="nb">list</span><span class="p">(</span><span class="n">new_metadata</span><span class="o">.</span><span class="n">values</span><span class="p">()),</span>
         <span class="p">)</span>
 
     <span class="nd">@typechecked</span>
@@ -5809,6 +5893,11 @@ has opened and started the asset yet.</p></td>
     <div class="doc doc-contents ">
 
       <p>Add metadata to assets without overriding existing metadata.</p>
+<p>Each dictionary is merged into the metadata of the asset given at the same position: its
+keys are added, or changed when the asset already has them, and the other keys are kept. A
+stored <code>ocrMetadata</code> key is the asset's OCR, not metadata: it is left out, and the OCR is
+unchanged. The metadata is read, then written whole: two calls at once on the same asset may
+lose the keys of one of them.</p>
 
 <p><strong>Parameters:</strong></p>
 <table>
@@ -5824,8 +5913,8 @@ has opened and started the asset yet.</p></td>
       <tr>
         <td><code>json_metadata</code></td>
         <td><code>list</code></td>
-        <td><p>List of metadata dictionaries to add to each asset.
-Each dictionary contains key/value pairs to be added to the asset's metadata.</p></td>
+        <td><p>List of metadata dictionaries to add to each asset, one per asset, in
+the order of <code>asset_ids</code> or <code>external_ids</code>. Values can be nested dicts and lists.</p></td>
         <td><em>required</em></td>
       </tr>
       <tr>
@@ -5843,7 +5932,8 @@ Each dictionary contains key/value pairs to be added to the asset's metadata.</p
       <tr>
         <td><code>external_ids</code></td>
         <td><code>Optional[list[str]]</code></td>
-        <td><p>The external asset IDs to modify (if <code>asset_ids</code> is not already provided).</p></td>
+        <td><p>The external asset IDs to modify (if <code>asset_ids</code> is not already provided).
+They are matched exactly.</p></td>
         <td><code>None</code></td>
       </tr>
   </tbody>
@@ -5861,6 +5951,30 @@ Each dictionary contains key/value pairs to be added to the asset's metadata.</p
       <td><code>list</code></td>
       <td><p>A list of dictionaries with the asset ids.</p></td>
     </tr>
+  </tbody>
+</table>
+<p><strong>Exceptions:</strong></p>
+<table>
+  <thead>
+    <tr>
+      <th>Type</th>
+      <th>Description</th>
+    </tr>
+  </thead>
+  <tbody>
+      <tr>
+        <td><code>MissingArgumentError</code></td>
+        <td><p>If both or neither of <code>asset_ids</code> and <code>external_ids</code> are given.</p></td>
+      </tr>
+      <tr>
+        <td><code>IncompatibleArgumentsError</code></td>
+        <td><p>If <code>json_metadata</code> and the ids do not have the same length.</p></td>
+      </tr>
+      <tr>
+        <td><code>NotFound</code></td>
+        <td><p>If an asset ID or an external ID matches no asset of the project, or an
+external ID several.</p></td>
+      </tr>
   </tbody>
 </table>
 <p><strong>Examples:</strong></p>
@@ -5889,22 +6003,35 @@ Each dictionary contains key/value pairs to be added to the asset's metadata.</p
           <summary>Source code in <code>kili/entrypoints/mutations/asset/__init__.py</code></summary>
           <div class="highlight"><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">add_metadata</span><span class="p">(</span>
     <span class="bp">self</span><span class="p">,</span>
-    <span class="n">json_metadata</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">int</span><span class="p">,</span> <span class="nb">float</span><span class="p">]]],</span>
+    <span class="n">json_metadata</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]],</span>
     <span class="n">project_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
     <span class="n">asset_ids</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="n">external_ids</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="nb">dict</span><span class="p">[</span><span class="n">Literal</span><span class="p">[</span><span class="s2">"id"</span><span class="p">],</span> <span class="nb">str</span><span class="p">]]:</span>
 <span class="w">    </span><span class="sd">"""Add metadata to assets without overriding existing metadata.</span>
 
+<span class="sd">    Each dictionary is merged into the metadata of the asset given at the same position: its</span>
+<span class="sd">    keys are added, or changed when the asset already has them, and the other keys are kept. A</span>
+<span class="sd">    stored `ocrMetadata` key is the asset's OCR, not metadata: it is left out, and the OCR is</span>
+<span class="sd">    unchanged. The metadata is read, then written whole: two calls at once on the same asset may</span>
+<span class="sd">    lose the keys of one of them.</span>
+
 <span class="sd">    Args:</span>
-<span class="sd">        json_metadata: List of metadata dictionaries to add to each asset.</span>
-<span class="sd">            Each dictionary contains key/value pairs to be added to the asset's metadata.</span>
+<span class="sd">        json_metadata: List of metadata dictionaries to add to each asset, one per asset, in</span>
+<span class="sd">            the order of `asset_ids` or `external_ids`. Values can be nested dicts and lists.</span>
 <span class="sd">        project_id: The project ID.</span>
 <span class="sd">        asset_ids: The asset IDs to modify.</span>
 <span class="sd">        external_ids: The external asset IDs to modify (if `asset_ids` is not already provided).</span>
+<span class="sd">            They are matched exactly.</span>
 
 <span class="sd">    Returns:</span>
 <span class="sd">        A list of dictionaries with the asset ids.</span>
+
+<span class="sd">    Raises:</span>
+<span class="sd">        MissingArgumentError: If both or neither of `asset_ids` and `external_ids` are given.</span>
+<span class="sd">        IncompatibleArgumentsError: If `json_metadata` and the ids do not have the same length.</span>
+<span class="sd">        NotFound: If an asset ID or an external ID matches no asset of the project, or an</span>
+<span class="sd">            external ID several.</span>
 
 <span class="sd">    Examples:</span>
 <span class="sd">        &gt;&gt;&gt; kili.add_metadata(</span>
@@ -5929,35 +6056,20 @@ Each dictionary contains key/value pairs to be added to the asset's metadata.</p
     <span class="k">if</span> <span class="n">is_empty_list_with_warning</span><span class="p">(</span><span class="s2">"add_metadata"</span><span class="p">,</span> <span class="s2">"json_metadata"</span><span class="p">,</span> <span class="n">json_metadata</span><span class="p">):</span>
         <span class="k">return</span> <span class="p">[]</span>
 
-    <span class="k">if</span> <span class="p">(</span><span class="n">asset_ids</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">external_ids</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">)</span> <span class="ow">or</span> <span class="p">(</span>
-        <span class="n">asset_ids</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">external_ids</span> <span class="ow">is</span> <span class="kc">None</span>
-    <span class="p">):</span>
-        <span class="k">raise</span> <span class="n">MissingArgumentError</span><span class="p">(</span><span class="s2">"Please provide either `asset_ids` or `external_ids`."</span><span class="p">)</span>
-
-    <span class="n">assets</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">kili_api_gateway</span><span class="o">.</span><span class="n">list_assets</span><span class="p">(</span>
-        <span class="n">AssetFilters</span><span class="p">(</span>
-            <span class="n">project_id</span><span class="o">=</span><span class="n">ProjectId</span><span class="p">(</span><span class="n">project_id</span><span class="p">),</span>
-            <span class="n">asset_id_in</span><span class="o">=</span><span class="n">cast</span><span class="p">(</span><span class="nb">list</span><span class="p">[</span><span class="n">AssetId</span><span class="p">],</span> <span class="n">asset_ids</span><span class="p">),</span>
-            <span class="n">external_id_in</span><span class="o">=</span><span class="n">cast</span><span class="p">(</span><span class="nb">list</span><span class="p">[</span><span class="n">AssetExternalId</span><span class="p">],</span> <span class="n">external_ids</span><span class="p">),</span>
-        <span class="p">),</span>
-        <span class="p">[</span><span class="s2">"id"</span><span class="p">,</span> <span class="s2">"jsonMetadata"</span><span class="p">],</span>
-        <span class="n">QueryOptions</span><span class="p">(</span><span class="n">disable_tqdm</span><span class="o">=</span><span class="kc">True</span><span class="p">),</span>
-    <span class="p">)</span>
-
-    <span class="n">resolved_asset_ids</span> <span class="o">=</span> <span class="p">[]</span>
-    <span class="n">json_metadatas</span> <span class="o">=</span> <span class="p">[]</span>
-    <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">asset</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">assets</span><span class="p">):</span>
-        <span class="n">current_metadata</span> <span class="o">=</span> <span class="n">asset</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"jsonMetadata"</span><span class="p">,</span> <span class="p">{})</span> <span class="k">if</span> <span class="n">asset</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"jsonMetadata"</span><span class="p">)</span> <span class="k">else</span> <span class="p">{}</span>
-        <span class="n">new_metadata</span> <span class="o">=</span> <span class="n">json_metadata</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="k">if</span> <span class="n">i</span> <span class="o">&lt;</span> <span class="nb">len</span><span class="p">(</span><span class="n">json_metadata</span><span class="p">)</span> <span class="k">else</span> <span class="p">{}</span>
-
-        <span class="n">current_metadata</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">new_metadata</span><span class="p">)</span>
-
-        <span class="n">json_metadatas</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">current_metadata</span><span class="p">)</span>
-        <span class="n">resolved_asset_ids</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">asset</span><span class="p">[</span><span class="s2">"id"</span><span class="p">])</span>
+    <span class="n">asset_ids_in_order</span><span class="p">,</span> <span class="n">current_metadata</span> <span class="o">=</span> <span class="n">AssetUseCasesUtils</span><span class="p">(</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">kili_api_gateway</span>
+    <span class="p">)</span><span class="o">.</span><span class="n">get_metadata_targets</span><span class="p">(</span><span class="n">ProjectId</span><span class="p">(</span><span class="n">project_id</span><span class="p">),</span> <span class="n">asset_ids</span><span class="p">,</span> <span class="n">external_ids</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">json_metadata</span><span class="p">))</span>
+    <span class="c1"># an asset given twice gets both dictionaries, in order, in one update</span>
+    <span class="n">new_metadata</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">dict</span><span class="p">]</span> <span class="o">=</span> <span class="p">{}</span>
+    <span class="k">for</span> <span class="n">asset_id</span><span class="p">,</span> <span class="n">metadata</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">asset_ids_in_order</span><span class="p">,</span> <span class="n">json_metadata</span><span class="p">,</span> <span class="n">strict</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
+        <span class="n">new_metadata</span><span class="p">[</span><span class="n">asset_id</span><span class="p">]</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="o">**</span><span class="n">new_metadata</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">asset_id</span><span class="p">,</span> <span class="n">current_metadata</span><span class="p">[</span><span class="n">asset_id</span><span class="p">]),</span>
+            <span class="o">**</span><span class="n">metadata</span><span class="p">,</span>
+        <span class="p">}</span>
 
     <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">update_properties_in_assets</span><span class="p">(</span>
-        <span class="n">asset_ids</span><span class="o">=</span><span class="n">cast</span><span class="p">(</span><span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">],</span> <span class="n">resolved_asset_ids</span><span class="p">),</span>
-        <span class="n">json_metadatas</span><span class="o">=</span><span class="n">json_metadatas</span><span class="p">,</span>
+        <span class="n">asset_ids</span><span class="o">=</span><span class="nb">list</span><span class="p">(</span><span class="n">new_metadata</span><span class="p">),</span>
+        <span class="n">json_metadatas</span><span class="o">=</span><span class="nb">list</span><span class="p">(</span><span class="n">new_metadata</span><span class="o">.</span><span class="n">values</span><span class="p">()),</span>
     <span class="p">)</span>
 </code></pre></div>
         </details>
@@ -6923,6 +7035,200 @@ asked for.</p>
 
 
 
+<h3 id="kili.entrypoints.mutations.asset.__init__.MutationsAsset.remove_metadata" class="doc doc-heading">
+<code class="highlight language-python"><span class="n">remove_metadata</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">keys</span><span class="p">,</span> <span class="n">project_id</span><span class="p">,</span> <span class="n">asset_ids</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">external_ids</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span></code>
+
+
+</h3>
+
+    <div class="doc doc-contents ">
+
+      <p>Remove metadata keys from assets, keeping their other keys.</p>
+<p>A stored <code>ocrMetadata</code> key is the asset's OCR, not metadata: it is left out, and the OCR is
+unchanged. The metadata is read, then written whole: two calls at once on the same asset may
+lose the keys of one of them.</p>
+
+<p><strong>Parameters:</strong></p>
+<table>
+  <thead>
+    <tr>
+      <th>Name</th>
+      <th>Type</th>
+      <th>Description</th>
+      <th>Default</th>
+    </tr>
+  </thead>
+  <tbody>
+      <tr>
+        <td><code>keys</code></td>
+        <td><code>list</code></td>
+        <td><p>The metadata keys to remove from each asset. A key an asset does not have is
+ignored.</p></td>
+        <td><em>required</em></td>
+      </tr>
+      <tr>
+        <td><code>project_id</code></td>
+        <td><code>str</code></td>
+        <td><p>The project ID.</p></td>
+        <td><em>required</em></td>
+      </tr>
+      <tr>
+        <td><code>asset_ids</code></td>
+        <td><code>Optional[list[str]]</code></td>
+        <td><p>The asset IDs to modify (if <code>external_ids</code> is not already provided).</p></td>
+        <td><code>None</code></td>
+      </tr>
+      <tr>
+        <td><code>external_ids</code></td>
+        <td><code>Optional[list[str]]</code></td>
+        <td><p>The external asset IDs to modify (if <code>asset_ids</code> is not already provided).
+They are matched exactly.</p></td>
+        <td><code>None</code></td>
+      </tr>
+  </tbody>
+</table>
+<p><strong>Returns:</strong></p>
+<table>
+  <thead>
+    <tr>
+      <th>Type</th>
+      <th>Description</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><code>list</code></td>
+      <td><p>A list of dictionaries with the asset ids.</p></td>
+    </tr>
+  </tbody>
+</table>
+<p><strong>Exceptions:</strong></p>
+<table>
+  <thead>
+    <tr>
+      <th>Type</th>
+      <th>Description</th>
+    </tr>
+  </thead>
+  <tbody>
+      <tr>
+        <td><code>ValueError</code></td>
+        <td><p>If <code>keys</code> holds <code>processingParameters</code>, which Kili keeps to process the
+asset: change it with <code>add_metadata</code>, which keeps the asset's other metadata.</p></td>
+      </tr>
+      <tr>
+        <td><code>MissingArgumentError</code></td>
+        <td><p>If both or neither of <code>asset_ids</code> and <code>external_ids</code> are given.</p></td>
+      </tr>
+      <tr>
+        <td><code>NotFound</code></td>
+        <td><p>If an asset ID or an external ID matches no asset of the project, or an
+external ID several.</p></td>
+      </tr>
+  </tbody>
+</table>
+<p><strong>Examples:</strong></p>
+    <div class="highlight"><pre><span></span><code><span class="o">&gt;&gt;&gt;</span> <span class="n">kili</span><span class="o">.</span><span class="n">remove_metadata</span><span class="p">(</span>
+        <span class="n">keys</span><span class="o">=</span><span class="p">[</span><span class="s2">"reviewed_by"</span><span class="p">,</span> <span class="s2">"split"</span><span class="p">],</span>
+        <span class="n">project_id</span><span class="o">=</span><span class="s2">"cm92to3cx012u7l0w6kij9qvx"</span><span class="p">,</span>
+        <span class="n">asset_ids</span><span class="o">=</span><span class="p">[</span><span class="s2">"ckg22d81r0jrg0885unmuswj8"</span><span class="p">,</span> <span class="s2">"ckg22d81s0jrh0885pdxfd03n"</span><span class="p">]</span>
+    <span class="p">)</span>
+</code></pre></div>
+    <pre><code># Or using external IDs
+</code></pre>
+    <div class="highlight"><pre><span></span><code><span class="o">&gt;&gt;&gt;</span> <span class="n">kili</span><span class="o">.</span><span class="n">remove_metadata</span><span class="p">(</span>
+        <span class="n">keys</span><span class="o">=</span><span class="p">[</span><span class="s2">"reviewed_by"</span><span class="p">],</span>
+        <span class="n">project_id</span><span class="o">=</span><span class="s2">"cm92to3cx012u7l0w6kij9qvx"</span><span class="p">,</span>
+        <span class="n">external_ids</span><span class="o">=</span><span class="p">[</span><span class="s2">"asset1"</span><span class="p">,</span> <span class="s2">"asset2"</span><span class="p">]</span>
+    <span class="p">)</span>
+</code></pre></div>
+
+        <details class="quote">
+          <summary>Source code in <code>kili/entrypoints/mutations/asset/__init__.py</code></summary>
+          <div class="highlight"><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">remove_metadata</span><span class="p">(</span>
+    <span class="bp">self</span><span class="p">,</span>
+    <span class="n">keys</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">],</span>
+    <span class="n">project_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+    <span class="n">asset_ids</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">external_ids</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="nb">dict</span><span class="p">[</span><span class="n">Literal</span><span class="p">[</span><span class="s2">"id"</span><span class="p">],</span> <span class="nb">str</span><span class="p">]]:</span>
+<span class="w">    </span><span class="sd">"""Remove metadata keys from assets, keeping their other keys.</span>
+
+<span class="sd">    A stored `ocrMetadata` key is the asset's OCR, not metadata: it is left out, and the OCR is</span>
+<span class="sd">    unchanged. The metadata is read, then written whole: two calls at once on the same asset may</span>
+<span class="sd">    lose the keys of one of them.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        keys: The metadata keys to remove from each asset. A key an asset does not have is</span>
+<span class="sd">            ignored.</span>
+<span class="sd">        project_id: The project ID.</span>
+<span class="sd">        asset_ids: The asset IDs to modify (if `external_ids` is not already provided).</span>
+<span class="sd">        external_ids: The external asset IDs to modify (if `asset_ids` is not already provided).</span>
+<span class="sd">            They are matched exactly.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        A list of dictionaries with the asset ids.</span>
+
+<span class="sd">    Raises:</span>
+<span class="sd">        ValueError: If `keys` holds `processingParameters`, which Kili keeps to process the</span>
+<span class="sd">            asset: change it with `add_metadata`, which keeps the asset's other metadata.</span>
+<span class="sd">        MissingArgumentError: If both or neither of `asset_ids` and `external_ids` are given.</span>
+<span class="sd">        NotFound: If an asset ID or an external ID matches no asset of the project, or an</span>
+<span class="sd">            external ID several.</span>
+
+<span class="sd">    Examples:</span>
+<span class="sd">        &gt;&gt;&gt; kili.remove_metadata(</span>
+<span class="sd">                keys=["reviewed_by", "split"],</span>
+<span class="sd">                project_id="cm92to3cx012u7l0w6kij9qvx",</span>
+<span class="sd">                asset_ids=["ckg22d81r0jrg0885unmuswj8", "ckg22d81s0jrh0885pdxfd03n"]</span>
+<span class="sd">            )</span>
+
+<span class="sd">            # Or using external IDs</span>
+<span class="sd">        &gt;&gt;&gt; kili.remove_metadata(</span>
+<span class="sd">                keys=["reviewed_by"],</span>
+<span class="sd">                project_id="cm92to3cx012u7l0w6kij9qvx",</span>
+<span class="sd">                external_ids=["asset1", "asset2"]</span>
+<span class="sd">            )</span>
+<span class="sd">    """</span>
+    <span class="k">if</span> <span class="p">(</span>
+        <span class="n">is_empty_list_with_warning</span><span class="p">(</span><span class="s2">"remove_metadata"</span><span class="p">,</span> <span class="s2">"keys"</span><span class="p">,</span> <span class="n">keys</span><span class="p">)</span>
+        <span class="ow">or</span> <span class="n">is_empty_list_with_warning</span><span class="p">(</span><span class="s2">"remove_metadata"</span><span class="p">,</span> <span class="s2">"asset_ids"</span><span class="p">,</span> <span class="n">asset_ids</span><span class="p">)</span>
+        <span class="ow">or</span> <span class="n">is_empty_list_with_warning</span><span class="p">(</span><span class="s2">"remove_metadata"</span><span class="p">,</span> <span class="s2">"external_ids"</span><span class="p">,</span> <span class="n">external_ids</span><span class="p">)</span>
+    <span class="p">):</span>
+        <span class="k">return</span> <span class="p">[]</span>
+    <span class="k">if</span> <span class="s2">"processingParameters"</span> <span class="ow">in</span> <span class="n">keys</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+            <span class="s2">"`processingParameters` cannot be removed: Kili keeps it to process the asset."</span>
+            <span class="s1">' Change it with `add_metadata(json_metadata=[{"processingParameters": {...}}], ...)`,'</span>
+            <span class="s2">" which keeps the asset's other metadata."</span>
+        <span class="p">)</span>
+
+    <span class="n">asset_ids_in_order</span><span class="p">,</span> <span class="n">current_metadata</span> <span class="o">=</span> <span class="n">AssetUseCasesUtils</span><span class="p">(</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">kili_api_gateway</span>
+    <span class="p">)</span><span class="o">.</span><span class="n">get_metadata_targets</span><span class="p">(</span><span class="n">ProjectId</span><span class="p">(</span><span class="n">project_id</span><span class="p">),</span> <span class="n">asset_ids</span><span class="p">,</span> <span class="n">external_ids</span><span class="p">)</span>
+    <span class="n">new_metadata</span> <span class="o">=</span> <span class="p">{</span>
+        <span class="n">asset_id</span><span class="p">:</span> <span class="p">{</span>
+            <span class="n">key</span><span class="p">:</span> <span class="n">value</span> <span class="k">for</span> <span class="n">key</span><span class="p">,</span> <span class="n">value</span> <span class="ow">in</span> <span class="n">current_metadata</span><span class="p">[</span><span class="n">asset_id</span><span class="p">]</span><span class="o">.</span><span class="n">items</span><span class="p">()</span> <span class="k">if</span> <span class="n">key</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">keys</span>
+        <span class="p">}</span>
+        <span class="k">for</span> <span class="n">asset_id</span> <span class="ow">in</span> <span class="n">asset_ids_in_order</span>
+    <span class="p">}</span>
+
+    <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">update_properties_in_assets</span><span class="p">(</span>
+        <span class="n">asset_ids</span><span class="o">=</span><span class="nb">list</span><span class="p">(</span><span class="n">new_metadata</span><span class="p">),</span>
+        <span class="n">json_metadatas</span><span class="o">=</span><span class="nb">list</span><span class="p">(</span><span class="n">new_metadata</span><span class="o">.</span><span class="n">values</span><span class="p">()),</span>
+    <span class="p">)</span>
+</code></pre></div>
+        </details>
+    </div>
+
+  </div>
+
+
+
+  <div class="doc doc-object doc-method">
+
+
+
 <h3 id="kili.entrypoints.mutations.asset.__init__.MutationsAsset.send_back_to_queue" class="doc doc-heading">
 <code class="highlight language-python"><span class="n">send_back_to_queue</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">asset_ids</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">external_ids</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">project_id</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span></code>
 
@@ -7218,7 +7524,11 @@ reported under <code>declined</code> rather than silently left out.</p>
 
     <div class="doc doc-contents ">
 
-      <p>Set metadata on assets, replacing any existing metadata.</p>
+      <p>Set metadata on assets, replacing their existing metadata.</p>
+<p>Each dictionary replaces the metadata of the asset given at the same position, except the
+keys <code>text</code>, <code>imageUrl</code>, <code>url</code> and <code>processingParameters</code>, which the asset keeps unless the
+dictionary gives them. The metadata is read, then written whole: two calls at once on the
+same asset may lose the keys of one of them.</p>
 
 <p><strong>Parameters:</strong></p>
 <table>
@@ -7234,8 +7544,8 @@ reported under <code>declined</code> rather than silently left out.</p>
       <tr>
         <td><code>json_metadata</code></td>
         <td><code>list</code></td>
-        <td><p>List of metadata dictionaries to set on each asset.
-Each dictionary contains key/value pairs to be set as the asset's metadata.</p></td>
+        <td><p>List of metadata dictionaries to set on each asset, one per asset, in
+the order of <code>asset_ids</code> or <code>external_ids</code>. Values can be nested dicts and lists.</p></td>
         <td><em>required</em></td>
       </tr>
       <tr>
@@ -7253,7 +7563,8 @@ Each dictionary contains key/value pairs to be set as the asset's metadata.</p><
       <tr>
         <td><code>external_ids</code></td>
         <td><code>Optional[list[str]]</code></td>
-        <td><p>The external asset IDs to modify (if <code>asset_ids</code> is not already provided).</p></td>
+        <td><p>The external asset IDs to modify (if <code>asset_ids</code> is not already provided).
+They are matched exactly.</p></td>
         <td><code>None</code></td>
       </tr>
   </tbody>
@@ -7273,13 +7584,37 @@ Each dictionary contains key/value pairs to be set as the asset's metadata.</p><
     </tr>
   </tbody>
 </table>
+<p><strong>Exceptions:</strong></p>
+<table>
+  <thead>
+    <tr>
+      <th>Type</th>
+      <th>Description</th>
+    </tr>
+  </thead>
+  <tbody>
+      <tr>
+        <td><code>MissingArgumentError</code></td>
+        <td><p>If both or neither of <code>asset_ids</code> and <code>external_ids</code> are given.</p></td>
+      </tr>
+      <tr>
+        <td><code>IncompatibleArgumentsError</code></td>
+        <td><p>If <code>json_metadata</code> and the ids do not have the same length.</p></td>
+      </tr>
+      <tr>
+        <td><code>NotFound</code></td>
+        <td><p>If an asset ID or an external ID matches no asset of the project, or an
+external ID several.</p></td>
+      </tr>
+  </tbody>
+</table>
 <p><strong>Examples:</strong></p>
     <div class="highlight"><pre><span></span><code><span class="o">&gt;&gt;&gt;</span> <span class="n">kili</span><span class="o">.</span><span class="n">set_metadata</span><span class="p">(</span>
         <span class="n">json_metadata</span><span class="o">=</span><span class="p">[</span>
             <span class="p">{</span><span class="s2">"key1"</span><span class="p">:</span> <span class="s2">"value1"</span><span class="p">,</span> <span class="s2">"key2"</span><span class="p">:</span> <span class="s2">"value2"</span><span class="p">},</span>
             <span class="p">{</span><span class="s2">"key3"</span><span class="p">:</span> <span class="s2">"value3"</span><span class="p">}</span>
         <span class="p">],</span>
-        <span class="n">project_id</span><span class="o">=</span><span class="s2">"cm92to3cx012u7l0w6kij9qvx"</span>
+        <span class="n">project_id</span><span class="o">=</span><span class="s2">"cm92to3cx012u7l0w6kij9qvx"</span><span class="p">,</span>
         <span class="n">asset_ids</span><span class="o">=</span><span class="p">[</span><span class="s2">"ckg22d81r0jrg0885unmuswj8"</span><span class="p">,</span> <span class="s2">"ckg22d81s0jrh0885pdxfd03n"</span><span class="p">]</span>
     <span class="p">)</span>
 </code></pre></div>
@@ -7299,22 +7634,34 @@ Each dictionary contains key/value pairs to be set as the asset's metadata.</p><
           <summary>Source code in <code>kili/entrypoints/mutations/asset/__init__.py</code></summary>
           <div class="highlight"><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">set_metadata</span><span class="p">(</span>
     <span class="bp">self</span><span class="p">,</span>
-    <span class="n">json_metadata</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">int</span><span class="p">,</span> <span class="nb">float</span><span class="p">]]],</span>
+    <span class="n">json_metadata</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]],</span>
     <span class="n">project_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
     <span class="n">asset_ids</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="n">external_ids</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="nb">dict</span><span class="p">[</span><span class="n">Literal</span><span class="p">[</span><span class="s2">"id"</span><span class="p">],</span> <span class="nb">str</span><span class="p">]]:</span>
-<span class="w">    </span><span class="sd">"""Set metadata on assets, replacing any existing metadata.</span>
+<span class="w">    </span><span class="sd">"""Set metadata on assets, replacing their existing metadata.</span>
+
+<span class="sd">    Each dictionary replaces the metadata of the asset given at the same position, except the</span>
+<span class="sd">    keys `text`, `imageUrl`, `url` and `processingParameters`, which the asset keeps unless the</span>
+<span class="sd">    dictionary gives them. The metadata is read, then written whole: two calls at once on the</span>
+<span class="sd">    same asset may lose the keys of one of them.</span>
 
 <span class="sd">    Args:</span>
-<span class="sd">        json_metadata: List of metadata dictionaries to set on each asset.</span>
-<span class="sd">            Each dictionary contains key/value pairs to be set as the asset's metadata.</span>
+<span class="sd">        json_metadata: List of metadata dictionaries to set on each asset, one per asset, in</span>
+<span class="sd">            the order of `asset_ids` or `external_ids`. Values can be nested dicts and lists.</span>
 <span class="sd">        project_id: The project ID.</span>
 <span class="sd">        asset_ids: The asset IDs to modify (if `external_ids` is not already provided).</span>
 <span class="sd">        external_ids: The external asset IDs to modify (if `asset_ids` is not already provided).</span>
+<span class="sd">            They are matched exactly.</span>
 
 <span class="sd">    Returns:</span>
 <span class="sd">        A list of dictionaries with the asset ids.</span>
+
+<span class="sd">    Raises:</span>
+<span class="sd">        MissingArgumentError: If both or neither of `asset_ids` and `external_ids` are given.</span>
+<span class="sd">        IncompatibleArgumentsError: If `json_metadata` and the ids do not have the same length.</span>
+<span class="sd">        NotFound: If an asset ID or an external ID matches no asset of the project, or an</span>
+<span class="sd">            external ID several.</span>
 
 <span class="sd">    Examples:</span>
 <span class="sd">        &gt;&gt;&gt; kili.set_metadata(</span>
@@ -7322,7 +7669,7 @@ Each dictionary contains key/value pairs to be set as the asset's metadata.</p><
 <span class="sd">                    {"key1": "value1", "key2": "value2"},</span>
 <span class="sd">                    {"key3": "value3"}</span>
 <span class="sd">                ],</span>
-<span class="sd">                project_id="cm92to3cx012u7l0w6kij9qvx"</span>
+<span class="sd">                project_id="cm92to3cx012u7l0w6kij9qvx",</span>
 <span class="sd">                asset_ids=["ckg22d81r0jrg0885unmuswj8", "ckg22d81s0jrh0885pdxfd03n"]</span>
 <span class="sd">            )</span>
 
@@ -7339,40 +7686,22 @@ Each dictionary contains key/value pairs to be set as the asset's metadata.</p><
     <span class="k">if</span> <span class="n">is_empty_list_with_warning</span><span class="p">(</span><span class="s2">"set_metadata"</span><span class="p">,</span> <span class="s2">"json_metadata"</span><span class="p">,</span> <span class="n">json_metadata</span><span class="p">):</span>
         <span class="k">return</span> <span class="p">[]</span>
 
-    <span class="k">if</span> <span class="p">(</span><span class="n">asset_ids</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">external_ids</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">)</span> <span class="ow">or</span> <span class="p">(</span>
-        <span class="n">asset_ids</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">external_ids</span> <span class="ow">is</span> <span class="kc">None</span>
-    <span class="p">):</span>
-        <span class="k">raise</span> <span class="n">MissingArgumentError</span><span class="p">(</span><span class="s2">"Please provide either `asset_ids` or `external_ids`."</span><span class="p">)</span>
-
-    <span class="n">assets</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">kili_api_gateway</span><span class="o">.</span><span class="n">list_assets</span><span class="p">(</span>
-        <span class="n">AssetFilters</span><span class="p">(</span>
-            <span class="n">project_id</span><span class="o">=</span><span class="n">ProjectId</span><span class="p">(</span><span class="n">project_id</span><span class="p">),</span>
-            <span class="n">asset_id_in</span><span class="o">=</span><span class="n">cast</span><span class="p">(</span><span class="nb">list</span><span class="p">[</span><span class="n">AssetId</span><span class="p">],</span> <span class="n">asset_ids</span><span class="p">),</span>
-            <span class="n">external_id_in</span><span class="o">=</span><span class="n">cast</span><span class="p">(</span><span class="nb">list</span><span class="p">[</span><span class="n">AssetExternalId</span><span class="p">],</span> <span class="n">external_ids</span><span class="p">),</span>
-        <span class="p">),</span>
-        <span class="p">[</span><span class="s2">"id"</span><span class="p">,</span> <span class="s2">"jsonMetadata"</span><span class="p">],</span>
-        <span class="n">QueryOptions</span><span class="p">(</span><span class="n">disable_tqdm</span><span class="o">=</span><span class="kc">True</span><span class="p">),</span>
-    <span class="p">)</span>
-
-    <span class="n">resolved_asset_ids</span> <span class="o">=</span> <span class="p">[]</span>
-    <span class="n">json_metadatas</span> <span class="o">=</span> <span class="p">[]</span>
-    <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">asset</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">assets</span><span class="p">):</span>
-        <span class="n">current_metadata</span> <span class="o">=</span> <span class="n">asset</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"jsonMetadata"</span><span class="p">,</span> <span class="p">{})</span> <span class="k">if</span> <span class="n">asset</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"jsonMetadata"</span><span class="p">)</span> <span class="k">else</span> <span class="p">{}</span>
-        <span class="n">new_metadata</span> <span class="o">=</span> <span class="n">json_metadata</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="k">if</span> <span class="n">i</span> <span class="o">&lt;</span> <span class="nb">len</span><span class="p">(</span><span class="n">json_metadata</span><span class="p">)</span> <span class="k">else</span> <span class="p">{}</span>
-
-        <span class="n">special_keys</span> <span class="o">=</span> <span class="p">[</span><span class="s2">"text"</span><span class="p">,</span> <span class="s2">"imageUrl"</span><span class="p">,</span> <span class="s2">"url"</span><span class="p">,</span> <span class="s2">"processingParameters"</span><span class="p">]</span>
-        <span class="n">preserved_metadata</span> <span class="o">=</span> <span class="p">{</span>
-            <span class="n">k</span><span class="p">:</span> <span class="n">current_metadata</span><span class="p">[</span><span class="n">k</span><span class="p">]</span> <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="n">special_keys</span> <span class="k">if</span> <span class="n">k</span> <span class="ow">in</span> <span class="n">current_metadata</span>
+    <span class="n">asset_ids_in_order</span><span class="p">,</span> <span class="n">current_metadata</span> <span class="o">=</span> <span class="n">AssetUseCasesUtils</span><span class="p">(</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">kili_api_gateway</span>
+    <span class="p">)</span><span class="o">.</span><span class="n">get_metadata_targets</span><span class="p">(</span><span class="n">ProjectId</span><span class="p">(</span><span class="n">project_id</span><span class="p">),</span> <span class="n">asset_ids</span><span class="p">,</span> <span class="n">external_ids</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">json_metadata</span><span class="p">))</span>
+    <span class="c1"># an asset given twice gets both dictionaries in turn, as two calls would</span>
+    <span class="n">new_metadata</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">dict</span><span class="p">]</span> <span class="o">=</span> <span class="p">{}</span>
+    <span class="k">for</span> <span class="n">asset_id</span><span class="p">,</span> <span class="n">metadata</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">asset_ids_in_order</span><span class="p">,</span> <span class="n">json_metadata</span><span class="p">,</span> <span class="n">strict</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
+        <span class="n">kept_metadata</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="n">key</span><span class="p">:</span> <span class="n">value</span>
+            <span class="k">for</span> <span class="n">key</span><span class="p">,</span> <span class="n">value</span> <span class="ow">in</span> <span class="n">new_metadata</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">asset_id</span><span class="p">,</span> <span class="n">current_metadata</span><span class="p">[</span><span class="n">asset_id</span><span class="p">])</span><span class="o">.</span><span class="n">items</span><span class="p">()</span>
+            <span class="k">if</span> <span class="n">key</span> <span class="ow">in</span> <span class="n">METADATA_KEYS_KEPT_BY_SET</span>
         <span class="p">}</span>
-
-        <span class="n">preserved_metadata</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">new_metadata</span><span class="p">)</span>
-
-        <span class="n">json_metadatas</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">preserved_metadata</span><span class="p">)</span>
-        <span class="n">resolved_asset_ids</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">asset</span><span class="p">[</span><span class="s2">"id"</span><span class="p">])</span>
+        <span class="n">new_metadata</span><span class="p">[</span><span class="n">asset_id</span><span class="p">]</span> <span class="o">=</span> <span class="p">{</span><span class="o">**</span><span class="n">kept_metadata</span><span class="p">,</span> <span class="o">**</span><span class="n">metadata</span><span class="p">}</span>
 
     <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">update_properties_in_assets</span><span class="p">(</span>
-        <span class="n">asset_ids</span><span class="o">=</span><span class="n">cast</span><span class="p">(</span><span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">],</span> <span class="n">resolved_asset_ids</span><span class="p">),</span>
-        <span class="n">json_metadatas</span><span class="o">=</span><span class="n">json_metadatas</span><span class="p">,</span>
+        <span class="n">asset_ids</span><span class="o">=</span><span class="nb">list</span><span class="p">(</span><span class="n">new_metadata</span><span class="p">),</span>
+        <span class="n">json_metadatas</span><span class="o">=</span><span class="nb">list</span><span class="p">(</span><span class="n">new_metadata</span><span class="o">.</span><span class="n">values</span><span class="p">()),</span>
     <span class="p">)</span>
 </code></pre></div>
         </details>

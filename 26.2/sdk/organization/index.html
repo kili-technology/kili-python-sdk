@@ -722,6 +722,24 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#kili.presentation.client.organization.OrganizationClientMethods.organization_usage" class="md-nav__link">
+    <span class="md-ellipsis">
+      organization_usage()
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#kili.presentation.client.organization.OrganizationClientMethods.organization_usage_by_project" class="md-nav__link">
+    <span class="md-ellipsis">
+      organization_usage_by_project()
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#kili.presentation.client.organization.OrganizationClientMethods.organizations" class="md-nav__link">
     <span class="md-ellipsis">
       organizations()
@@ -2024,6 +2042,24 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#kili.presentation.client.organization.OrganizationClientMethods.organization_usage" class="md-nav__link">
+    <span class="md-ellipsis">
+      organization_usage()
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#kili.presentation.client.organization.OrganizationClientMethods.organization_usage_by_project" class="md-nav__link">
+    <span class="md-ellipsis">
+      organization_usage_by_project()
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#kili.presentation.client.organization.OrganizationClientMethods.organizations" class="md-nav__link">
     <span class="md-ellipsis">
       organizations()
@@ -2158,6 +2194,157 @@
         <span class="k">return</span> <span class="n">OrganizationUseCases</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">kili_api_gateway</span><span class="p">)</span><span class="o">.</span><span class="n">count_organizations</span><span class="p">(</span><span class="n">where</span><span class="p">)</span>
 
     <span class="nd">@typechecked</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">organization_usage</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">metrics</span><span class="p">:</span> <span class="n">ListOrTuple</span><span class="p">[</span><span class="n">OrganizationMetricName</span><span class="p">]</span> <span class="o">=</span> <span class="n">USAGE_METRICS</span><span class="p">,</span>
+        <span class="n">start_date</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">datetime</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">end_date</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">datetime</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">granularity</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">MetricsGranularity</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">project_id</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">organization_id</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="nb">dict</span><span class="p">]:</span>
+<span class="w">        </span><span class="sd">"""Get the usage metrics of your organization, as the Usage and license page shows them.</span>
+
+<span class="sd">        Only organization admins can call it.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            metrics: The metrics to return. Times (`LABELING_TIME`, `REVIEW_TIME`) are in seconds.</span>
+<span class="sd">                The page counts annotations with `ROOT_NUMBER_OF_ANNOTATIONS` when your licence</span>
+<span class="sd">                counts root annotations only, and with `NUMBER_OF_ANNOTATIONS` otherwise.</span>
+<span class="sd">            start_date: Start of the period, floored to its day in UTC. Defaults to the start of</span>
+<span class="sd">                your licence. A naive datetime is read as UTC.</span>
+<span class="sd">            end_date: End of the period. Defaults to now. Usage is kept per UTC day: the day</span>
+<span class="sd">                `end_date` falls in counts in full, unless `end_date` is its midnight. A naive</span>
+<span class="sd">                datetime is read as UTC.</span>
+<span class="sd">            granularity: Size of the buckets of `details`: `DAY`, `WEEK`, `MONTH` or `YEAR` (the</span>
+<span class="sd">                default); `HOUR` gives days too. The page uses `DAY` for a month and `MONTH` for a</span>
+<span class="sd">                year.</span>
+<span class="sd">            project_id: Restrict the metrics to this project.</span>
+<span class="sd">            organization_id: Identifier of the organization, yours by default. Only Kili admins</span>
+<span class="sd">                can name another, and the default start date still follows your own licence.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            One dictionary per metric with usage over the period: `metric`, its `total`, and its</span>
+<span class="sd">                `details`, one `{"timestamp", "value"}` per bucket and per project. A metric with</span>
+<span class="sd">                no usage is absent: read it as 0.</span>
+
+<span class="sd">        Examples:</span>
+<span class="sd">            &gt;&gt;&gt; from datetime import datetime</span>
+<span class="sd">            &gt;&gt;&gt; kili.organization_usage(</span>
+<span class="sd">            ...     metrics=["LABELED_ASSETS", "LABELING_TIME"],</span>
+<span class="sd">            ...     start_date=datetime(2026, 10, 1),</span>
+<span class="sd">            ...     end_date=datetime(2026, 11, 1),</span>
+<span class="sd">            ...     granularity="DAY",</span>
+<span class="sd">            ... )</span>
+<span class="sd">            [{'metric': 'LABELED_ASSETS', 'total': 120, 'details': [...]},</span>
+<span class="sd">             {'metric': 'LABELING_TIME', 'total': 45000, 'details': [...]}]</span>
+<span class="sd">        """</span>
+        <span class="n">filters</span> <span class="o">=</span> <span class="n">OrganizationUsageFilters</span><span class="p">(</span>
+            <span class="n">metrics</span><span class="o">=</span><span class="n">metrics</span><span class="p">,</span>
+            <span class="n">organization_id</span><span class="o">=</span><span class="n">OrganizationId</span><span class="p">(</span><span class="n">organization_id</span><span class="p">)</span> <span class="k">if</span> <span class="n">organization_id</span> <span class="k">else</span> <span class="kc">None</span><span class="p">,</span>
+            <span class="n">project_id</span><span class="o">=</span><span class="n">ProjectId</span><span class="p">(</span><span class="n">project_id</span><span class="p">)</span> <span class="k">if</span> <span class="n">project_id</span> <span class="k">else</span> <span class="kc">None</span><span class="p">,</span>
+            <span class="n">start_datetime</span><span class="o">=</span><span class="n">start_date</span><span class="p">,</span>
+            <span class="n">end_datetime</span><span class="o">=</span><span class="n">end_date</span><span class="p">,</span>
+            <span class="n">granularity</span><span class="o">=</span><span class="n">granularity</span><span class="p">,</span>
+        <span class="p">)</span>
+        <span class="k">return</span> <span class="n">OrganizationUseCases</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">kili_api_gateway</span><span class="p">)</span><span class="o">.</span><span class="n">get_organization_usage</span><span class="p">(</span><span class="n">filters</span><span class="p">)</span>
+
+    <span class="nd">@overload</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">organization_usage_by_project</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">metrics</span><span class="p">:</span> <span class="n">ListOrTuple</span><span class="p">[</span><span class="n">OrganizationMetricName</span><span class="p">]</span> <span class="o">=</span> <span class="n">USAGE_BY_PROJECT_METRICS</span><span class="p">,</span>
+        <span class="n">start_date</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">datetime</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">end_date</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">datetime</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">search_query</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">organization_id</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">first</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">skip</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span>
+        <span class="n">disable_tqdm</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">bool</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="o">*</span><span class="p">,</span>
+        <span class="n">as_generator</span><span class="p">:</span> <span class="n">Literal</span><span class="p">[</span><span class="kc">True</span><span class="p">],</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Generator</span><span class="p">[</span><span class="nb">dict</span><span class="p">,</span> <span class="kc">None</span><span class="p">,</span> <span class="kc">None</span><span class="p">]:</span>
+        <span class="o">...</span>
+
+    <span class="nd">@overload</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">organization_usage_by_project</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">metrics</span><span class="p">:</span> <span class="n">ListOrTuple</span><span class="p">[</span><span class="n">OrganizationMetricName</span><span class="p">]</span> <span class="o">=</span> <span class="n">USAGE_BY_PROJECT_METRICS</span><span class="p">,</span>
+        <span class="n">start_date</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">datetime</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">end_date</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">datetime</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">search_query</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">organization_id</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">first</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">skip</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span>
+        <span class="n">disable_tqdm</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">bool</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="o">*</span><span class="p">,</span>
+        <span class="n">as_generator</span><span class="p">:</span> <span class="n">Literal</span><span class="p">[</span><span class="kc">False</span><span class="p">]</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="nb">dict</span><span class="p">]:</span>
+        <span class="o">...</span>
+
+    <span class="nd">@typechecked</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">organization_usage_by_project</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">metrics</span><span class="p">:</span> <span class="n">ListOrTuple</span><span class="p">[</span><span class="n">OrganizationMetricName</span><span class="p">]</span> <span class="o">=</span> <span class="n">USAGE_BY_PROJECT_METRICS</span><span class="p">,</span>
+        <span class="n">start_date</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">datetime</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">end_date</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">datetime</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">search_query</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">organization_id</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">first</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">skip</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span>
+        <span class="n">disable_tqdm</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">bool</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="o">*</span><span class="p">,</span>
+        <span class="n">as_generator</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Iterable</span><span class="p">[</span><span class="nb">dict</span><span class="p">]:</span>
+<span class="w">        </span><span class="sd">"""Get the usage metrics per project, as the Usage and license page lists them.</span>
+
+<span class="sd">        Only organization admins can call it. Projects come busiest first, ranked by the annotation</span>
+<span class="sd">        metric your licence counts, which is added to the metrics asked for; a project with no usage</span>
+<span class="sd">        of these metrics over the period is not listed. Every page ranks the whole organization</span>
+<span class="sd">        again: on a large one, set `first` or narrow the period.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            metrics: The metrics to total per project. Times (`LABELING_TIME`, `REVIEW_TIME`) are in</span>
+<span class="sd">                seconds.</span>
+<span class="sd">            start_date: Start of the period, floored to its day in UTC. Defaults to the start of</span>
+<span class="sd">                your licence. A naive datetime is read as UTC.</span>
+<span class="sd">            end_date: End of the period. Defaults to now. Usage is kept per UTC day: the day</span>
+<span class="sd">                `end_date` falls in counts in full, unless `end_date` is its midnight. A naive</span>
+<span class="sd">                datetime is read as UTC.</span>
+<span class="sd">            search_query: Case-insensitive filter on the project title, description or id.</span>
+<span class="sd">            organization_id: Identifier of the organization, yours by default. Only Kili admins</span>
+<span class="sd">                can name another, and the default start date and the ranking still follow your own</span>
+<span class="sd">                licence.</span>
+<span class="sd">            first: Maximum number of projects to return.</span>
+<span class="sd">            skip: Number of projects to skip, in rank order.</span>
+<span class="sd">            disable_tqdm: If `True`, the progress bar will be disabled.</span>
+<span class="sd">            as_generator: If `True`, a generator on the projects is returned.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            An iterable of projects: `projectId`, `projectTitle`, `isDeleted`, and `metrics`, one</span>
+<span class="sd">                `{"metric", "total"}` per metric the project has usage for: a missing one is 0.</span>
+
+<span class="sd">        Examples:</span>
+<span class="sd">            &gt;&gt;&gt; kili.organization_usage_by_project(metrics=["LABELED_ASSETS"], first=2)</span>
+<span class="sd">            [{'projectId': 'clx…', 'projectTitle': 'Retail shelves', 'isDeleted': False,</span>
+<span class="sd">              'metrics': [{'metric': 'LABELED_ASSETS', 'total': 120}]}, ...]</span>
+<span class="sd">        """</span>
+        <span class="n">disable_tqdm</span> <span class="o">=</span> <span class="n">resolve_disable_tqdm</span><span class="p">(</span><span class="n">disable_tqdm</span><span class="p">,</span> <span class="nb">getattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="s2">"disable_tqdm"</span><span class="p">,</span> <span class="kc">None</span><span class="p">))</span>
+        <span class="n">projects</span> <span class="o">=</span> <span class="n">OrganizationUseCases</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">kili_api_gateway</span><span class="p">)</span><span class="o">.</span><span class="n">list_organization_usage_by_project</span><span class="p">(</span>
+            <span class="n">OrganizationUsageByProjectFilters</span><span class="p">(</span>
+                <span class="n">metrics</span><span class="o">=</span><span class="n">metrics</span><span class="p">,</span>
+                <span class="n">organization_id</span><span class="o">=</span><span class="n">OrganizationId</span><span class="p">(</span><span class="n">organization_id</span><span class="p">)</span> <span class="k">if</span> <span class="n">organization_id</span> <span class="k">else</span> <span class="kc">None</span><span class="p">,</span>
+                <span class="n">start_datetime</span><span class="o">=</span><span class="n">start_date</span><span class="p">,</span>
+                <span class="n">end_datetime</span><span class="o">=</span><span class="n">end_date</span><span class="p">,</span>
+                <span class="n">search_query</span><span class="o">=</span><span class="n">search_query</span><span class="p">,</span>
+            <span class="p">),</span>
+            <span class="n">QueryOptions</span><span class="p">(</span><span class="n">disable_tqdm</span><span class="o">=</span><span class="n">disable_tqdm</span><span class="p">,</span> <span class="n">first</span><span class="o">=</span><span class="n">first</span><span class="p">,</span> <span class="n">skip</span><span class="o">=</span><span class="n">skip</span><span class="p">),</span>
+        <span class="p">)</span>
+        <span class="k">if</span> <span class="n">as_generator</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">projects</span>
+        <span class="k">return</span> <span class="nb">list</span><span class="p">(</span><span class="n">projects</span><span class="p">)</span>
+
+    <span class="nd">@deprecated</span><span class="p">(</span><span class="n">ORGANIZATION_METRICS_DEPRECATION</span><span class="p">)</span>
+    <span class="nd">@typechecked</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">organization_metrics</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">organization_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
@@ -2170,6 +2357,10 @@
         <span class="p">),</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">"""Get organization metrics.</span>
+
+<span class="sd">        !!! warning "Deprecated"</span>
+<span class="sd">            This method will be removed: use `organization_usage()` instead, which counts as the</span>
+<span class="sd">            Usage and license page of the app does. Only organization admins can call it.</span>
 
 <span class="sd">        Args:</span>
 <span class="sd">            organization_id: Identifier of the organization</span>
@@ -2298,6 +2489,11 @@
     <div class="doc doc-contents ">
 
       <p>Get organization metrics.</p>
+<div class="admonition warning">
+<p class="admonition-title">Deprecated</p>
+<p>This method will be removed: use <code>organization_usage()</code> instead, which counts as the
+Usage and license page of the app does. Only organization admins can call it.</p>
+</div>
 
 <p><strong>Parameters:</strong></p>
 <table>
@@ -2353,7 +2549,9 @@
 </table>
         <details class="quote">
           <summary>Source code in <code>kili/presentation/client/organization.py</code></summary>
-          <div class="highlight"><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">organization_metrics</span><span class="p">(</span>
+          <div class="highlight"><pre><span></span><code><span class="nd">@deprecated</span><span class="p">(</span><span class="n">ORGANIZATION_METRICS_DEPRECATION</span><span class="p">)</span>
+<span class="nd">@typechecked</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">organization_metrics</span><span class="p">(</span>
     <span class="bp">self</span><span class="p">,</span>
     <span class="n">organization_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
     <span class="n">start_date</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">datetime</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
@@ -2365,6 +2563,10 @@
     <span class="p">),</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">"""Get organization metrics.</span>
+
+<span class="sd">    !!! warning "Deprecated"</span>
+<span class="sd">        This method will be removed: use `organization_usage()` instead, which counts as the</span>
+<span class="sd">        Usage and license page of the app does. Only organization admins can call it.</span>
 
 <span class="sd">    Args:</span>
 <span class="sd">        organization_id: Identifier of the organization</span>
@@ -2384,6 +2586,354 @@
     <span class="p">)</span>
 
     <span class="k">return</span> <span class="n">OrganizationUseCases</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">kili_api_gateway</span><span class="p">)</span><span class="o">.</span><span class="n">get_organization_metrics</span><span class="p">(</span><span class="n">filters</span><span class="p">,</span> <span class="n">fields</span><span class="p">)</span>
+</code></pre></div>
+        </details>
+    </div>
+
+  </div>
+
+
+
+  <div class="doc doc-object doc-method">
+
+
+
+<h3 id="kili.presentation.client.organization.OrganizationClientMethods.organization_usage" class="doc doc-heading">
+<code class="highlight language-python"><span class="n">organization_usage</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">metrics</span><span class="o">=</span><span class="p">(</span><span class="s1">'LABELED_ASSETS'</span><span class="p">,</span> <span class="s1">'NUMBER_OF_ANNOTATIONS'</span><span class="p">,</span> <span class="s1">'ROOT_NUMBER_OF_ANNOTATIONS'</span><span class="p">,</span> <span class="s1">'LABELING_TIME'</span><span class="p">,</span> <span class="s1">'REVIEW_TIME'</span><span class="p">),</span> <span class="n">start_date</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">end_date</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">granularity</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">project_id</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">organization_id</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span></code>
+
+
+</h3>
+
+    <div class="doc doc-contents ">
+
+      <p>Get the usage metrics of your organization, as the Usage and license page shows them.</p>
+<p>Only organization admins can call it.</p>
+
+<p><strong>Parameters:</strong></p>
+<table>
+  <thead>
+    <tr>
+      <th>Name</th>
+      <th>Type</th>
+      <th>Description</th>
+      <th>Default</th>
+    </tr>
+  </thead>
+  <tbody>
+      <tr>
+        <td><code>metrics</code></td>
+        <td><code>Union[list[Literal[&#39;INTERACTIVE_SEGMENTATION&#39;, &#39;LABELED_ASSETS&#39;, &#39;LABELING_TIME&#39;, &#39;NUMBER_OF_ANNOTATIONS&#39;, &#39;REVIEW_TIME&#39;, &#39;ROOT_NUMBER_OF_ANNOTATIONS&#39;, &#39;VIDEO_TRACKING&#39;]], tuple[Literal[&#39;INTERACTIVE_SEGMENTATION&#39;, &#39;LABELED_ASSETS&#39;, &#39;LABELING_TIME&#39;, &#39;NUMBER_OF_ANNOTATIONS&#39;, &#39;REVIEW_TIME&#39;, &#39;ROOT_NUMBER_OF_ANNOTATIONS&#39;, &#39;VIDEO_TRACKING&#39;], ...]]</code></td>
+        <td><p>The metrics to return. Times (<code>LABELING_TIME</code>, <code>REVIEW_TIME</code>) are in seconds.
+The page counts annotations with <code>ROOT_NUMBER_OF_ANNOTATIONS</code> when your licence
+counts root annotations only, and with <code>NUMBER_OF_ANNOTATIONS</code> otherwise.</p></td>
+        <td><code>(&#39;LABELED_ASSETS&#39;, &#39;NUMBER_OF_ANNOTATIONS&#39;, &#39;ROOT_NUMBER_OF_ANNOTATIONS&#39;, &#39;LABELING_TIME&#39;, &#39;REVIEW_TIME&#39;)</code></td>
+      </tr>
+      <tr>
+        <td><code>start_date</code></td>
+        <td><code>Optional[datetime.datetime]</code></td>
+        <td><p>Start of the period, floored to its day in UTC. Defaults to the start of
+your licence. A naive datetime is read as UTC.</p></td>
+        <td><code>None</code></td>
+      </tr>
+      <tr>
+        <td><code>end_date</code></td>
+        <td><code>Optional[datetime.datetime]</code></td>
+        <td><p>End of the period. Defaults to now. Usage is kept per UTC day: the day
+<code>end_date</code> falls in counts in full, unless <code>end_date</code> is its midnight. A naive
+datetime is read as UTC.</p></td>
+        <td><code>None</code></td>
+      </tr>
+      <tr>
+        <td><code>granularity</code></td>
+        <td><code>Optional[Literal[&#39;HOUR&#39;, &#39;DAY&#39;, &#39;WEEK&#39;, &#39;MONTH&#39;, &#39;YEAR&#39;]]</code></td>
+        <td><p>Size of the buckets of <code>details</code>: <code>DAY</code>, <code>WEEK</code>, <code>MONTH</code> or <code>YEAR</code> (the
+default); <code>HOUR</code> gives days too. The page uses <code>DAY</code> for a month and <code>MONTH</code> for a
+year.</p></td>
+        <td><code>None</code></td>
+      </tr>
+      <tr>
+        <td><code>project_id</code></td>
+        <td><code>Optional[str]</code></td>
+        <td><p>Restrict the metrics to this project.</p></td>
+        <td><code>None</code></td>
+      </tr>
+      <tr>
+        <td><code>organization_id</code></td>
+        <td><code>Optional[str]</code></td>
+        <td><p>Identifier of the organization, yours by default. Only Kili admins
+can name another, and the default start date still follows your own licence.</p></td>
+        <td><code>None</code></td>
+      </tr>
+  </tbody>
+</table>
+<p><strong>Returns:</strong></p>
+<table>
+  <thead>
+    <tr>
+      <th>Type</th>
+      <th>Description</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><code>One dictionary per metric with usage over the period</code></td>
+      <td><p><code>metric</code>, its <code>total</code>, and its
+    <code>details</code>, one <code>{"timestamp", "value"}</code> per bucket and per project. A metric with
+    no usage is absent: read it as 0.</p></td>
+    </tr>
+  </tbody>
+</table>
+<p><strong>Examples:</strong></p>
+    <div class="highlight"><pre><span></span><code><span class="o">&gt;&gt;&gt;</span> <span class="kn">from</span><span class="w"> </span><span class="nn">datetime</span><span class="w"> </span><span class="kn">import</span> <span class="n">datetime</span>
+<span class="o">&gt;&gt;&gt;</span> <span class="n">kili</span><span class="o">.</span><span class="n">organization_usage</span><span class="p">(</span>
+<span class="o">...</span>     <span class="n">metrics</span><span class="o">=</span><span class="p">[</span><span class="s2">"LABELED_ASSETS"</span><span class="p">,</span> <span class="s2">"LABELING_TIME"</span><span class="p">],</span>
+<span class="o">...</span>     <span class="n">start_date</span><span class="o">=</span><span class="n">datetime</span><span class="p">(</span><span class="mi">2026</span><span class="p">,</span> <span class="mi">10</span><span class="p">,</span> <span class="mi">1</span><span class="p">),</span>
+<span class="o">...</span>     <span class="n">end_date</span><span class="o">=</span><span class="n">datetime</span><span class="p">(</span><span class="mi">2026</span><span class="p">,</span> <span class="mi">11</span><span class="p">,</span> <span class="mi">1</span><span class="p">),</span>
+<span class="o">...</span>     <span class="n">granularity</span><span class="o">=</span><span class="s2">"DAY"</span><span class="p">,</span>
+<span class="o">...</span> <span class="p">)</span>
+<span class="p">[{</span><span class="s1">'metric'</span><span class="p">:</span> <span class="s1">'LABELED_ASSETS'</span><span class="p">,</span> <span class="s1">'total'</span><span class="p">:</span> <span class="mi">120</span><span class="p">,</span> <span class="s1">'details'</span><span class="p">:</span> <span class="p">[</span><span class="o">...</span><span class="p">]},</span>
+ <span class="p">{</span><span class="s1">'metric'</span><span class="p">:</span> <span class="s1">'LABELING_TIME'</span><span class="p">,</span> <span class="s1">'total'</span><span class="p">:</span> <span class="mi">45000</span><span class="p">,</span> <span class="s1">'details'</span><span class="p">:</span> <span class="p">[</span><span class="o">...</span><span class="p">]}]</span>
+</code></pre></div>
+
+        <details class="quote">
+          <summary>Source code in <code>kili/presentation/client/organization.py</code></summary>
+          <div class="highlight"><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">organization_usage</span><span class="p">(</span>
+    <span class="bp">self</span><span class="p">,</span>
+    <span class="n">metrics</span><span class="p">:</span> <span class="n">ListOrTuple</span><span class="p">[</span><span class="n">OrganizationMetricName</span><span class="p">]</span> <span class="o">=</span> <span class="n">USAGE_METRICS</span><span class="p">,</span>
+    <span class="n">start_date</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">datetime</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">end_date</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">datetime</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">granularity</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">MetricsGranularity</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">project_id</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">organization_id</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="nb">dict</span><span class="p">]:</span>
+<span class="w">    </span><span class="sd">"""Get the usage metrics of your organization, as the Usage and license page shows them.</span>
+
+<span class="sd">    Only organization admins can call it.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        metrics: The metrics to return. Times (`LABELING_TIME`, `REVIEW_TIME`) are in seconds.</span>
+<span class="sd">            The page counts annotations with `ROOT_NUMBER_OF_ANNOTATIONS` when your licence</span>
+<span class="sd">            counts root annotations only, and with `NUMBER_OF_ANNOTATIONS` otherwise.</span>
+<span class="sd">        start_date: Start of the period, floored to its day in UTC. Defaults to the start of</span>
+<span class="sd">            your licence. A naive datetime is read as UTC.</span>
+<span class="sd">        end_date: End of the period. Defaults to now. Usage is kept per UTC day: the day</span>
+<span class="sd">            `end_date` falls in counts in full, unless `end_date` is its midnight. A naive</span>
+<span class="sd">            datetime is read as UTC.</span>
+<span class="sd">        granularity: Size of the buckets of `details`: `DAY`, `WEEK`, `MONTH` or `YEAR` (the</span>
+<span class="sd">            default); `HOUR` gives days too. The page uses `DAY` for a month and `MONTH` for a</span>
+<span class="sd">            year.</span>
+<span class="sd">        project_id: Restrict the metrics to this project.</span>
+<span class="sd">        organization_id: Identifier of the organization, yours by default. Only Kili admins</span>
+<span class="sd">            can name another, and the default start date still follows your own licence.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        One dictionary per metric with usage over the period: `metric`, its `total`, and its</span>
+<span class="sd">            `details`, one `{"timestamp", "value"}` per bucket and per project. A metric with</span>
+<span class="sd">            no usage is absent: read it as 0.</span>
+
+<span class="sd">    Examples:</span>
+<span class="sd">        &gt;&gt;&gt; from datetime import datetime</span>
+<span class="sd">        &gt;&gt;&gt; kili.organization_usage(</span>
+<span class="sd">        ...     metrics=["LABELED_ASSETS", "LABELING_TIME"],</span>
+<span class="sd">        ...     start_date=datetime(2026, 10, 1),</span>
+<span class="sd">        ...     end_date=datetime(2026, 11, 1),</span>
+<span class="sd">        ...     granularity="DAY",</span>
+<span class="sd">        ... )</span>
+<span class="sd">        [{'metric': 'LABELED_ASSETS', 'total': 120, 'details': [...]},</span>
+<span class="sd">         {'metric': 'LABELING_TIME', 'total': 45000, 'details': [...]}]</span>
+<span class="sd">    """</span>
+    <span class="n">filters</span> <span class="o">=</span> <span class="n">OrganizationUsageFilters</span><span class="p">(</span>
+        <span class="n">metrics</span><span class="o">=</span><span class="n">metrics</span><span class="p">,</span>
+        <span class="n">organization_id</span><span class="o">=</span><span class="n">OrganizationId</span><span class="p">(</span><span class="n">organization_id</span><span class="p">)</span> <span class="k">if</span> <span class="n">organization_id</span> <span class="k">else</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">project_id</span><span class="o">=</span><span class="n">ProjectId</span><span class="p">(</span><span class="n">project_id</span><span class="p">)</span> <span class="k">if</span> <span class="n">project_id</span> <span class="k">else</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">start_datetime</span><span class="o">=</span><span class="n">start_date</span><span class="p">,</span>
+        <span class="n">end_datetime</span><span class="o">=</span><span class="n">end_date</span><span class="p">,</span>
+        <span class="n">granularity</span><span class="o">=</span><span class="n">granularity</span><span class="p">,</span>
+    <span class="p">)</span>
+    <span class="k">return</span> <span class="n">OrganizationUseCases</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">kili_api_gateway</span><span class="p">)</span><span class="o">.</span><span class="n">get_organization_usage</span><span class="p">(</span><span class="n">filters</span><span class="p">)</span>
+</code></pre></div>
+        </details>
+    </div>
+
+  </div>
+
+
+
+  <div class="doc doc-object doc-method">
+
+
+
+<h3 id="kili.presentation.client.organization.OrganizationClientMethods.organization_usage_by_project" class="doc doc-heading">
+<code class="highlight language-python"><span class="n">organization_usage_by_project</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">metrics</span><span class="o">=</span><span class="p">(</span><span class="s1">'LABELED_ASSETS'</span><span class="p">,</span> <span class="s1">'NUMBER_OF_ANNOTATIONS'</span><span class="p">,</span> <span class="s1">'ROOT_NUMBER_OF_ANNOTATIONS'</span><span class="p">,</span> <span class="s1">'LABELING_TIME'</span><span class="p">),</span> <span class="n">start_date</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">end_date</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">search_query</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">organization_id</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">first</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">skip</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">disable_tqdm</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">as_generator</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span></code>
+
+
+</h3>
+
+    <div class="doc doc-contents ">
+
+      <p>Get the usage metrics per project, as the Usage and license page lists them.</p>
+<p>Only organization admins can call it. Projects come busiest first, ranked by the annotation
+metric your licence counts, which is added to the metrics asked for; a project with no usage
+of these metrics over the period is not listed. Every page ranks the whole organization
+again: on a large one, set <code>first</code> or narrow the period.</p>
+
+<p><strong>Parameters:</strong></p>
+<table>
+  <thead>
+    <tr>
+      <th>Name</th>
+      <th>Type</th>
+      <th>Description</th>
+      <th>Default</th>
+    </tr>
+  </thead>
+  <tbody>
+      <tr>
+        <td><code>metrics</code></td>
+        <td><code>Union[list[Literal[&#39;INTERACTIVE_SEGMENTATION&#39;, &#39;LABELED_ASSETS&#39;, &#39;LABELING_TIME&#39;, &#39;NUMBER_OF_ANNOTATIONS&#39;, &#39;REVIEW_TIME&#39;, &#39;ROOT_NUMBER_OF_ANNOTATIONS&#39;, &#39;VIDEO_TRACKING&#39;]], tuple[Literal[&#39;INTERACTIVE_SEGMENTATION&#39;, &#39;LABELED_ASSETS&#39;, &#39;LABELING_TIME&#39;, &#39;NUMBER_OF_ANNOTATIONS&#39;, &#39;REVIEW_TIME&#39;, &#39;ROOT_NUMBER_OF_ANNOTATIONS&#39;, &#39;VIDEO_TRACKING&#39;], ...]]</code></td>
+        <td><p>The metrics to total per project. Times (<code>LABELING_TIME</code>, <code>REVIEW_TIME</code>) are in
+seconds.</p></td>
+        <td><code>(&#39;LABELED_ASSETS&#39;, &#39;NUMBER_OF_ANNOTATIONS&#39;, &#39;ROOT_NUMBER_OF_ANNOTATIONS&#39;, &#39;LABELING_TIME&#39;)</code></td>
+      </tr>
+      <tr>
+        <td><code>start_date</code></td>
+        <td><code>Optional[datetime.datetime]</code></td>
+        <td><p>Start of the period, floored to its day in UTC. Defaults to the start of
+your licence. A naive datetime is read as UTC.</p></td>
+        <td><code>None</code></td>
+      </tr>
+      <tr>
+        <td><code>end_date</code></td>
+        <td><code>Optional[datetime.datetime]</code></td>
+        <td><p>End of the period. Defaults to now. Usage is kept per UTC day: the day
+<code>end_date</code> falls in counts in full, unless <code>end_date</code> is its midnight. A naive
+datetime is read as UTC.</p></td>
+        <td><code>None</code></td>
+      </tr>
+      <tr>
+        <td><code>search_query</code></td>
+        <td><code>Optional[str]</code></td>
+        <td><p>Case-insensitive filter on the project title, description or id.</p></td>
+        <td><code>None</code></td>
+      </tr>
+      <tr>
+        <td><code>organization_id</code></td>
+        <td><code>Optional[str]</code></td>
+        <td><p>Identifier of the organization, yours by default. Only Kili admins
+can name another, and the default start date and the ranking still follow your own
+licence.</p></td>
+        <td><code>None</code></td>
+      </tr>
+      <tr>
+        <td><code>first</code></td>
+        <td><code>Optional[int]</code></td>
+        <td><p>Maximum number of projects to return.</p></td>
+        <td><code>None</code></td>
+      </tr>
+      <tr>
+        <td><code>skip</code></td>
+        <td><code>int</code></td>
+        <td><p>Number of projects to skip, in rank order.</p></td>
+        <td><code>0</code></td>
+      </tr>
+      <tr>
+        <td><code>disable_tqdm</code></td>
+        <td><code>Optional[bool]</code></td>
+        <td><p>If <code>True</code>, the progress bar will be disabled.</p></td>
+        <td><code>None</code></td>
+      </tr>
+      <tr>
+        <td><code>as_generator</code></td>
+        <td><code>bool</code></td>
+        <td><p>If <code>True</code>, a generator on the projects is returned.</p></td>
+        <td><code>False</code></td>
+      </tr>
+  </tbody>
+</table>
+<p><strong>Returns:</strong></p>
+<table>
+  <thead>
+    <tr>
+      <th>Type</th>
+      <th>Description</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><code>An iterable of projects</code></td>
+      <td><p><code>projectId</code>, <code>projectTitle</code>, <code>isDeleted</code>, and <code>metrics</code>, one
+    <code>{"metric", "total"}</code> per metric the project has usage for: a missing one is 0.</p></td>
+    </tr>
+  </tbody>
+</table>
+<p><strong>Examples:</strong></p>
+    <div class="highlight"><pre><span></span><code><span class="o">&gt;&gt;&gt;</span> <span class="n">kili</span><span class="o">.</span><span class="n">organization_usage_by_project</span><span class="p">(</span><span class="n">metrics</span><span class="o">=</span><span class="p">[</span><span class="s2">"LABELED_ASSETS"</span><span class="p">],</span> <span class="n">first</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span>
+<span class="p">[{</span><span class="s1">'projectId'</span><span class="p">:</span> <span class="s1">'clx…'</span><span class="p">,</span> <span class="s1">'projectTitle'</span><span class="p">:</span> <span class="s1">'Retail shelves'</span><span class="p">,</span> <span class="s1">'isDeleted'</span><span class="p">:</span> <span class="kc">False</span><span class="p">,</span>
+  <span class="s1">'metrics'</span><span class="p">:</span> <span class="p">[{</span><span class="s1">'metric'</span><span class="p">:</span> <span class="s1">'LABELED_ASSETS'</span><span class="p">,</span> <span class="s1">'total'</span><span class="p">:</span> <span class="mi">120</span><span class="p">}]},</span> <span class="o">...</span><span class="p">]</span>
+</code></pre></div>
+
+        <details class="quote">
+          <summary>Source code in <code>kili/presentation/client/organization.py</code></summary>
+          <div class="highlight"><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">organization_usage_by_project</span><span class="p">(</span>
+    <span class="bp">self</span><span class="p">,</span>
+    <span class="n">metrics</span><span class="p">:</span> <span class="n">ListOrTuple</span><span class="p">[</span><span class="n">OrganizationMetricName</span><span class="p">]</span> <span class="o">=</span> <span class="n">USAGE_BY_PROJECT_METRICS</span><span class="p">,</span>
+    <span class="n">start_date</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">datetime</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">end_date</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">datetime</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">search_query</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">organization_id</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">first</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">skip</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span>
+    <span class="n">disable_tqdm</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">bool</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="o">*</span><span class="p">,</span>
+    <span class="n">as_generator</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Iterable</span><span class="p">[</span><span class="nb">dict</span><span class="p">]:</span>
+<span class="w">    </span><span class="sd">"""Get the usage metrics per project, as the Usage and license page lists them.</span>
+
+<span class="sd">    Only organization admins can call it. Projects come busiest first, ranked by the annotation</span>
+<span class="sd">    metric your licence counts, which is added to the metrics asked for; a project with no usage</span>
+<span class="sd">    of these metrics over the period is not listed. Every page ranks the whole organization</span>
+<span class="sd">    again: on a large one, set `first` or narrow the period.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        metrics: The metrics to total per project. Times (`LABELING_TIME`, `REVIEW_TIME`) are in</span>
+<span class="sd">            seconds.</span>
+<span class="sd">        start_date: Start of the period, floored to its day in UTC. Defaults to the start of</span>
+<span class="sd">            your licence. A naive datetime is read as UTC.</span>
+<span class="sd">        end_date: End of the period. Defaults to now. Usage is kept per UTC day: the day</span>
+<span class="sd">            `end_date` falls in counts in full, unless `end_date` is its midnight. A naive</span>
+<span class="sd">            datetime is read as UTC.</span>
+<span class="sd">        search_query: Case-insensitive filter on the project title, description or id.</span>
+<span class="sd">        organization_id: Identifier of the organization, yours by default. Only Kili admins</span>
+<span class="sd">            can name another, and the default start date and the ranking still follow your own</span>
+<span class="sd">            licence.</span>
+<span class="sd">        first: Maximum number of projects to return.</span>
+<span class="sd">        skip: Number of projects to skip, in rank order.</span>
+<span class="sd">        disable_tqdm: If `True`, the progress bar will be disabled.</span>
+<span class="sd">        as_generator: If `True`, a generator on the projects is returned.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        An iterable of projects: `projectId`, `projectTitle`, `isDeleted`, and `metrics`, one</span>
+<span class="sd">            `{"metric", "total"}` per metric the project has usage for: a missing one is 0.</span>
+
+<span class="sd">    Examples:</span>
+<span class="sd">        &gt;&gt;&gt; kili.organization_usage_by_project(metrics=["LABELED_ASSETS"], first=2)</span>
+<span class="sd">        [{'projectId': 'clx…', 'projectTitle': 'Retail shelves', 'isDeleted': False,</span>
+<span class="sd">          'metrics': [{'metric': 'LABELED_ASSETS', 'total': 120}]}, ...]</span>
+<span class="sd">    """</span>
+    <span class="n">disable_tqdm</span> <span class="o">=</span> <span class="n">resolve_disable_tqdm</span><span class="p">(</span><span class="n">disable_tqdm</span><span class="p">,</span> <span class="nb">getattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="s2">"disable_tqdm"</span><span class="p">,</span> <span class="kc">None</span><span class="p">))</span>
+    <span class="n">projects</span> <span class="o">=</span> <span class="n">OrganizationUseCases</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">kili_api_gateway</span><span class="p">)</span><span class="o">.</span><span class="n">list_organization_usage_by_project</span><span class="p">(</span>
+        <span class="n">OrganizationUsageByProjectFilters</span><span class="p">(</span>
+            <span class="n">metrics</span><span class="o">=</span><span class="n">metrics</span><span class="p">,</span>
+            <span class="n">organization_id</span><span class="o">=</span><span class="n">OrganizationId</span><span class="p">(</span><span class="n">organization_id</span><span class="p">)</span> <span class="k">if</span> <span class="n">organization_id</span> <span class="k">else</span> <span class="kc">None</span><span class="p">,</span>
+            <span class="n">start_datetime</span><span class="o">=</span><span class="n">start_date</span><span class="p">,</span>
+            <span class="n">end_datetime</span><span class="o">=</span><span class="n">end_date</span><span class="p">,</span>
+            <span class="n">search_query</span><span class="o">=</span><span class="n">search_query</span><span class="p">,</span>
+        <span class="p">),</span>
+        <span class="n">QueryOptions</span><span class="p">(</span><span class="n">disable_tqdm</span><span class="o">=</span><span class="n">disable_tqdm</span><span class="p">,</span> <span class="n">first</span><span class="o">=</span><span class="n">first</span><span class="p">,</span> <span class="n">skip</span><span class="o">=</span><span class="n">skip</span><span class="p">),</span>
+    <span class="p">)</span>
+    <span class="k">if</span> <span class="n">as_generator</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">projects</span>
+    <span class="k">return</span> <span class="nb">list</span><span class="p">(</span><span class="n">projects</span><span class="p">)</span>
 </code></pre></div>
         </details>
     </div>

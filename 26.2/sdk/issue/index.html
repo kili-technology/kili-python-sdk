@@ -2122,6 +2122,8 @@
         <span class="n">asset_id_in</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="n">issue_type</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">IssueType</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="n">status</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">IssueStatus</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">step_id_in</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">step_name_in</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">"""Count and return the number of issues with the given constraints.</span>
 
@@ -2132,6 +2134,12 @@
 <span class="sd">            issue_type: Type of the issue to return. An issue object both</span>
 <span class="sd">                represents issues and questions in the app.</span>
 <span class="sd">            status: Status of the issues to return.</span>
+<span class="sd">            step_id_in: Ids of the steps the returned issues were raised in.</span>
+<span class="sd">                Exclusive with `step_name_in`.</span>
+<span class="sd">            step_name_in: Names of the project's current steps the returned issues were raised in.</span>
+<span class="sd">                Only applicable if the project uses the multi-step or multi-group workflow.</span>
+<span class="sd">                A step removed from the workflow is filtered by its id, with `step_id_in`.</span>
+<span class="sd">                Exclusive with `step_id_in`.</span>
 
 <span class="sd">        Returns:</span>
 <span class="sd">            The number of issues that match the given constraints.</span>
@@ -2147,6 +2155,9 @@
                 <span class="n">asset_id_in</span><span class="o">=</span><span class="n">asset_id_in</span><span class="p">,</span>
                 <span class="n">issue_type</span><span class="o">=</span><span class="n">issue_type</span><span class="p">,</span>
                 <span class="n">status</span><span class="o">=</span><span class="n">status</span><span class="p">,</span>
+                <span class="n">step_id_in</span><span class="o">=</span><span class="n">_resolve_step_ids</span><span class="p">(</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">kili_api_gateway</span><span class="p">,</span> <span class="n">project_id</span><span class="p">,</span> <span class="n">step_id_in</span><span class="p">,</span> <span class="n">step_name_in</span>
+                <span class="p">),</span>
             <span class="p">)</span>
         <span class="p">)</span>
 
@@ -2168,6 +2179,8 @@
         <span class="n">asset_id_in</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="n">issue_type</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">IssueType</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="n">status</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">IssueStatus</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">step_id_in</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">step_name_in</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="o">*</span><span class="p">,</span>
         <span class="n">as_generator</span><span class="p">:</span> <span class="n">Literal</span><span class="p">[</span><span class="kc">True</span><span class="p">],</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Generator</span><span class="p">[</span><span class="nb">dict</span><span class="p">,</span> <span class="kc">None</span><span class="p">,</span> <span class="kc">None</span><span class="p">]:</span>
@@ -2191,6 +2204,8 @@
         <span class="n">asset_id_in</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="n">issue_type</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">IssueType</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="n">status</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">IssueStatus</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">step_id_in</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">step_name_in</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="o">*</span><span class="p">,</span>
         <span class="n">as_generator</span><span class="p">:</span> <span class="n">Literal</span><span class="p">[</span><span class="kc">False</span><span class="p">]</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="nb">dict</span><span class="p">]:</span>
@@ -2214,6 +2229,8 @@
         <span class="n">asset_id_in</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="n">issue_type</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">IssueType</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="n">status</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">IssueStatus</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">step_id_in</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">step_name_in</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="o">*</span><span class="p">,</span>
         <span class="n">as_generator</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Iterable</span><span class="p">[</span><span class="nb">dict</span><span class="p">]:</span>
@@ -2231,8 +2248,19 @@
 <span class="sd">            asset_id_in: List of Ids of assets whose returned issues are associated to.</span>
 <span class="sd">            issue_type: Type of the issue to return. An issue object both represents issues and questions in the app.</span>
 <span class="sd">            status: Status of the issues to return.</span>
+<span class="sd">            step_id_in: Ids of the steps the returned issues were raised in.</span>
+<span class="sd">                Exclusive with `step_name_in`.</span>
+<span class="sd">            step_name_in: Names of the project's current steps the returned issues were raised in.</span>
+<span class="sd">                Only applicable if the project uses the multi-step or multi-group workflow.</span>
+<span class="sd">                A step removed from the workflow is filtered by its id, with `step_id_in`.</span>
+<span class="sd">                Exclusive with `step_id_in`.</span>
 <span class="sd">            fields: All the fields to request among the possible fields for the assets.</span>
 <span class="sd">                See [the documentation](https://api-docs.kili-technology.com/types/objects/issue) for all possible fields.</span>
+<span class="sd">                `stepId` and `step.name` give the step an issue was raised in: null when its</span>
+<span class="sd">                asset had finished its workflow, off a multi-step or multi-group workflow, and for</span>
+<span class="sd">                an issue created before steps were recorded. `labelId` and `label.id` give the</span>
+<span class="sd">                label it was raised on: null for a question, for an issue created before labels</span>
+<span class="sd">                were recorded, and once the label is deleted.</span>
 <span class="sd">            first: Maximum number of issues to return.</span>
 <span class="sd">            skip: Number of issues to skip (they are ordered by their date of creation, first to last).</span>
 <span class="sd">            disable_tqdm: If `True`, the progress bar will be disabled</span>
@@ -2243,6 +2271,7 @@
 
 <span class="sd">        Examples:</span>
 <span class="sd">            &gt;&gt;&gt; kili.issues(project_id=project_id, fields=['author.email']) # List all issues of a project and their authors</span>
+<span class="sd">            &gt;&gt;&gt; kili.issues(project_id=project_id, fields=['id', 'step.name', 'labelId'], step_name_in=['Review 2']) # The issues raised in the step "Review 2"</span>
 <span class="sd">        """</span>
         <span class="k">if</span> <span class="n">asset_id</span> <span class="ow">and</span> <span class="n">asset_id_in</span><span class="p">:</span>
             <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
@@ -2259,6 +2288,9 @@
                 <span class="n">asset_id_in</span><span class="o">=</span><span class="n">asset_id_in</span><span class="p">,</span>
                 <span class="n">issue_type</span><span class="o">=</span><span class="n">issue_type</span><span class="p">,</span>
                 <span class="n">status</span><span class="o">=</span><span class="n">status</span><span class="p">,</span>
+                <span class="n">step_id_in</span><span class="o">=</span><span class="n">_resolve_step_ids</span><span class="p">(</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">kili_api_gateway</span><span class="p">,</span> <span class="n">project_id</span><span class="p">,</span> <span class="n">step_id_in</span><span class="p">,</span> <span class="n">step_name_in</span>
+                <span class="p">),</span>
             <span class="p">),</span>
             <span class="n">fields</span><span class="o">=</span><span class="n">fields</span><span class="p">,</span>
             <span class="n">options</span><span class="o">=</span><span class="n">options</span><span class="p">,</span>
@@ -2299,7 +2331,7 @@
 
 
 <h3 id="kili.presentation.client.issue.IssueClientMethods.count_issues" class="doc doc-heading">
-<code class="highlight language-python"><span class="n">count_issues</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">project_id</span><span class="p">,</span> <span class="n">asset_id</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">asset_id_in</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">issue_type</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">status</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span></code>
+<code class="highlight language-python"><span class="n">count_issues</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">project_id</span><span class="p">,</span> <span class="n">asset_id</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">asset_id_in</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">issue_type</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">status</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">step_id_in</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">step_name_in</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span></code>
 
 
 </h3>
@@ -2350,6 +2382,22 @@ represents issues and questions in the app.</p></td>
         <td><p>Status of the issues to return.</p></td>
         <td><code>None</code></td>
       </tr>
+      <tr>
+        <td><code>step_id_in</code></td>
+        <td><code>Optional[list[str]]</code></td>
+        <td><p>Ids of the steps the returned issues were raised in.
+Exclusive with <code>step_name_in</code>.</p></td>
+        <td><code>None</code></td>
+      </tr>
+      <tr>
+        <td><code>step_name_in</code></td>
+        <td><code>Optional[list[str]]</code></td>
+        <td><p>Names of the project's current steps the returned issues were raised in.
+Only applicable if the project uses the multi-step or multi-group workflow.
+A step removed from the workflow is filtered by its id, with <code>step_id_in</code>.
+Exclusive with <code>step_id_in</code>.</p></td>
+        <td><code>None</code></td>
+      </tr>
   </tbody>
 </table>
 <p><strong>Returns:</strong></p>
@@ -2376,6 +2424,8 @@ represents issues and questions in the app.</p></td>
     <span class="n">asset_id_in</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="n">issue_type</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">IssueType</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="n">status</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">IssueStatus</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">step_id_in</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">step_name_in</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">"""Count and return the number of issues with the given constraints.</span>
 
@@ -2386,6 +2436,12 @@ represents issues and questions in the app.</p></td>
 <span class="sd">        issue_type: Type of the issue to return. An issue object both</span>
 <span class="sd">            represents issues and questions in the app.</span>
 <span class="sd">        status: Status of the issues to return.</span>
+<span class="sd">        step_id_in: Ids of the steps the returned issues were raised in.</span>
+<span class="sd">            Exclusive with `step_name_in`.</span>
+<span class="sd">        step_name_in: Names of the project's current steps the returned issues were raised in.</span>
+<span class="sd">            Only applicable if the project uses the multi-step or multi-group workflow.</span>
+<span class="sd">            A step removed from the workflow is filtered by its id, with `step_id_in`.</span>
+<span class="sd">            Exclusive with `step_id_in`.</span>
 
 <span class="sd">    Returns:</span>
 <span class="sd">        The number of issues that match the given constraints.</span>
@@ -2401,6 +2457,9 @@ represents issues and questions in the app.</p></td>
             <span class="n">asset_id_in</span><span class="o">=</span><span class="n">asset_id_in</span><span class="p">,</span>
             <span class="n">issue_type</span><span class="o">=</span><span class="n">issue_type</span><span class="p">,</span>
             <span class="n">status</span><span class="o">=</span><span class="n">status</span><span class="p">,</span>
+            <span class="n">step_id_in</span><span class="o">=</span><span class="n">_resolve_step_ids</span><span class="p">(</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">kili_api_gateway</span><span class="p">,</span> <span class="n">project_id</span><span class="p">,</span> <span class="n">step_id_in</span><span class="p">,</span> <span class="n">step_name_in</span>
+            <span class="p">),</span>
         <span class="p">)</span>
     <span class="p">)</span>
 </code></pre></div>
@@ -2523,7 +2582,7 @@ represents issues and questions in the app.</p></td>
 
 
 <h3 id="kili.presentation.client.issue.IssueClientMethods.issues" class="doc doc-heading">
-<code class="highlight language-python"><span class="n">issues</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">project_id</span><span class="p">,</span> <span class="n">fields</span><span class="o">=</span><span class="p">(</span><span class="s1">'id'</span><span class="p">,</span> <span class="s1">'createdAt'</span><span class="p">,</span> <span class="s1">'status'</span><span class="p">,</span> <span class="s1">'type'</span><span class="p">,</span> <span class="s1">'assetId'</span><span class="p">),</span> <span class="n">first</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">skip</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">disable_tqdm</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">asset_id</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">asset_id_in</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">issue_type</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">status</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">as_generator</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span></code>
+<code class="highlight language-python"><span class="n">issues</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">project_id</span><span class="p">,</span> <span class="n">fields</span><span class="o">=</span><span class="p">(</span><span class="s1">'id'</span><span class="p">,</span> <span class="s1">'createdAt'</span><span class="p">,</span> <span class="s1">'status'</span><span class="p">,</span> <span class="s1">'type'</span><span class="p">,</span> <span class="s1">'assetId'</span><span class="p">),</span> <span class="n">first</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">skip</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">disable_tqdm</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">asset_id</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">asset_id_in</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">issue_type</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">status</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">step_id_in</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">step_name_in</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">as_generator</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span></code>
 
 
 </h3>
@@ -2580,10 +2639,31 @@ However to query issues and questions, we currently provide this unique method t
         <td><code>None</code></td>
       </tr>
       <tr>
+        <td><code>step_id_in</code></td>
+        <td><code>Optional[list[str]]</code></td>
+        <td><p>Ids of the steps the returned issues were raised in.
+Exclusive with <code>step_name_in</code>.</p></td>
+        <td><code>None</code></td>
+      </tr>
+      <tr>
+        <td><code>step_name_in</code></td>
+        <td><code>Optional[list[str]]</code></td>
+        <td><p>Names of the project's current steps the returned issues were raised in.
+Only applicable if the project uses the multi-step or multi-group workflow.
+A step removed from the workflow is filtered by its id, with <code>step_id_in</code>.
+Exclusive with <code>step_id_in</code>.</p></td>
+        <td><code>None</code></td>
+      </tr>
+      <tr>
         <td><code>fields</code></td>
         <td><code>Union[list[str], tuple[str, ...]]</code></td>
         <td><p>All the fields to request among the possible fields for the assets.
-See <a href="https://api-docs.kili-technology.com/types/objects/issue">the documentation</a> for all possible fields.</p></td>
+See <a href="https://api-docs.kili-technology.com/types/objects/issue">the documentation</a> for all possible fields.
+<code>stepId</code> and <code>step.name</code> give the step an issue was raised in: null when its
+asset had finished its workflow, off a multi-step or multi-group workflow, and for
+an issue created before steps were recorded. <code>labelId</code> and <code>label.id</code> give the
+label it was raised on: null for a question, for an issue created before labels
+were recorded, and once the label is deleted.</p></td>
         <td><code>(&#39;id&#39;, &#39;createdAt&#39;, &#39;status&#39;, &#39;type&#39;, &#39;assetId&#39;)</code></td>
       </tr>
       <tr>
@@ -2629,6 +2709,7 @@ See <a href="https://api-docs.kili-technology.com/types/objects/issue">the docum
 </table>
 <p><strong>Examples:</strong></p>
     <div class="highlight"><pre><span></span><code><span class="o">&gt;&gt;&gt;</span> <span class="n">kili</span><span class="o">.</span><span class="n">issues</span><span class="p">(</span><span class="n">project_id</span><span class="o">=</span><span class="n">project_id</span><span class="p">,</span> <span class="n">fields</span><span class="o">=</span><span class="p">[</span><span class="s1">'author.email'</span><span class="p">])</span> <span class="c1"># List all issues of a project and their authors</span>
+<span class="o">&gt;&gt;&gt;</span> <span class="n">kili</span><span class="o">.</span><span class="n">issues</span><span class="p">(</span><span class="n">project_id</span><span class="o">=</span><span class="n">project_id</span><span class="p">,</span> <span class="n">fields</span><span class="o">=</span><span class="p">[</span><span class="s1">'id'</span><span class="p">,</span> <span class="s1">'step.name'</span><span class="p">,</span> <span class="s1">'labelId'</span><span class="p">],</span> <span class="n">step_name_in</span><span class="o">=</span><span class="p">[</span><span class="s1">'Review 2'</span><span class="p">])</span> <span class="c1"># The issues raised in the step "Review 2"</span>
 </code></pre></div>
 
         <details class="quote">
@@ -2650,6 +2731,8 @@ See <a href="https://api-docs.kili-technology.com/types/objects/issue">the docum
     <span class="n">asset_id_in</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="n">issue_type</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">IssueType</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="n">status</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">IssueStatus</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">step_id_in</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">step_name_in</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="o">*</span><span class="p">,</span>
     <span class="n">as_generator</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Iterable</span><span class="p">[</span><span class="nb">dict</span><span class="p">]:</span>
@@ -2667,8 +2750,19 @@ See <a href="https://api-docs.kili-technology.com/types/objects/issue">the docum
 <span class="sd">        asset_id_in: List of Ids of assets whose returned issues are associated to.</span>
 <span class="sd">        issue_type: Type of the issue to return. An issue object both represents issues and questions in the app.</span>
 <span class="sd">        status: Status of the issues to return.</span>
+<span class="sd">        step_id_in: Ids of the steps the returned issues were raised in.</span>
+<span class="sd">            Exclusive with `step_name_in`.</span>
+<span class="sd">        step_name_in: Names of the project's current steps the returned issues were raised in.</span>
+<span class="sd">            Only applicable if the project uses the multi-step or multi-group workflow.</span>
+<span class="sd">            A step removed from the workflow is filtered by its id, with `step_id_in`.</span>
+<span class="sd">            Exclusive with `step_id_in`.</span>
 <span class="sd">        fields: All the fields to request among the possible fields for the assets.</span>
 <span class="sd">            See [the documentation](https://api-docs.kili-technology.com/types/objects/issue) for all possible fields.</span>
+<span class="sd">            `stepId` and `step.name` give the step an issue was raised in: null when its</span>
+<span class="sd">            asset had finished its workflow, off a multi-step or multi-group workflow, and for</span>
+<span class="sd">            an issue created before steps were recorded. `labelId` and `label.id` give the</span>
+<span class="sd">            label it was raised on: null for a question, for an issue created before labels</span>
+<span class="sd">            were recorded, and once the label is deleted.</span>
 <span class="sd">        first: Maximum number of issues to return.</span>
 <span class="sd">        skip: Number of issues to skip (they are ordered by their date of creation, first to last).</span>
 <span class="sd">        disable_tqdm: If `True`, the progress bar will be disabled</span>
@@ -2679,6 +2773,7 @@ See <a href="https://api-docs.kili-technology.com/types/objects/issue">the docum
 
 <span class="sd">    Examples:</span>
 <span class="sd">        &gt;&gt;&gt; kili.issues(project_id=project_id, fields=['author.email']) # List all issues of a project and their authors</span>
+<span class="sd">        &gt;&gt;&gt; kili.issues(project_id=project_id, fields=['id', 'step.name', 'labelId'], step_name_in=['Review 2']) # The issues raised in the step "Review 2"</span>
 <span class="sd">    """</span>
     <span class="k">if</span> <span class="n">asset_id</span> <span class="ow">and</span> <span class="n">asset_id_in</span><span class="p">:</span>
         <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
@@ -2695,6 +2790,9 @@ See <a href="https://api-docs.kili-technology.com/types/objects/issue">the docum
             <span class="n">asset_id_in</span><span class="o">=</span><span class="n">asset_id_in</span><span class="p">,</span>
             <span class="n">issue_type</span><span class="o">=</span><span class="n">issue_type</span><span class="p">,</span>
             <span class="n">status</span><span class="o">=</span><span class="n">status</span><span class="p">,</span>
+            <span class="n">step_id_in</span><span class="o">=</span><span class="n">_resolve_step_ids</span><span class="p">(</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">kili_api_gateway</span><span class="p">,</span> <span class="n">project_id</span><span class="p">,</span> <span class="n">step_id_in</span><span class="p">,</span> <span class="n">step_name_in</span>
+            <span class="p">),</span>
         <span class="p">),</span>
         <span class="n">fields</span><span class="o">=</span><span class="n">fields</span><span class="p">,</span>
         <span class="n">options</span><span class="o">=</span><span class="n">options</span><span class="p">,</span>

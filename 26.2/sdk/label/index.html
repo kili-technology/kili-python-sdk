@@ -3634,6 +3634,7 @@
         <span class="n">label_type_in</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="n">include_sent_back_labels</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">bool</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="n">export_type</span><span class="p">:</span> <span class="n">ExportType</span> <span class="o">=</span> <span class="s2">"latest"</span><span class="p">,</span>
+        <span class="n">bbox_as</span><span class="p">:</span> <span class="n">YoloBoundingBoxes</span> <span class="o">=</span> <span class="s2">"box"</span><span class="p">,</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">list</span><span class="p">[</span><span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Union</span><span class="p">[</span><span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">],</span> <span class="nb">str</span><span class="p">]]]]:</span>
         <span class="c1"># pylint: disable=line-too-long</span>
 <span class="w">        </span><span class="sd">"""Export the project labels with the requested format into the requested output path.</span>
@@ -3699,21 +3700,37 @@
 <span class="sd">                - `"latest_from_last_step"`: Export the latest label from each annotator for the last step.</span>
 <span class="sd">                - `"latest_from_all_steps"`: Export the latest label from each annotator for all steps.</span>
 <span class="sd">                - `"normal"`: Export all labels.</span>
+<span class="sd">            bbox_as: How the YOLO format writes the bounding boxes:</span>
+<span class="sd">                - `"box"`: the upright box around each, for the Detect task.</span>
+<span class="sd">                - `"obb"`: their four corners, for the OBB task: a rotated box keeps its angle.</span>
+<span class="sd">                - `"polygon"`: their four corners, in the Segment task, beside the polygons and</span>
+<span class="sd">                    semantic segmentations.</span>
 
 <span class="sd">        !!! Info</span>
 <span class="sd">            The supported formats are:</span>
 
-<span class="sd">            - Yolo V4, V5, V7, V8 for object detection tasks.</span>
+<span class="sd">            - `"yolo"` for object detection, the YOLO format the Kili app exports: a dataset per</span>
+<span class="sd">                Ultralytics task the project's jobs give: the bounding boxes' task, Detect, OBB or</span>
+<span class="sd">                Segment by `bbox_as`, and Segment (polygons and semantic segmentations). Split by</span>
+<span class="sd">                job, each job's folder holds its own task; merged, a project with two gets a folder</span>
+<span class="sd">                per task, `detect/` or `obb/`, and `segment/`. Points, lines, pose and</span>
+<span class="sd">                classification are not exported.</span>
+<span class="sd">            - `"yolo_v4"`, `"yolo_v5"`, `"yolo_v7"` and `"yolo_v8"` are deprecated: use `"yolo"`.</span>
+<span class="sd">                They still work, each as before (`"yolo_v7"` and `"yolo_v8"` write the files of</span>
+<span class="sd">                `"yolo"`, `"yolo_v4"` Detect only), with a `DeprecationWarning`.</span>
 <span class="sd">            - Kili (a.k.a raw) for all tasks.</span>
-<span class="sd">            - COCO for object detection tasks (bounding box and semantic segmentation).</span>
-<span class="sd">            - Pascal VOC for object detection tasks (bounding box).</span>
+<span class="sd">            - COCO for object detection tasks (bounding box, polygon and semantic segmentation).</span>
+<span class="sd">            - Pascal VOC for object detection tasks (bounding box only: polygons and semantic</span>
+<span class="sd">                segmentations are not exported).</span>
+<span class="sd">            An asset with several labels gets a file per label, suffixed `_label&lt;n&gt;`, beside its</span>
+<span class="sd">            image, written once; a video, a file per frame holding a shape.</span>
 
 <span class="sd">        !!! warning "Cloud storage"</span>
 <span class="sd">            Export with asset download (`with_assets=True`) is not allowed for projects connected to a cloud storage.</span>
 
 <span class="sd">        !!! Example</span>
 <span class="sd">            ```python</span>
-<span class="sd">            kili.export_labels("your_project_id", "export.zip", "yolo_v4")</span>
+<span class="sd">            kili.export_labels("your_project_id", "export.zip", "yolo")</span>
 <span class="sd">            ```</span>
 
 <span class="sd">        !!! Example</span>
@@ -3800,6 +3817,7 @@
                 <span class="n">normalized_coordinates</span><span class="o">=</span><span class="n">normalized_coordinates</span><span class="p">,</span>
                 <span class="n">label_type_in</span><span class="o">=</span><span class="n">label_type_in</span><span class="p">,</span>
                 <span class="n">include_sent_back_labels</span><span class="o">=</span><span class="n">include_sent_back_labels</span><span class="p">,</span>
+                <span class="n">bbox_as</span><span class="o">=</span><span class="n">bbox_as</span><span class="p">,</span>
             <span class="p">)</span>
         <span class="k">except</span> <span class="n">NoCompatibleJobError</span> <span class="k">as</span> <span class="n">excp</span><span class="p">:</span>
             <span class="n">warnings</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">excp</span><span class="p">),</span> <span class="n">stacklevel</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span>
@@ -5801,7 +5819,7 @@ provide the predictions model name.</p>
 
 
 <h3 id="kili.presentation.client.label.LabelClientMethods.export_labels" class="doc doc-heading">
-<code class="highlight language-python"><span class="n">export_labels</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">project_id</span><span class="p">,</span> <span class="n">filename</span><span class="p">,</span> <span class="n">fmt</span><span class="p">,</span> <span class="n">asset_ids</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">layout</span><span class="o">=</span><span class="s1">'split'</span><span class="p">,</span> <span class="n">single_file</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">disable_tqdm</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">with_assets</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">external_ids</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">annotation_modifier</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">asset_filter_kwargs</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">normalized_coordinates</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">label_type_in</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">include_sent_back_labels</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">export_type</span><span class="o">=</span><span class="s1">'latest'</span><span class="p">)</span></code>
+<code class="highlight language-python"><span class="n">export_labels</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">project_id</span><span class="p">,</span> <span class="n">filename</span><span class="p">,</span> <span class="n">fmt</span><span class="p">,</span> <span class="n">asset_ids</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">layout</span><span class="o">=</span><span class="s1">'split'</span><span class="p">,</span> <span class="n">single_file</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">disable_tqdm</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">with_assets</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">external_ids</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">annotation_modifier</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">asset_filter_kwargs</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">normalized_coordinates</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">label_type_in</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">include_sent_back_labels</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">export_type</span><span class="o">=</span><span class="s1">'latest'</span><span class="p">,</span> <span class="n">bbox_as</span><span class="o">=</span><span class="s1">'box'</span><span class="p">)</span></code>
 
 
 </h3>
@@ -5836,7 +5854,7 @@ the exported data.</p></td>
       </tr>
       <tr>
         <td><code>fmt</code></td>
-        <td><code>Literal[&#39;raw&#39;, &#39;kili&#39;, &#39;yolo_v4&#39;, &#39;yolo_v5&#39;, &#39;yolo_v7&#39;, &#39;yolo_v8&#39;, &#39;coco&#39;, &#39;pascal_voc&#39;, &#39;geojson&#39;]</code></td>
+        <td><code>Literal[&#39;raw&#39;, &#39;kili&#39;, &#39;yolo&#39;, &#39;yolo_v4&#39;, &#39;yolo_v5&#39;, &#39;yolo_v7&#39;, &#39;yolo_v8&#39;, &#39;coco&#39;, &#39;pascal_voc&#39;, &#39;geojson&#39;]</code></td>
         <td><p>Format of the exported labels.</p></td>
         <td><em>required</em></td>
       </tr>
@@ -5956,15 +5974,36 @@ By default, only <code>DEFAULT</code> and <code>REVIEW</code> labels are exporte
 - <code>"normal"</code>: Export all labels.</p></td>
         <td><code>&#39;latest&#39;</code></td>
       </tr>
+      <tr>
+        <td><code>bbox_as</code></td>
+        <td><code>Literal[&#39;box&#39;, &#39;obb&#39;, &#39;polygon&#39;]</code></td>
+        <td><p>How the YOLO format writes the bounding boxes:
+- <code>"box"</code>: the upright box around each, for the Detect task.
+- <code>"obb"</code>: their four corners, for the OBB task: a rotated box keeps its angle.
+- <code>"polygon"</code>: their four corners, in the Segment task, beside the polygons and
+    semantic segmentations.</p></td>
+        <td><code>&#39;box&#39;</code></td>
+      </tr>
   </tbody>
 </table>      <div class="admonition info">
 <p class="admonition-title">Info</p>
 <p>The supported formats are:</p>
 <ul>
-<li>Yolo V4, V5, V7, V8 for object detection tasks.</li>
+<li><code>"yolo"</code> for object detection, the YOLO format the Kili app exports: a dataset per
+    Ultralytics task the project's jobs give: the bounding boxes' task, Detect, OBB or
+    Segment by <code>bbox_as</code>, and Segment (polygons and semantic segmentations). Split by
+    job, each job's folder holds its own task; merged, a project with two gets a folder
+    per task, <code>detect/</code> or <code>obb/</code>, and <code>segment/</code>. Points, lines, pose and
+    classification are not exported.</li>
+<li><code>"yolo_v4"</code>, <code>"yolo_v5"</code>, <code>"yolo_v7"</code> and <code>"yolo_v8"</code> are deprecated: use <code>"yolo"</code>.
+    They still work, each as before (<code>"yolo_v7"</code> and <code>"yolo_v8"</code> write the files of
+    <code>"yolo"</code>, <code>"yolo_v4"</code> Detect only), with a <code>DeprecationWarning</code>.</li>
 <li>Kili (a.k.a raw) for all tasks.</li>
-<li>COCO for object detection tasks (bounding box and semantic segmentation).</li>
-<li>Pascal VOC for object detection tasks (bounding box).</li>
+<li>COCO for object detection tasks (bounding box, polygon and semantic segmentation).</li>
+<li>Pascal VOC for object detection tasks (bounding box only: polygons and semantic
+    segmentations are not exported).
+An asset with several labels gets a file per label, suffixed <code>_label&lt;n&gt;</code>, beside its
+image, written once; a video, a file per frame holding a shape.</li>
 </ul>
 </div>
 <div class="admonition warning">
@@ -5973,7 +6012,7 @@ By default, only <code>DEFAULT</code> and <code>REVIEW</code> labels are exporte
 </div>
 <div class="admonition example">
 <p class="admonition-title">Example</p>
-<div class="highlight"><pre><span></span><code><span class="n">kili</span><span class="o">.</span><span class="n">export_labels</span><span class="p">(</span><span class="s2">"your_project_id"</span><span class="p">,</span> <span class="s2">"export.zip"</span><span class="p">,</span> <span class="s2">"yolo_v4"</span><span class="p">)</span>
+<div class="highlight"><pre><span></span><code><span class="n">kili</span><span class="o">.</span><span class="n">export_labels</span><span class="p">(</span><span class="s2">"your_project_id"</span><span class="p">,</span> <span class="s2">"export.zip"</span><span class="p">,</span> <span class="s2">"yolo"</span><span class="p">)</span>
 </code></pre></div>
 </div>
 <div class="admonition example">
@@ -6010,6 +6049,7 @@ By default, only <code>DEFAULT</code> and <code>REVIEW</code> labels are exporte
     <span class="n">label_type_in</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="n">include_sent_back_labels</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">bool</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="n">export_type</span><span class="p">:</span> <span class="n">ExportType</span> <span class="o">=</span> <span class="s2">"latest"</span><span class="p">,</span>
+    <span class="n">bbox_as</span><span class="p">:</span> <span class="n">YoloBoundingBoxes</span> <span class="o">=</span> <span class="s2">"box"</span><span class="p">,</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">list</span><span class="p">[</span><span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Union</span><span class="p">[</span><span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">],</span> <span class="nb">str</span><span class="p">]]]]:</span>
     <span class="c1"># pylint: disable=line-too-long</span>
 <span class="w">    </span><span class="sd">"""Export the project labels with the requested format into the requested output path.</span>
@@ -6075,21 +6115,37 @@ By default, only <code>DEFAULT</code> and <code>REVIEW</code> labels are exporte
 <span class="sd">            - `"latest_from_last_step"`: Export the latest label from each annotator for the last step.</span>
 <span class="sd">            - `"latest_from_all_steps"`: Export the latest label from each annotator for all steps.</span>
 <span class="sd">            - `"normal"`: Export all labels.</span>
+<span class="sd">        bbox_as: How the YOLO format writes the bounding boxes:</span>
+<span class="sd">            - `"box"`: the upright box around each, for the Detect task.</span>
+<span class="sd">            - `"obb"`: their four corners, for the OBB task: a rotated box keeps its angle.</span>
+<span class="sd">            - `"polygon"`: their four corners, in the Segment task, beside the polygons and</span>
+<span class="sd">                semantic segmentations.</span>
 
 <span class="sd">    !!! Info</span>
 <span class="sd">        The supported formats are:</span>
 
-<span class="sd">        - Yolo V4, V5, V7, V8 for object detection tasks.</span>
+<span class="sd">        - `"yolo"` for object detection, the YOLO format the Kili app exports: a dataset per</span>
+<span class="sd">            Ultralytics task the project's jobs give: the bounding boxes' task, Detect, OBB or</span>
+<span class="sd">            Segment by `bbox_as`, and Segment (polygons and semantic segmentations). Split by</span>
+<span class="sd">            job, each job's folder holds its own task; merged, a project with two gets a folder</span>
+<span class="sd">            per task, `detect/` or `obb/`, and `segment/`. Points, lines, pose and</span>
+<span class="sd">            classification are not exported.</span>
+<span class="sd">        - `"yolo_v4"`, `"yolo_v5"`, `"yolo_v7"` and `"yolo_v8"` are deprecated: use `"yolo"`.</span>
+<span class="sd">            They still work, each as before (`"yolo_v7"` and `"yolo_v8"` write the files of</span>
+<span class="sd">            `"yolo"`, `"yolo_v4"` Detect only), with a `DeprecationWarning`.</span>
 <span class="sd">        - Kili (a.k.a raw) for all tasks.</span>
-<span class="sd">        - COCO for object detection tasks (bounding box and semantic segmentation).</span>
-<span class="sd">        - Pascal VOC for object detection tasks (bounding box).</span>
+<span class="sd">        - COCO for object detection tasks (bounding box, polygon and semantic segmentation).</span>
+<span class="sd">        - Pascal VOC for object detection tasks (bounding box only: polygons and semantic</span>
+<span class="sd">            segmentations are not exported).</span>
+<span class="sd">        An asset with several labels gets a file per label, suffixed `_label&lt;n&gt;`, beside its</span>
+<span class="sd">        image, written once; a video, a file per frame holding a shape.</span>
 
 <span class="sd">    !!! warning "Cloud storage"</span>
 <span class="sd">        Export with asset download (`with_assets=True`) is not allowed for projects connected to a cloud storage.</span>
 
 <span class="sd">    !!! Example</span>
 <span class="sd">        ```python</span>
-<span class="sd">        kili.export_labels("your_project_id", "export.zip", "yolo_v4")</span>
+<span class="sd">        kili.export_labels("your_project_id", "export.zip", "yolo")</span>
 <span class="sd">        ```</span>
 
 <span class="sd">    !!! Example</span>
@@ -6176,6 +6232,7 @@ By default, only <code>DEFAULT</code> and <code>REVIEW</code> labels are exporte
             <span class="n">normalized_coordinates</span><span class="o">=</span><span class="n">normalized_coordinates</span><span class="p">,</span>
             <span class="n">label_type_in</span><span class="o">=</span><span class="n">label_type_in</span><span class="p">,</span>
             <span class="n">include_sent_back_labels</span><span class="o">=</span><span class="n">include_sent_back_labels</span><span class="p">,</span>
+            <span class="n">bbox_as</span><span class="o">=</span><span class="n">bbox_as</span><span class="p">,</span>
         <span class="p">)</span>
     <span class="k">except</span> <span class="n">NoCompatibleJobError</span> <span class="k">as</span> <span class="n">excp</span><span class="p">:</span>
         <span class="n">warnings</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">excp</span><span class="p">),</span> <span class="n">stacklevel</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span>

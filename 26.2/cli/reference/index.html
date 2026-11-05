@@ -2273,7 +2273,7 @@
 <td><code>False</code></td>
 </tr>
 <tr>
-<td><code>-h</code>, <code>--help</code></td>
+<td><code>--help</code>, <code>-h</code></td>
 <td>boolean</td>
 <td>Show this message and exit.</td>
 <td><code>False</code></td>
@@ -2297,7 +2297,7 @@
 </thead>
 <tbody>
 <tr>
-<td><code>-h</code>, <code>--help</code></td>
+<td><code>--help</code>, <code>-h</code></td>
 <td>boolean</td>
 <td>Show this message and exit.</td>
 <td><code>False</code></td>
@@ -2396,7 +2396,7 @@ Copy the json interface but not the members:
 <td><code>False</code></td>
 </tr>
 <tr>
-<td><code>-h</code>, <code>--help</code></td>
+<td><code>--help</code>, <code>-h</code></td>
 <td>boolean</td>
 <td>Show this message and exit.</td>
 <td><code>False</code></td>
@@ -2482,7 +2482,7 @@ https://docs.kili-technology.com/docs/customizing-the-interface-through-json-set
 <td><code>plain</code></td>
 </tr>
 <tr>
-<td><code>-h</code>, <code>--help</code></td>
+<td><code>--help</code>, <code>-h</code></td>
 <td>boolean</td>
 <td>Show this message and exit.</td>
 <td><code>False</code></td>
@@ -2524,7 +2524,7 @@ https://docs.kili-technology.com/docs/customizing-the-interface-through-json-set
 <td>None</td>
 </tr>
 <tr>
-<td><code>-h</code>, <code>--help</code></td>
+<td><code>--help</code>, <code>-h</code></td>
 <td>boolean</td>
 <td>Show this message and exit.</td>
 <td><code>False</code></td>
@@ -2537,10 +2537,12 @@ https://docs.kili-technology.com/docs/customizing-the-interface-through-json-set
 <p class="admonition-title">Info</p>
 <p>The supported formats are:</p>
 <ul>
-<li>Yolo V4, V5, V7, V8 for object detection tasks.</li>
+<li>yolo for object detection tasks, the YOLO format the Kili app exports: the bounding
+  boxes for Detect, OBB or Segment (<code>--bbox-as</code>). yolo_v4, yolo_v5, yolo_v7 and yolo_v8
+  are deprecated: use yolo.</li>
 <li>Kili (a.k.a raw) for all tasks.</li>
-<li>COCO for object detection tasks (bounding box and semantic segmentation).</li>
-<li>Pascal VOC for object detection tasks (bounding box).</li>
+<li>COCO for object detection tasks (bounding box, polygon and semantic segmentation).</li>
+<li>Pascal VOC for object detection tasks (bounding box only).</li>
 </ul>
 </div>
 <div class="admonition warning">
@@ -2556,7 +2558,7 @@ https://docs.kili-technology.com/docs/customizing-the-interface-through-json-set
 </code></pre></div>
 <div class="highlight"><pre><span></span><code>kili project export \
     --project-id &lt;project_id&gt; \
-    --output-format yolo_v5 \
+    --output-format yolo \
     --output-file /tmp/export_split.zip \
     --layout split
 </code></pre></div></p>
@@ -2577,8 +2579,8 @@ https://docs.kili-technology.com/docs/customizing-the-interface-through-json-set
 <tbody>
 <tr>
 <td><code>--output-format</code></td>
-<td>choice (<code>raw</code> &#x7C; <code>kili</code> &#x7C; <code>yolo_v4</code> &#x7C; <code>yolo_v5</code> &#x7C; <code>yolo_v7</code> &#x7C; <code>yolo_v8</code> &#x7C; <code>coco</code> &#x7C; <code>pascal_voc</code> &#x7C; <code>geojson</code>)</td>
-<td>Format into which the label data will be converted</td>
+<td>choice (<code>raw</code> &#x7C; <code>kili</code> &#x7C; <code>yolo</code> &#x7C; <code>yolo_v4</code> &#x7C; <code>yolo_v5</code> &#x7C; <code>yolo_v7</code> &#x7C; <code>yolo_v8</code> &#x7C; <code>coco</code> &#x7C; <code>pascal_voc</code> &#x7C; <code>geojson</code>)</td>
+<td>Format into which the label data will be converted. yolo_v4, yolo_v5, yolo_v7 and yolo_v8 are deprecated: use yolo.</td>
 <td>_required</td>
 </tr>
 <tr>
@@ -2612,6 +2614,12 @@ https://docs.kili-technology.com/docs/customizing-the-interface-through-json-set
 <td>None</td>
 </tr>
 <tr>
+<td><code>--bbox-as</code></td>
+<td>choice (<code>box</code> &#x7C; <code>obb</code> &#x7C; <code>polygon</code>)</td>
+<td>YOLO only: write the bounding boxes for the Detect task ('box'), the OBB task ('obb'), or as polygons in the Segment task ('polygon').</td>
+<td><code>box</code></td>
+</tr>
+<tr>
 <td><code>--api-key</code></td>
 <td>text</td>
 <td>Your Kili API key.</td>
@@ -2636,7 +2644,7 @@ https://docs.kili-technology.com/docs/customizing-the-interface-through-json-set
 <td><code>False</code></td>
 </tr>
 <tr>
-<td><code>-h</code>, <code>--help</code></td>
+<td><code>--help</code>, <code>-h</code></td>
 <td>boolean</td>
 <td>Show this message and exit.</td>
 <td><code>False</code></td>
@@ -2739,7 +2747,7 @@ assets from a CSV file with two columns:</p>
 <td><code>False</code></td>
 </tr>
 <tr>
-<td><code>-h</code>, <code>--help</code></td>
+<td><code>--help</code>, <code>-h</code></td>
 <td>boolean</td>
 <td>Show this message and exit.</td>
 <td><code>False</code></td>
@@ -2769,15 +2777,15 @@ To import labels as predictions:
     --prediction \\
     --model-name YOLO-run-3
 </code></pre></div>
-To import labels as predictions in the Yolo v5 format into a target job:
+To import labels as predictions in the YOLO format into a target job:
 <div class="highlight"><pre><span></span><code>kili project label \\
     dir/predictions/ \\
     --project-id &lt;project_id&gt; \\
     --prediction \\
-    --model-name YOLO-v5 \\
-    --metadata-file classes.yml \\
+    --model-name YOLO-run-3 \\
+    --metadata-file data.yaml \\
     --target-job IMAGE_DETECTION_JOB \\
-    --input-format yolo_v5
+    --input-format yolo
     --overwrite True
 </code></pre></div></p>
 </div>
@@ -2833,8 +2841,8 @@ To import labels as predictions in the Yolo v5 format into a target job:
 </tr>
 <tr>
 <td><code>--input-format</code></td>
-<td>choice (<code>yolo_v4</code> &#x7C; <code>yolo_v5</code> &#x7C; <code>yolo_v7</code> &#x7C; <code>kili</code> &#x7C; <code>raw</code>)</td>
-<td>Format in which the labels are encoded</td>
+<td>choice (<code>yolo</code> &#x7C; <code>yolo_v4</code> &#x7C; <code>yolo_v5</code> &#x7C; <code>yolo_v7</code> &#x7C; <code>kili</code> &#x7C; <code>raw</code>)</td>
+<td>Format in which the labels are encoded. yolo_v4, yolo_v5 and yolo_v7 are deprecated: use yolo, which reads the classes.txt or data.yaml of any YOLO dataset.</td>
 <td><code>kili</code></td>
 </tr>
 <tr>
@@ -2856,7 +2864,7 @@ To import labels as predictions in the Yolo v5 format into a target job:
 <td><code>False</code></td>
 </tr>
 <tr>
-<td><code>-h</code>, <code>--help</code></td>
+<td><code>--help</code>, <code>-h</code></td>
 <td>boolean</td>
 <td>Show this message and exit.</td>
 <td><code>False</code></td>
@@ -2910,7 +2918,7 @@ To import labels as predictions in the Yolo v5 format into a target job:
 <td><code>100</code></td>
 </tr>
 <tr>
-<td><code>-h</code>, <code>--help</code></td>
+<td><code>--help</code>, <code>-h</code></td>
 <td>boolean</td>
 <td>Show this message and exit.</td>
 <td><code>False</code></td>
@@ -2934,7 +2942,7 @@ To import labels as predictions in the Yolo v5 format into a target job:
 </thead>
 <tbody>
 <tr>
-<td><code>-h</code>, <code>--help</code></td>
+<td><code>--help</code>, <code>-h</code></td>
 <td>boolean</td>
 <td>Show this message and exit.</td>
 <td><code>False</code></td>
@@ -3012,7 +3020,7 @@ You can provide several emails separated by spaces.</p>
 <td>None</td>
 </tr>
 <tr>
-<td><code>-h</code>, <code>--help</code></td>
+<td><code>--help</code>, <code>-h</code></td>
 <td>boolean</td>
 <td>Show this message and exit.</td>
 <td><code>False</code></td>
@@ -3059,7 +3067,7 @@ You can provide several emails separated by spaces.</p>
 <td><code>plain</code></td>
 </tr>
 <tr>
-<td><code>-h</code>, <code>--help</code></td>
+<td><code>--help</code>, <code>-h</code></td>
 <td>boolean</td>
 <td>Show this message and exit.</td>
 <td><code>False</code></td>
@@ -3130,7 +3138,7 @@ You can provide several emails separated by spaces.</p>
 <td><code>False</code></td>
 </tr>
 <tr>
-<td><code>-h</code>, <code>--help</code></td>
+<td><code>--help</code>, <code>-h</code></td>
 <td>boolean</td>
 <td>Show this message and exit.</td>
 <td><code>False</code></td>
@@ -3208,7 +3216,7 @@ You can provide several emails separated by spaces.</p>
 <td>None</td>
 </tr>
 <tr>
-<td><code>-h</code>, <code>--help</code></td>
+<td><code>--help</code>, <code>-h</code></td>
 <td>boolean</td>
 <td>Show this message and exit.</td>
 <td><code>False</code></td>
