@@ -130,9 +130,10 @@ class YoloExporter(AbstractExporter):
         downloaded images they describe.
         """
         input_type = self.project["inputType"]
+        # Downloaded, a video's jsonContent is its frames' paths; a big image's, its tile layers
         content_frames = (
             [Path(path) for path in asset["jsonContent"]]
-            if isinstance(asset.get("jsonContent"), list)
+            if input_type == "VIDEO" and isinstance(asset.get("jsonContent"), list)
             else []
         )
         # A downloaded native video is cut into frames, named as kili-formats names them

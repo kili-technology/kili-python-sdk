@@ -334,3 +334,30 @@ kili_format_expected_frame_asset_output = {
         }
     ]
 }
+
+# A big image's jsonContent once the media downloader has fetched it: its tile layers, of a
+# DeepZoom pyramid or of a Cloud Optimized GeoTIFF the dynamic tiler serves
+big_image_layers = {
+    "pyramid": [
+        {
+            "tileLayerUrl": "https://storage.example/big/{z}/{x}_{y}.webp",
+            "minZoom": 10,
+            "maxZoom": 14,
+            "width": 12000,
+            "height": 9000,
+            "epsg": "TiledImage",
+            "initEpsg": -1,
+            "useClassicCoordinates": False,
+        }
+    ],
+    "cog": [
+        {
+            "imageCogUrl": "https://storage.example/big-pixel.tiff",
+            "width": 12000,
+            "height": 9000,
+            "epsg": "TiledImage",
+            "initEpsg": -1,
+            "useClassicCoordinates": False,
+        }
+    ],
+}

@@ -24,6 +24,7 @@ from tests.fakes.fake_data import (
     asset_image_1_with_270_rotation,
     asset_image_1_without_annotation,
     asset_video,
+    big_image_layers,
     category_ids,
 )
 from tests.unit.services.export.fakes.fake_content_repository import (
@@ -217,6 +218,56 @@ def test_a_frame_video_not_downloaded_lists_its_frames_named_after_the_video():
         ("clip", "https://storage.example/clip-003.jpg", "clip_003.txt"),
         ("clip", "https://storage.example/clip-012.jpg", "clip_012.txt"),
     ]
+
+
+@pytest.mark.parametrize("layers", big_image_layers.values(), ids=big_image_layers.keys())
+def test_a_downloaded_big_image_is_exported_as_its_image(tmp_path: Path, layers: list):
+    image = tmp_path / "images" / "big.jpg"
+    image.parent.mkdir()
+    image.write_bytes(b"")
+    box = {
+        "categories": [{"name": "OBJECT_A"}],
+        "type": "rectangle",
+        "boundingPoly": [
+            {
+                "normalizedVertices": [
+                    {"x": 0.25, "y": 0.75},
+                    {"x": 0.25, "y": 0.25},
+                    {"x": 0.75, "y": 0.25},
+                    {"x": 0.75, "y": 0.75},
+                ]
+            }
+        ],
+    }
+    exporter = YoloExporter.__new__(YoloExporter)
+    exporter.project = {
+        "inputType": "IMAGE",
+        "jsonInterface": {
+            "jobs": {"JOB_0": {"mlTask": "OBJECT_DETECTION", "tools": ["rectangle"]}}
+        },
+    }
+    exporter.project_id = "project"  # type: ignore
+    exporter.export_root_folder = tmp_path / "export"  # type: ignore
+    exporter.folders = {"": YoloFolder("detect", category_ids)}
+    exporter.with_assets = True
+
+    # pylint: disable-next=protected-access  # the per-asset writer is what this test drives
+    rows, frames_by_folder, images = exporter._write_asset(
+        {
+            "externalId": "big",
+            "content": str(image),
+            "jsonContent": copy.deepcopy(layers),
+            "resolution": {"width": 12000, "height": 9000},
+            "latestLabel": {"jsonResponse": {"JOB_0": {"annotations": [box]}}},
+        }
+    )
+
+    assert images == {image}
+    assert frames_by_folder == {"": []}
+    assert rows == []
+    line = (tmp_path / "export" / "project" / "labels" / "big.txt").read_text().split()
+    assert line[0] == "0"
+    assert [float(value) for value in line[1:]] == pytest.approx([0.5, 0.5, 0.5, 0.5])
 
 
 def test_convert_from_kili_to_yolo_format():
