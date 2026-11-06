@@ -1,4 +1,6 @@
+import copy
 from pathlib import Path
+from xml.etree import ElementTree
 
 import pytest
 from kili_formats import convert_from_kili_to_voc_format
@@ -14,6 +16,7 @@ from tests.fakes.fake_data import (
     asset_image_1_with_180_rotation,
     asset_image_1_with_270_rotation,
     asset_image_1_without_annotation,
+    big_image_layers,
 )
 
 
@@ -217,6 +220,61 @@ def test_process_asset_image_with_latest_labels(tmp_path: Path):
     # Should create two XML files with label suffixes
     assert Path(label_path / "multi_label_label1.xml").is_file()
     assert Path(label_path / "multi_label_label2.xml").is_file()
+
+
+@pytest.mark.parametrize("layers", big_image_layers.values(), ids=big_image_layers.keys())
+def test_a_downloaded_big_image_is_exported_as_its_image(tmp_path: Path, layers: list):
+    images_folder = tmp_path / "images"
+    images_folder.mkdir()
+    image = images_folder / "big.jpg"
+    image.write_bytes(b"")
+    asset = {
+        "externalId": "big",
+        "content": str(image),
+        "jsonContent": copy.deepcopy(layers),
+        "resolution": {"width": 12000, "height": 9000},
+        "latestLabel": {
+            "jsonResponse": {
+                "JOB_0": {
+                    "annotations": [
+                        {
+                            "categories": [{"name": "OBJECT_A"}],
+                            "type": "rectangle",
+                            "boundingPoly": [
+                                {
+                                    "normalizedVertices": [
+                                        {"x": 0.25, "y": 0.75},
+                                        {"x": 0.25, "y": 0.25},
+                                        {"x": 0.75, "y": 0.25},
+                                        {"x": 0.75, "y": 0.75},
+                                    ]
+                                }
+                            ],
+                        }
+                    ]
+                }
+            }
+        },
+    }
+    labels_folder = tmp_path / "labels"
+
+    images, frames = _process_asset(
+        asset, labels_folder, "IMAGE", ["JOB_0"], images_folder=images_folder
+    )
+
+    assert images == {image}
+    assert frames == []
+    root = ElementTree.parse(labels_folder / "big.xml").getroot()
+    assert root.findtext("filename") == "big.jpg"
+    assert [root.findtext(f"size/{side}") for side in ("width", "height")] == ["12000", "9000"]
+    box = root.find("object/bndbox")
+    assert box is not None
+    assert [box.findtext(edge) for edge in ("xmin", "ymin", "xmax", "ymax")] == [
+        "3000",
+        "2250",
+        "9000",
+        "6750",
+    ]
 
 
 JOBS_BY_SHAPE = {

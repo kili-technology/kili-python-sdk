@@ -103,9 +103,10 @@ def _process_asset(
     Return the downloaded images they describe, and the names of the video's frames.
     """
     content = Path(str(asset["content"]))
+    # Downloaded, a video's jsonContent is its frames' paths; a big image's, its tile layers
     frames = (
         [Path(path) for path in asset["jsonContent"]]
-        if isinstance(asset.get("jsonContent"), list)
+        if project_input_type == "VIDEO" and isinstance(asset.get("jsonContent"), list)
         else []
     )
     if project_input_type == "VIDEO":
