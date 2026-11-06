@@ -393,8 +393,8 @@ def test_parse_retry_after(header, expected):
 
 
 def test_is_mutation_operation_name_and_describe():
-    mutation = gql("mutation { appendManyAssets(data: {}) { id } }")
-    query = gql("query { projects { id } }")
+    mutation = gql("mutation { appendManyAssets(data: {}) { id } }").document
+    query = gql("query { projects { id } }").document
 
     assert is_mutation(mutation)
     assert not is_mutation(query)

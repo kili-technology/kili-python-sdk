@@ -5,9 +5,12 @@ import time
 from dataclasses import dataclass
 from typing import Any, Optional, Union
 
+from gql.transport.exceptions import TransportConnectionFailed
 from gql.transport.requests import RequestsHTTPTransport
+from graphql import ExecutionResult
 from requests import PreparedRequest, Response
 from requests.adapters import HTTPAdapter
+from requests.exceptions import RequestException
 
 from kili.log.logging import logger
 
@@ -187,3 +190,19 @@ class KiliRequestsHTTPTransport(RequestsHTTPTransport):
         assert self.session is not None
         for prefix in ("http://", "https://"):
             self.session.mount(prefix, self.adapter)
+
+    def execute(self, *args: Any, **kwargs: Any) -> ExecutionResult:
+        """Send the request, raising the error of requests itself when it fails to.
+
+        gql 4 wraps every error of requests in TransportConnectionFailed. The retry policy tells
+        a refused connection, which is safe to resend, from a read timeout, which is not, by the
+        type of that error: it gets the error unwrapped, as gql 3 raised it.
+        """
+        error = None  # bound before the try: pylint cannot tell what err.__cause__ is otherwise
+        try:
+            return super().execute(*args, **kwargs)
+        except TransportConnectionFailed as err:
+            if not isinstance(err.__cause__, RequestException):
+                raise
+            error = err.__cause__
+        raise error  # out of the except block: the error keeps its own context

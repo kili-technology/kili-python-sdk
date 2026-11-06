@@ -72,7 +72,6 @@ def test_skip_checks_disable_local_validation(mocker: pytest_mock.MockerFixture)
 
 def test_rate_limiting(mocker: pytest_mock.MockerFixture):
     mocker.patch("kili.core.graphql.graphql_client.GraphQLClient._get_kili_app_version")
-    mocker.patch("kili.core.graphql.graphql_client.gql", side_effect=lambda x: x)
     mocker.patch(
         "kili.core.graphql.graphql_client._limiter",
         new=Limiter(Rate(MAX_CALLS_PER_MINUTE, Duration.SECOND * 5), max_delay=120 * 1000),
@@ -102,10 +101,10 @@ def test_rate_limiting(mocker: pytest_mock.MockerFixture):
 
     # first calls should not be rate limited
     for _ in range(MAX_CALLS_PER_MINUTE):
-        client.execute(query="")
+        client.execute(query=QUERY)
 
     # next calls should be rate limited
-    client.execute(query="")
+    client.execute(query=QUERY)
 
     # at least 1 second delay for the last call
     assert last_call_timestamp - before_last_call_timestamp > 1
@@ -114,8 +113,6 @@ def test_rate_limiting(mocker: pytest_mock.MockerFixture):
 def test_given_gql_client_when_the_server_refuses_wrong_query_then_it_does_no_retry(
     mocker: pytest_mock.MockerFixture,
 ):
-    mocker.patch("kili.core.graphql.graphql_client.gql", side_effect=lambda x: x)
-
     nb_times_called = 0
 
     def mocked_backend_response(*args, **kwargs):
@@ -154,7 +151,7 @@ def test_given_gql_client_when_the_server_refuses_wrong_query_then_it_does_no_re
     with pytest.raises(
         GraphQLError, match=r'Variable "(\$\w+)" of required type "(\w+!)" was not provided.'
     ):
-        client.execute(query="fake_query")  # When
+        client.execute(query=QUERY)  # When
 
     assert mocked_execute.call_count == nb_times_called == 1
 
@@ -162,8 +159,6 @@ def test_given_gql_client_when_the_server_refuses_wrong_query_then_it_does_no_re
 def test_given_gql_client_when_the_server_returns_flagsmith_error_then_it_retries(
     mocker: pytest_mock.MockerFixture,
 ):
-    mocker.patch("kili.core.graphql.graphql_client.gql", side_effect=lambda x: x)
-
     nb_times_called = 0
 
     def mocked_backend_response(*args, **kwargs):
@@ -229,7 +224,7 @@ def test_given_gql_client_when_the_server_returns_flagsmith_error_then_it_retrie
     )
 
     # When
-    result = client.execute(query="fake_query")
+    result = client.execute(query=QUERY)
 
     # Then
     assert result["data"] == "all good"

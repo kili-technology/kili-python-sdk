@@ -2,9 +2,11 @@ import gzip
 
 import pytest
 import pytest_mock
+from gql import gql
+from gql.transport.exceptions import TransportConnectionFailed
 from requests import PreparedRequest, Request, Response
 from requests.adapters import HTTPAdapter
-from requests.exceptions import ReadTimeout
+from requests.exceptions import ConnectTimeout, ReadTimeout
 
 from kili.core.graphql.transport import (
     COMPRESSION_THRESHOLD_BYTES,
@@ -184,6 +186,32 @@ def test_the_mounted_adapter_never_retries_by_itself():
     # a urllib3 retry would resend mutations behind the client's back
     assert adapter.max_retries.total == 0
     assert adapter.max_retries.read is False
+
+
+@pytest.mark.parametrize("error", [ConnectTimeout(), ReadTimeout()])
+def test_execute_raises_the_error_of_requests_that_gql_wraps(
+    mocker: pytest_mock.MockerFixture, error: Exception
+):
+    # the retry policy resends a connect timeout but not a read timeout: it needs their type
+    mocker.patch.object(HTTPAdapter, "send", side_effect=error)
+    transport = KiliRequestsHTTPTransport(url="https://kili/graphql")
+    transport.connect()
+
+    with pytest.raises(type(error)) as raised:
+        transport.execute(gql("query { projects { id } }"))
+
+    assert raised.value is error
+
+
+def test_execute_keeps_a_wrapped_error_that_is_not_one_of_requests(
+    mocker: pytest_mock.MockerFixture,
+):
+    mocker.patch.object(HTTPAdapter, "send", side_effect=RuntimeError("boom"))
+    transport = KiliRequestsHTTPTransport(url="https://kili/graphql")
+    transport.connect()
+
+    with pytest.raises(TransportConnectionFailed):
+        transport.execute(gql("query { projects { id } }"))
 
 
 @pytest.mark.parametrize(
