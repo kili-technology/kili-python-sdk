@@ -336,7 +336,7 @@ kili_format_expected_frame_asset_output = {
 }
 
 # A big image's jsonContent once the media downloader has fetched it: its tile layers, of a
-# DeepZoom pyramid or of a Cloud Optimized GeoTIFF the dynamic tiler serves
+# DeepZoom pyramid or of a Cloud Optimized GeoTIFF
 big_image_layers = {
     "pyramid": [
         {

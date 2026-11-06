@@ -32,10 +32,12 @@ from tests.unit.services.export.fakes.fake_content_repository import (
 )
 
 
-def _write_asset(asset: dict, input_type: str, repository, export_root: Path):
-    """An exporter's `_write_asset`, without the assets, its detect folder at the root.
+def _write_asset(
+    asset: dict, input_type: str, repository, export_root: Path, with_assets: bool = False
+):
+    """An exporter's `_write_asset`, its detect folder at the root.
 
-    Return the remote rows, the video's frames and the labels folder.
+    Return the remote rows, the video's frames, the labels folder and the downloaded images.
     """
     exporter = YoloExporter.__new__(YoloExporter)
     exporter.project = {
@@ -47,10 +49,11 @@ def _write_asset(asset: dict, input_type: str, repository, export_root: Path):
     exporter.project_id = "project"  # type: ignore
     exporter.export_root_folder = export_root  # type: ignore
     exporter.folders = {"": YoloFolder("detect", category_ids)}
-    exporter.with_assets = False
+    exporter.with_assets = with_assets
     exporter.content_repository = repository
-    rows, frames_by_folder, _images = exporter._write_asset(asset)  # pylint: disable=protected-access
-    return rows, frames_by_folder[""], Path(export_root) / "project" / "labels"
+    # pylint: disable-next=protected-access  # the per-asset writer is what these tests drive
+    rows, frames_by_folder, images = exporter._write_asset(asset)
+    return rows, frames_by_folder[""], Path(export_root) / "project" / "labels", images
 
 
 def _classes(*names: str, in_folder: bool = False) -> str:
@@ -70,7 +73,7 @@ def test_process_asset_for_job_image_not_served_by_kili():
                 verify=True,
             ),
         )
-        asset_remote_content, video_filenames, labels_folder = _write_asset(
+        asset_remote_content, video_filenames, labels_folder, _ = _write_asset(
             {
                 "latestLabel": {
                     "jsonResponse": {
@@ -135,7 +138,7 @@ def test_process_asset_for_job_frame_not_served_by_kili():
                 verify=True,
             ),
         )
-        asset_remote_content, video_filenames, labels_folder = _write_asset(
+        asset_remote_content, video_filenames, labels_folder, _ = _write_asset(
             asset_video,
             "VIDEO",
             fake_content_repository,
@@ -206,7 +209,7 @@ def test_a_frame_video_not_downloaded_lists_its_frames_named_after_the_video():
         ),
     )
     with TemporaryDirectory() as export_root:
-        rows, frames, labels_folder = _write_asset(asset, "VIDEO", repository, export_root)
+        rows, frames, labels_folder, _ = _write_asset(asset, "VIDEO", repository, export_root)
 
         # Padded to the video's 130 frames, not the label's 15, as the app names them
         assert sorted(path.name for path in labels_folder.iterdir()) == [
@@ -239,33 +242,24 @@ def test_a_downloaded_big_image_is_exported_as_its_image(tmp_path: Path, layers:
             }
         ],
     }
-    exporter = YoloExporter.__new__(YoloExporter)
-    exporter.project = {
-        "inputType": "IMAGE",
-        "jsonInterface": {
-            "jobs": {"JOB_0": {"mlTask": "OBJECT_DETECTION", "tools": ["rectangle"]}}
-        },
-    }
-    exporter.project_id = "project"  # type: ignore
-    exporter.export_root_folder = tmp_path / "export"  # type: ignore
-    exporter.folders = {"": YoloFolder("detect", category_ids)}
-    exporter.with_assets = True
-
-    # pylint: disable-next=protected-access  # the per-asset writer is what this test drives
-    rows, frames_by_folder, images = exporter._write_asset(
+    rows, frames, labels_folder, images = _write_asset(
         {
             "externalId": "big",
             "content": str(image),
             "jsonContent": copy.deepcopy(layers),
             "resolution": {"width": 12000, "height": 9000},
             "latestLabel": {"jsonResponse": {"JOB_0": {"annotations": [box]}}},
-        }
+        },
+        "IMAGE",
+        None,
+        tmp_path / "export",
+        with_assets=True,
     )
 
     assert images == {image}
-    assert frames_by_folder == {"": []}
+    assert frames == []
     assert rows == []
-    line = (tmp_path / "export" / "project" / "labels" / "big.txt").read_text().split()
+    line = (labels_folder / "big.txt").read_text().split()
     assert line[0] == "0"
     assert [float(value) for value in line[1:]] == pytest.approx([0.5, 0.5, 0.5, 0.5])
 
@@ -674,7 +668,7 @@ def test_process_asset_with_latest_labels():
                 verify=True,
             ),
         )
-        asset_remote_content, video_filenames, labels_folder = _write_asset(
+        asset_remote_content, video_filenames, labels_folder, _ = _write_asset(
             {
                 "latestLabels": [
                     {
