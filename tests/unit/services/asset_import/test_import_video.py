@@ -1,11 +1,15 @@
 import json
-from unittest.mock import MagicMock, patch
+from pathlib import Path
+from unittest.mock import MagicMock, call, patch
 
 import pytest
 
 from kili.adapters.kili_api_gateway.asset.operations_mixin import AssetOperationMixin
 from kili.services.asset_import import import_assets
-from kili.services.asset_import.exceptions import UploadFromLocalDataForbiddenError
+from kili.services.asset_import.exceptions import (
+    ImportValidationError,
+    UploadFromLocalDataForbiddenError,
+)
 from tests.unit.services.asset_import.base import ImportTestCase
 from tests.unit.services.asset_import.mocks import (
     mocked_request_signed_urls,
@@ -68,6 +72,88 @@ class VideoTestCase(ImportTestCase):
             "NATIVE_VIDEO",
         )
         self.kili.graphql_client.execute.assert_called_with(*expected_parameters)
+
+    def test_upload_from_one_hosted_transport_stream_skips_the_import_service(self, *_):
+        self.kili.kili_api_gateway.get_project.return_value = {"inputType": "VIDEO"}
+        url = "https://hosted-data/flight.ts?X-Amz-Signature=abc"
+        assets = [{"content": url, "external_id": "hosted transport stream", "id": "unique_id"}]
+        import_assets(self.kili, self.project_id, assets, disable_tqdm=True)
+        expected_parameters = self.get_expected_sync_call(
+            [url],
+            ["hosted transport stream"],
+            ["unique_id"],
+            [False],
+            [""],
+            [json.dumps({"processingParameters": {}})],
+        )
+        self.kili.graphql_client.execute.assert_called_with(*expected_parameters)
+
+    def test_upload_from_one_local_transport_stream_skips_the_import_service(self, *_):
+        self.kili.kili_api_gateway.get_project.return_value = {"inputType": "VIDEO"}
+        path = Path(self.test_dir) / "flight.ts"
+        path.write_bytes(bytes([0x47]) + bytes(187))
+        assets = [{"content": str(path), "external_id": "local transport stream"}]
+        import_assets(self.kili, self.project_id, assets, disable_tqdm=True)
+        expected_parameters = self.get_expected_sync_call(
+            ["https://signed_url?id=id"],
+            ["local transport stream"],
+            ["unique_id"],
+            [False],
+            [""],
+            [json.dumps({"processingParameters": {}})],
+        )
+        self.kili.graphql_client.execute.assert_called_with(*expected_parameters)
+        assert mocked_upload_data_via_rest.call_args.args[2] == "video/mp2t"
+
+    def test_upload_of_transport_streams_and_other_videos_imports_each_its_way(self, *_):
+        self.kili.kili_api_gateway.get_project.return_value = {"inputType": "VIDEO"}
+        self.kili.graphql_client.execute.reset_mock()
+        assets = [
+            {"content": "https://hosted-data/flight.ts", "external_id": "stream", "id": "ts_id"},
+            {"content": "https://hosted-data/clip.mp4", "external_id": "clip", "id": "mp4_id"},
+        ]
+        import_assets(self.kili, self.project_id, assets, disable_tqdm=True)
+        expected_metadata = json.dumps({"processingParameters": {}})
+        calls = self.kili.graphql_client.execute.call_args_list
+        assert (
+            call(
+                *self.get_expected_sync_call(
+                    ["https://hosted-data/flight.ts"],
+                    ["stream"],
+                    ["ts_id"],
+                    [False],
+                    [""],
+                    [expected_metadata],
+                )
+            )
+            in calls
+        )
+        assert (
+            call(
+                *self.get_expected_async_call(
+                    ["https://hosted-data/clip.mp4"],
+                    ["clip"],
+                    ["mp4_id"],
+                    [expected_metadata],
+                    "NATIVE_VIDEO",
+                )
+            )
+            in calls
+        )
+
+    def test_upload_of_a_transport_stream_to_split_into_frames_is_refused(self, *_):
+        self.kili.kili_api_gateway.get_project.return_value = {"inputType": "VIDEO"}
+        for parameter in ["shouldUseNativeVideo", "shouldKeepNativeFrameRate"]:
+            with self.subTest(parameter=parameter):
+                assets = [
+                    {
+                        "content": "https://hosted-data/flight.ts",
+                        "external_id": "stream",
+                        "json_metadata": {"processingParameters": {parameter: False}},
+                    }
+                ]
+                with pytest.raises(ImportValidationError, match="transport stream"):
+                    import_assets(self.kili, self.project_id, assets, disable_tqdm=True)
 
     def test_upload_from_one_hosted_video_authorized_while_local_forbidden(self, *_):
         self.kili.kili_api_gateway.get_project.return_value = {"inputType": "VIDEO"}

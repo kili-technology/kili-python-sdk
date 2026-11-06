@@ -149,6 +149,11 @@ class TestFileExtensionValidation(ImportTestCase):
         assets = [{"content": "https://example.com/vid.mkv", "external_id": "ok"}]
         import_assets(self.kili, ProjectId(self.project_id), assets)
 
+    def test_video_project_accepts_ts_extension(self, *_):
+        self.kili.kili_api_gateway.get_project.return_value = {"inputType": "VIDEO"}
+        assets = [{"content": "https://example.com/flight.ts", "external_id": "ok"}]
+        import_assets(self.kili, ProjectId(self.project_id), assets)
+
     # --- AUDIO ---
     def test_audio_project_rejects_image_extension(self, *_):
         self.kili.kili_api_gateway.get_project.return_value = {"inputType": "AUDIO"}
