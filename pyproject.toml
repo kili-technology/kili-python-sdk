@@ -64,7 +64,7 @@ dev = [
   "pytest-timeout",
   # documentation
   "mkdocs >= 1.0.0, < 2.0.0",
-  "mkdocs-material >= 9.0.0, < 9.6.0",
+  "mkdocs-material >=9.0.0, <9.9.0",
   "mkdocstrings",
   "mkdocstrings-python-legacy",
   "mkdocs-click",
