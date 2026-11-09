@@ -27,6 +27,9 @@ def _generate_label_file(yolo_rows: list[list], filename: str):
 
 
 def _generate_meta_file(yolo_classes, yolo_meta_path, input_format):
+    if input_format == "yolo":
+        # Any YOLO dataset's class file: a data.yaml as the Kili app exports it, or a classes.txt
+        input_format = "yolo_v7" if Path(yolo_meta_path).suffix == ".yaml" else "yolo_v4"
     if input_format == "yolo_v4":
         # newline="" to disable universal newlines translation (bug fix for windows)
         with open(yolo_meta_path, "w", newline="", encoding="utf-8") as y_m:
@@ -219,6 +222,34 @@ def test_import_labels_wrong_target_job(mocker):
             "yolo_v7",
             {0: "OBJECT_A", 1: "OBJECT_B"},
         ),
+        (
+            "YOLO, a data.yaml as the Kili app exports it",
+            "data.yaml",
+            ["train: images", "val: images", "nc: 2", 'names: ["OBJECT_A", "OBJECT_B"]'],
+            "yolo",
+            {0: "OBJECT_A", 1: "OBJECT_B"},
+        ),
+        (
+            "YOLO, a data.yml whose names are a map",
+            "data.yml",
+            ["names: ", "  0: OBJECT_A", "  1: OBJECT_B"],
+            "yolo",
+            {0: "OBJECT_A", 1: "OBJECT_B"},
+        ),
+        (
+            "YOLO, a classes.txt with ids",
+            "classes.txt",
+            ["0 OBJECT_A", "1 OBJECT_B"],
+            "yolo",
+            {0: "OBJECT_A", 1: "OBJECT_B"},
+        ),
+        (
+            "YOLO, a classes.txt of names alone",
+            "classes.txt",
+            ["OBJECT A", "OBJECT B"],
+            "yolo",
+            {0: "OBJECT A", 1: "OBJECT B"},
+        ),
     ],
 )
 def test__read_classes_from_meta_file(name, filename, lines, label_format, expected):
@@ -332,3 +363,25 @@ def test_yolo_label_parser_reads_a_line_with_trailing_spaces():
         annotations = yolo_parser.parse(label_file)["JOB_0"]["annotations"]
 
         assert [len(a["boundingPoly"][0]["normalizedVertices"]) for a in annotations] == [4, 3]
+
+
+@pytest.mark.parametrize("input_format", ["yolo_v4", "yolo_v5", "yolo_v7"])
+def test_a_deprecated_yolo_format_warns_to_import_in_yolo(input_format, kili_api_gateway, mocker):
+    kili = mocker.MagicMock()
+    kili.kili_api_gateway = kili_api_gateway
+
+    with pytest.warns(DeprecationWarning, match=f'The "{input_format}" format is deprecated'):
+        with pytest.raises(ValueError, match="You must specify files to upload"):
+            import_labels_from_files(
+                kili,
+                [],
+                "classes.txt",
+                ProjectId("project"),
+                input_format,
+                "JOB_0",
+                disable_tqdm=True,
+                log_level="WARNING",
+                model_name=None,
+                is_prediction=False,
+                overwrite=False,
+            )

@@ -174,7 +174,7 @@ See detailed examples in this [recipe](https://docs.kili-technology.com/recipes/
 ### Exporting labels
 
 ```python
-kili.export_labels("your_project_id", "export.zip", "yolo_v4")
+kili.export_labels("your_project_id", "export.zip", "yolo")
 ```
 
 See a detailed example in this [tutorial](https://python-sdk-docs.kili-technology.com/latest/sdk/tutorials/export_a_kili_project/).

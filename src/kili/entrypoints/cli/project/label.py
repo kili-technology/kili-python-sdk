@@ -45,7 +45,10 @@ def type_check_label(key, value):
 @click.option(
     "--input-format",
     type=click.Choice(get_args(LabelFormat)),
-    help="Format in which the labels are encoded",
+    help=(
+        "Format in which the labels are encoded. yolo_v4, yolo_v5 and yolo_v7 are deprecated:"
+        " use yolo, which reads the classes.txt or data.yaml of any YOLO dataset."
+    ),
     default="kili",
     show_default='"raw" kili format',
 )
@@ -108,16 +111,16 @@ def import_labels(
             --prediction \\
             --model-name YOLO-run-3
         ```
-        To import labels as predictions in the Yolo v5 format into a target job:
+        To import labels as predictions in the YOLO format into a target job:
         ```
         kili project label \\
             dir/predictions/ \\
             --project-id <project_id> \\
             --prediction \\
-            --model-name YOLO-v5 \\
-            --metadata-file classes.yml \\
+            --model-name YOLO-run-3 \\
+            --metadata-file data.yaml \\
             --target-job IMAGE_DETECTION_JOB \\
-            --input-format yolo_v5
+            --input-format yolo
             --overwrite True
         ```
     """

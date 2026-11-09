@@ -192,7 +192,10 @@ class YoloLabelImporter(AbstractLabelImporter):
     ) -> Classes:
         assert meta_file_path
         classes: Classes = Classes({})
-        if input_format == "yolo_v4":
+        # "yolo" reads the class file of any YOLO dataset: a classes.txt, or a data.yaml whose
+        # names are a map, as yolo_v5 reads them, or a list, as yolo_v7 does
+        is_yaml = meta_file_path.suffix.lower() in (".yaml", ".yml")
+        if input_format == "yolo_v4" or (input_format == "yolo" and not is_yaml):
             try:
                 # layout: id class\n
                 with meta_file_path.open("r", encoding="utf-8") as m_f:
@@ -202,21 +205,19 @@ class YoloLabelImporter(AbstractLabelImporter):
                 with meta_file_path.open("r", encoding="utf-8") as m_f:
                     classes = Classes(dict(enumerate(m_f.read().splitlines())))
 
-        elif input_format in ("yolo_v5", "yolo_v7"):
+        elif input_format in ("yolo", "yolo_v5", "yolo_v7"):
             try:
                 import yaml  # pylint: disable=import-outside-toplevel
             except ImportError as e:
                 raise ImportError(
                     "Install with `pip install kili[yolo]` to use this feature."
                 ) from e
-            if input_format == "yolo_v5":
-                with meta_file_path.open("r", encoding="utf-8") as m_f:
-                    m_d = yaml.load(m_f, yaml.FullLoader)
-                    classes = Classes(m_d["names"])
-            elif input_format == "yolo_v7":
-                with meta_file_path.open("r", encoding="utf-8") as m_f:
-                    m_d = yaml.load(m_f, yaml.FullLoader)
-                    classes = Classes(dict(enumerate(m_d["names"])))
+            with meta_file_path.open("r", encoding="utf-8") as m_f:
+                names = yaml.load(m_f, yaml.FullLoader)["names"]
+            if input_format == "yolo_v7" or (input_format == "yolo" and isinstance(names, list)):
+                classes = Classes(dict(enumerate(names)))
+            else:
+                classes = Classes(names)
         else:
             raise NotImplementedError(f"The format f{input_format} does not have a metadata parser")
 

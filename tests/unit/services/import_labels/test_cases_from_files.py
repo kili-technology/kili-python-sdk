@@ -1,3 +1,5 @@
+import copy
+
 YOLO_V4_TEST_CASE = {
     "description": "AAU, I import assets with all the asset attributes in the CSV, yolo_v4",
     "inputs": {
@@ -99,23 +101,24 @@ YOLO_V4_TEST_CASE = {
     },
 }
 
-YOLO_V5_TEST_CASE = YOLO_V4_TEST_CASE.copy()
-YOLO_V5_TEST_CASE["inputs"]["label_format"] = "yolo_v5"
-YOLO_V5_TEST_CASE[
-    "description"
-] = "AAU, I import assets with all the asset attributes in the CSV, yolo_v5"
 
-YOLO_V7_TEST_CASE = YOLO_V4_TEST_CASE.copy()
-YOLO_V7_TEST_CASE["inputs"]["label_format"] = "yolo_v7"
-YOLO_V7_TEST_CASE[
-    "description"
-] = "AAU, I import assets with all the asset attributes in the CSV, yolo_v7"
+def _yolo_test_case(label_format: str, meta_path: str) -> dict:
+    # A deep copy: a shallow one shares its inputs, and the last format set would be every case's
+    test_case = copy.deepcopy(YOLO_V4_TEST_CASE)
+    test_case["inputs"]["label_format"] = label_format
+    test_case["inputs"]["meta_path"] = meta_path
+    test_case[
+        "description"
+    ] = f"AAU, I import assets with all the asset attributes in the CSV, {label_format}, {meta_path}"
+    return test_case
 
 
 TEST_CASES = [
     YOLO_V4_TEST_CASE,
-    YOLO_V5_TEST_CASE,
-    YOLO_V7_TEST_CASE,
+    _yolo_test_case("yolo_v5", "yolo_classes.txt"),
+    _yolo_test_case("yolo_v7", "yolo_classes.txt"),
+    _yolo_test_case("yolo", "data.yaml"),
+    _yolo_test_case("yolo", "classes.txt"),
     {
         "description": (
             "AAU, I import assets with the minimum amount of asset attributes in the CSV"

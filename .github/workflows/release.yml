@@ -11,7 +11,7 @@ jobs:
       # needed to publish to PyPI
       id-token: write
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
 
       - name: Set up Python
         uses: actions/setup-python@v5
@@ -48,14 +48,14 @@ jobs:
           fi
 
       - name: Publish to PyPI
-        uses: pypa/gh-action-pypi-publish@v1.13.0
+        uses: pypa/gh-action-pypi-publish@v1.14.3
         with:
           verbose: true
 
       - name: Slack notification
         id: slack
         if: success()
-        uses: slackapi/slack-github-action@v1.25.0
+        uses: slackapi/slack-github-action@v1.27.1
         with:
           payload: |
             {

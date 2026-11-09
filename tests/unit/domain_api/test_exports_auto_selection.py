@@ -1,5 +1,6 @@
 """Unit tests for automatic export type selection based on project workflow version."""
 
+import warnings
 from unittest.mock import MagicMock
 
 import pytest
@@ -123,6 +124,7 @@ class TestAllExportFormats:
         [
             ("kili", "kili"),
             ("coco", "coco"),
+            ("yolo", "yolo"),
             ("yolo_v4", "yolo_v4"),
             ("yolo_v5", "yolo_v5"),
             ("yolo_v7", "yolo_v7"),
@@ -383,7 +385,7 @@ class TestExportTypeValidation:
         mock_gateway.get_project.assert_called_once()
 
 
-@pytest.mark.parametrize("method", ["yolo_v5", "yolo_v7", "yolo_v8"])
+@pytest.mark.parametrize("method", ["yolo", "yolo_v5", "yolo_v7", "yolo_v8"])
 def test_the_yolo_exports_pass_how_to_write_the_bounding_boxes(
     export_namespace, mock_client, mock_gateway, method
 ):
@@ -394,3 +396,20 @@ def test_the_yolo_exports_pass_how_to_write_the_bounding_boxes(
     )
 
     assert mock_client.export_labels.call_args.kwargs["bbox_as"] == "obb"
+
+
+@pytest.mark.parametrize("method", ["yolo_v4", "yolo_v5", "yolo_v7", "yolo_v8"])
+def test_the_versioned_yolo_exports_are_deprecated_for_yolo_the_service_warning_once(
+    export_namespace, mock_client, mock_gateway, method
+):
+    mock_gateway.get_project.return_value = {"id": "test-project", "workflowVersion": "V2"}
+
+    with warnings.catch_warnings(record=True) as caught:
+        warnings.simplefilter("always")
+        getattr(export_namespace, method)(project_id="test-project", output_path="/tmp/export.zip")
+
+    # Marked for IDEs and type checkers; the export service, past the client, warns at run time
+    assert "kili.exports.yolo()" in getattr(ExportNamespace, method).__deprecated__
+    assert not [w for w in caught if issubclass(w.category, DeprecationWarning)]
+    assert mock_client.export_labels.call_args.kwargs["fmt"] == method
+    assert not hasattr(ExportNamespace.yolo, "__deprecated__")

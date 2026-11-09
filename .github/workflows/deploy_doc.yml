@@ -38,7 +38,7 @@ jobs:
               fi
           fi
 
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
         with:
           ref: ${{ env.REF }} # checked out branch
 
@@ -73,7 +73,7 @@ jobs:
       - name: Slack notification
         id: slack
         if: success()
-        uses: slackapi/slack-github-action@v1.25.0
+        uses: slackapi/slack-github-action@v1.27.1
         with:
           payload: |
             {

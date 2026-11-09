@@ -471,6 +471,8 @@ class GraphQLClient:
                         f"[Kili SDK] Deprecated GraphQL field used: "
                         f"{item.get('path')} – {item.get('reason')}"
                     )
+                for message in extensions.get("warnings") or []:
+                    warnings.warn(f"[Kili SDK] {message}")
 
             transport = self._gql_client.transport
             if transport:

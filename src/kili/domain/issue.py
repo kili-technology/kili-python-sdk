@@ -19,3 +19,4 @@ class IssueFilters:
     asset_id_in: Optional[list[str]] = None
     issue_type: Optional[IssueType] = None
     status: Optional[IssueStatus] = None
+    step_id_in: Optional[list[str]] = None

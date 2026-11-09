@@ -2,7 +2,6 @@
 
 import abc
 import logging
-import mimetypes
 import os
 import urllib.parse
 import warnings
@@ -371,8 +370,7 @@ class ContentBatchImporter(BaseBatchImporter):
         assert isinstance(content, str)
         with Path(content).open("rb") as file:
             data = file.read()
-            content_type, _ = mimetypes.guess_type(content)
-            return data, content_type
+            return data, get_mime_type(content)
 
     def get_type_and_data_from_content_array(
         self, content_array: list[Optional[Union[str, bytes]]]
@@ -761,7 +759,8 @@ class BaseAbstractAssetImporter(abc.ABC):
         given minus the fields the batch importer uploads to the bucket on its own.
         """
         batch_generator = size_aware_batcher(assets, batch_size, batch_importer.payload_size)
-        self.pbar.total = len(assets)
+        # An importer can import its assets in several groups: the bar counts the earlier ones too
+        self.pbar.total = self.pbar.n + len(assets)
         self.pbar.refresh()
 
         created_asset_ids: list[str] = []

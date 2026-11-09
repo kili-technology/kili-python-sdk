@@ -250,3 +250,10 @@ def test_get_mime_type_reads_nitf_and_rset_full_resolution_as_nitf(path):
 @pytest.mark.parametrize("path", ["image.r1", "image.r5", "image.r10"])
 def test_get_mime_type_does_not_read_rset_reduced_resolutions_as_nitf(path):
     assert get_mime_type(path) != "application/vnd.nitf"
+
+
+@pytest.mark.parametrize("path", ["flight.ts", "/videos/FLIGHT.TS"])
+def test_get_mime_type_reads_transport_streams_as_mpeg_ts_whatever_the_platform(path):
+    # Linux's shared MIME database maps `.ts` to Qt Linguist files
+    with patch("mimetypes.guess_type", return_value=("text/vnd.trolltech.linguist", None)):
+        assert get_mime_type(path) == "video/mp2t"

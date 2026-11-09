@@ -1,5 +1,6 @@
 """Label import service."""
 
+import warnings
 from pathlib import Path
 from typing import TYPE_CHECKING, Optional, cast
 
@@ -12,7 +13,7 @@ from kili.services.label_import.importer import (
     LoggerParams,
     YoloLabelImporter,
 )
-from kili.services.label_import.types import LabelFormat
+from kili.services.label_import.types import DEPRECATED_YOLO_FORMATS, LabelFormat
 from kili.services.types import LogLevel
 
 if TYPE_CHECKING:
@@ -33,6 +34,14 @@ def import_labels_from_files(  # pylint: disable=too-many-arguments
     overwrite: bool,
 ) -> None:
     """Imports labels from a list of files contained in file path."""
+    if input_format in DEPRECATED_YOLO_FORMATS:
+        warnings.warn(
+            f'The "{input_format}" format is deprecated and will be removed in a future release:'
+            ' import in the "yolo" format instead (--input-format yolo), which reads the'
+            " classes.txt or data.yaml of any YOLO dataset.",
+            DeprecationWarning,
+            stacklevel=1,
+        )
     kili.kili_api_gateway.get_project(project_id, ["id"])
 
     if len(labels_files) == 0:
@@ -47,7 +56,7 @@ def import_labels_from_files(  # pylint: disable=too-many-arguments
         )
 
     label_importer_class: Optional[type[AbstractLabelImporter]] = None
-    if input_format in ["yolo_v4", "yolo_v5", "yolo_v7"]:
+    if input_format in ["yolo", "yolo_v4", "yolo_v5", "yolo_v7"]:
         label_importer_class = YoloLabelImporter
     elif input_format in ["raw", "kili"]:
         label_importer_class = KiliRawLabelImporter

@@ -30,7 +30,7 @@ class YoloExporter(AbstractExporter):
     task with a bounding box job, detect, obb or segment by `bbox_as`; segment with a polygon or
     semantic job. Merged, with two, each goes in its own folder, named after its task, beside the
     shared `images/`; with one, at the export's root. Split, each job's folder is written for its
-    own task. YOLO v4 has detect only.
+    own task. The deprecated YOLO v4 has detect only.
     """
 
     def __init__(self, *args, **kwargs) -> None:
@@ -130,9 +130,10 @@ class YoloExporter(AbstractExporter):
         downloaded images they describe.
         """
         input_type = self.project["inputType"]
+        # Downloaded, a video's jsonContent is its frames' paths; a big image's, its tile layers
         content_frames = (
             [Path(path) for path in asset["jsonContent"]]
-            if isinstance(asset.get("jsonContent"), list)
+            if input_type == "VIDEO" and isinstance(asset.get("jsonContent"), list)
             else []
         )
         # A downloaded native video is cut into frames, named as kili-formats names them
