@@ -47,7 +47,7 @@ jobs:
           echo "Bumping '$RELEASE_TYPE' version on '$TARGET_BRANCH'"
 
       - name: Checkout target branch
-        uses: actions/checkout@v4
+        uses: actions/checkout@v7
         with:
           ref: ${{ github.event.inputs.target_branch }}
           token: ${{ secrets.RELEASE_BOT_PAT }}   # <<< service PAT
