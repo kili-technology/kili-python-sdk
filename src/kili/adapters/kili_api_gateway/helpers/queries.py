@@ -1,9 +1,8 @@
 """GraphQL module."""
 
 from collections.abc import Generator
-from typing import Any, NamedTuple, Optional
+from typing import Any, NamedTuple, Optional, Union
 
-from pyparsing import Union
 from typeguard import typechecked
 
 from kili.core.constants import QUERY_BATCH_SIZE
