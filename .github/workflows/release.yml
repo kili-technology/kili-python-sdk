@@ -55,8 +55,10 @@ jobs:
       - name: Slack notification
         id: slack
         if: success()
-        uses: slackapi/slack-github-action@v1.27.1
+        uses: slackapi/slack-github-action@v4.0.0
         with:
+          webhook: ${{ secrets.SLACK_WEBHOOK_URL_PYTHON_SDK }}
+          webhook-type: incoming-webhook
           payload: |
             {
               "text": "Kili SDK ${{ github.ref_name }} released!\nGitHub: https://github.com/kili-technology/kili-python-sdk/releases\nPyPI: https://pypi.org/project/kili/",
@@ -70,9 +72,6 @@ jobs:
                 }
               ]
             }
-        env:
-          SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL_PYTHON_SDK }}
-          SLACK_WEBHOOK_TYPE: INCOMING_WEBHOOK
 
       - name: Set git identity
         run: |
