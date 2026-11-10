@@ -24,9 +24,8 @@ repos:
       - id: nb-clean
         args:
           - --preserve-cell-outputs
-          - --preserve-cell-metadata
+          - --preserve-cell-metadata-field
           - tags
-          - --
 
   - repo: local
     hooks:
