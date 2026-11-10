@@ -21,13 +21,13 @@ class MutationsPlugins(BaseOperationEntrypointMixin):
     """Set of Plugins mutations."""
 
     @typechecked
-    def upload_plugin(
+    def upload_plugin(  # pylint: disable=missing-param-doc
         self,
         plugin_path: Optional[str] = None,
         plugin_name: Optional[str] = None,
         verbose: bool = True,
         event_matcher: Optional[list[str]] = None,
-        **kwargs,  # pylint: disable=missing-param-doc
+        **kwargs,
     ) -> LiteralString:
         """Uploads a plugin.
 
@@ -208,13 +208,13 @@ class MutationsPlugins(BaseOperationEntrypointMixin):
         return delete_plugin(self, plugin_name)
 
     @typechecked
-    def update_plugin(
+    def update_plugin(  # pylint: disable=missing-param-doc
         self,
         plugin_path: Optional[str] = None,
         plugin_name: Optional[str] = None,
         verbose: bool = True,
         event_matcher: Optional[list[str]] = None,
-        **kwargs,  # pylint: disable=missing-param-doc
+        **kwargs,
     ) -> LiteralString:
         """Update a plugin with new code.
 
