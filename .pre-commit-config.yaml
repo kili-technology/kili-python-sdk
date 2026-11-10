@@ -19,14 +19,13 @@ repos:
         args: [--py38-plus]
 
   - repo: https://github.com/srstevenson/nb-clean
-    rev: 3.3.0
+    rev: v6.0.0
     hooks:
       - id: nb-clean
         args:
           - --preserve-cell-outputs
-          - --preserve-cell-metadata
+          - --preserve-cell-metadata-field
           - tags
-          - --
 
   - repo: local
     hooks:
