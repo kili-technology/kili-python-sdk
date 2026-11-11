@@ -111,6 +111,14 @@ the others still run, its error is logged, and the run fails with the first erro
 kili.upload_plugin(plugin_path="./my_plugin/", plugin_name="my_plugin")
 ```
 
+To leave some of these events out, pass them in `event_matcher`, each prefixed with `!`, and nothing else: with a
+method annotated `AssetEvent`, the plugin below receives every asset event but `asset.updated`, including the asset
+events Kili adds later. A list that would leave every event out is refused.
+
+```python
+kili.upload_plugin(plugin_path="./my_plugin/", plugin_name="my_plugin", event_matcher=["!asset.updated"])
+```
+
 The upload reads your code without running it, so:
 
 - the decorated methods are those of the `PluginHandler` class of the plugin file (of `main.py` for a folder) — not the
@@ -138,9 +146,9 @@ declares them — no event id or timestamp.
 Overriding `on_event` with an `event_matcher` still works, but is deprecated in favour of `on_kili_event`. **`on_event` now
 receives the whole event**: the fields it received before are under `payload["payload"]`, beside `event`,
 `organizationId`, `projectId` and `userId`. Its `event_matcher` takes subjects and patterns, where `*` stands for one or
-more names (`label.workflow.*`, `project.workflow.bulkAction.*.started`). A pattern prefixed with `!` leaves out the
-events it matches, even when another pattern matches them: `["asset.*", "!asset.updated"]` receives every asset event
-but `asset.updated`. A webhook's `event_matcher` takes the same patterns.
+more names (`label.workflow.*`, `project.workflow.bulkAction.*.started`), and `!` before a pattern leaves its events
+out (`["asset.*", "!asset.updated"]`), as for a webhook's `event_matcher`. With `on_kili_event`, the annotations
+replace the patterns and `event_matcher` keeps only the exclusions (`["!asset.updated"]`).
 
 Before:
 

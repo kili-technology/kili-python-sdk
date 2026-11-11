@@ -488,13 +488,17 @@ class PluginUploader:
                     "on_event would stop the events reaching the methods decorated with"
                     " @on_kili_event: remove it from PluginHandler."
                 )
-            if self.event_matcher:
+            exclusions = list(dict.fromkeys(self.event_matcher or []))
+            if any(not pattern.startswith("!") for pattern in exclusions):
                 raise ValueError(
                     "The events come from the annotations of the @on_kili_event methods:"
-                    " upload without event_matcher."
+                    " upload without event_matcher, or pass in it only the events to leave out,"
+                    " each prefixed with ! (event_matcher=['!asset.updated'])."
                 )
-            self.event_matcher = sorted(
-                {pattern for patterns in subscriptions.values() for pattern in patterns}
+            # Kili sends no event matching an exclusion, even one an annotation names.
+            self.event_matcher = (
+                sorted({pattern for patterns in subscriptions.values() for pattern in patterns})
+                + exclusions
             )
         elif has_on_event:
             if not self.event_matcher:

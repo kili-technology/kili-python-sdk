@@ -490,10 +490,11 @@ class PluginsNamespace(DomainNamespace):
                 - a .py file
             plugin_name: Name of your plugin, if not provided, it will be the name from your file
             event_pattern: A single `event_matcher`.
-            event_matcher: Events for which a plugin overriding `on_event` is called. A plugin
-                using `@on_kili_event` leaves it out: its events come from the annotations.
-                A pattern prefixed with `!` leaves out the events it matches, even when
-                another pattern matches them: `['asset.*', '!asset.updated']`.
+            event_matcher: Events for which a plugin overriding `on_event` is called, such as
+                `['asset.*', '!asset.updated']`: a pattern prefixed with `!` leaves out the
+                events it matches, even when another pattern matches them. A plugin using
+                `@on_kili_event` gets its events from the annotations, and passes here only
+                the ones to leave out, each prefixed with `!` (`['!asset.updated']`).
             verbose: If false, minimal logs are displayed
 
         Returns:
@@ -536,10 +537,11 @@ class PluginsNamespace(DomainNamespace):
                 - a .py file
             plugin_name: Name of the plugin to update
             event_pattern: A single `event_matcher`.
-            event_matcher: Events for which a plugin overriding `on_event` is called. A plugin
-                using `@on_kili_event` leaves it out: its events come from the annotations.
-                A pattern prefixed with `!` leaves out the events it matches, even when
-                another pattern matches them: `['asset.*', '!asset.updated']`.
+            event_matcher: Events for which a plugin overriding `on_event` is called, such as
+                `['asset.*', '!asset.updated']`: a pattern prefixed with `!` leaves out the
+                events it matches, even when another pattern matches them. A plugin using
+                `@on_kili_event` gets its events from the annotations, and passes here only
+                the ones to leave out, each prefixed with `!` (`['!asset.updated']`).
             verbose: If false, minimal logs are displayed
 
         Returns:

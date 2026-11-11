@@ -537,11 +537,44 @@ def test_upload_refuses_decorators_beside_another_handler(kili, tmp_path, extra_
         uploader._retrieve_plugin_src()
 
 
-def test_upload_refuses_decorators_with_an_event_matcher(kili, tmp_path):
-    uploader = _uploader(kili, _plugin_file(tmp_path, SUBSCRIBED_PLUGIN), ["asset.*"])
+@pytest.mark.parametrize(
+    "event_matcher",
+    [["asset.*"], ["!asset.updated", "asset.*"]],
+    ids=["a pattern", "a pattern beside an exclusion"],
+)
+def test_upload_refuses_decorators_with_an_event_matcher_holding_a_pattern(
+    kili, tmp_path, event_matcher
+):
+    uploader = _uploader(kili, _plugin_file(tmp_path, SUBSCRIBED_PLUGIN), event_matcher)
 
-    with pytest.raises(ValueError, match="upload without event_matcher"):
+    with pytest.raises(ValueError, match="upload without event_matcher, or pass in it only"):
         uploader._retrieve_plugin_src()
+
+
+def test_upload_sends_the_exclusions_after_the_patterns_of_the_annotations(kili, tmp_path):
+    # Given
+    uploader = _uploader(
+        kili,
+        _plugin_file(tmp_path, SUBSCRIBED_PLUGIN),
+        ["!asset.issue.cancelled", "!label.workflow.rejected", "!asset.issue.cancelled"],
+    )
+
+    # When
+    uploader._retrieve_plugin_src()
+    uploader._create_plugin_runner()
+
+    # Then
+    assert kili.graphql_client.execute.call_args.args[1] == {
+        "pluginName": PLUGIN_NAME,
+        "handlerTypes": None,
+        "eventMatcher": [
+            "asset.issue.*",
+            "asset.skipped",
+            "label.workflow.*",
+            "!asset.issue.cancelled",
+            "!label.workflow.rejected",
+        ],
+    }
 
 
 def test_upload_of_an_on_event_plugin_warns_it_is_deprecated(kili, caplog):
