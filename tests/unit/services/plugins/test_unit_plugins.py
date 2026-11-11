@@ -1,6 +1,8 @@
 # pylint: disable=missing-function-docstring,redefined-outer-name,protected-access
+import itertools
 import logging
 import os
+import re
 import textwrap
 from pathlib import Path
 from unittest.mock import MagicMock
@@ -15,6 +17,7 @@ from kili.services.plugins.upload import (
     check_file_contains_handler,
     check_file_mime_type,
     find_event_subscriptions,
+    receives_no_event,
 )
 from kili.utils.tempfile import TemporaryDirectory
 
@@ -861,3 +864,63 @@ def test_find_event_subscriptions_reads_only_the_event_annotation(tmp_path):
     )
 
     assert find_event_subscriptions(plugin_path) == {"on_skip": ["asset.skipped"]}
+
+
+def _event_name_regex(exclusion):
+    """The oracle: a `*` is one or more whole names, anything else a literal name."""
+    names = [
+        r"[^.]+(?:\.[^.]+)*" if name == "*" else re.escape(name) for name in exclusion.split(".")
+    ]
+    return re.compile(r"\.".join(names))
+
+
+def test_receives_no_event_reads_exclusions_as_event_manager_does():
+    # Given every pattern of 1 to 5 names after the stream, each name a, b or *
+    patterns = [
+        ".".join(("asset", *names))
+        for length in range(1, 6)
+        for names in itertools.product("ab*", repeat=length)
+    ]
+    disagreements = []
+
+    for exclusion in patterns:
+        oracle = _event_name_regex(exclusion)
+        for pattern in patterns:
+            # When
+            covered = receives_no_event([pattern, f"!{exclusion}"])
+
+            # Then
+            if covered != bool(oracle.fullmatch(pattern)):
+                disagreements.append(f"{exclusion} / {pattern}")
+
+    assert disagreements == []
+
+
+def test_upload_refuses_annotations_left_out_by_their_exclusions_before_uploading(kili, tmp_path):
+    uploader = _uploader(
+        kili, _plugin_file(tmp_path, SUBSCRIBED_PLUGIN), ["!asset.*", "!label.workflow.*"]
+    )
+
+    with pytest.raises(ValueError, match="leaves out every event the annotations"):
+        uploader._retrieve_plugin_src()
+
+    kili.graphql_client.execute.assert_not_called()
+
+
+def test_upload_refuses_an_on_event_plugin_receiving_no_event_before_uploading(kili):
+    plugin_path = Path(
+        os.path.join(
+            "tests",
+            "unit",
+            "services",
+            "plugins",
+            "test_plugins",
+            "handlers_correctly_implemented_events.py",
+        )
+    )
+    uploader = _uploader(kili, plugin_path, ["!asset.updated"])
+
+    with pytest.raises(ValueError, match="event_matcher would receive no event"):
+        uploader._retrieve_plugin_src()
+
+    kili.graphql_client.execute.assert_not_called()

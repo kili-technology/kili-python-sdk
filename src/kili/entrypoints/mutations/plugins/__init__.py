@@ -238,6 +238,8 @@ class MutationsPlugins(BaseOperationEntrypointMixin):
                 events it matches, even when another pattern matches them. A plugin using
                 `@on_kili_event` gets its events from the annotations, and passes here only
                 the ones to leave out, each prefixed with `!` (`['!asset.updated']`).
+                An update declares the events again: pass the exclusions again on every
+                update, or they are dropped.
             verbose: If false, minimal logs are displayed
 
         Returns:

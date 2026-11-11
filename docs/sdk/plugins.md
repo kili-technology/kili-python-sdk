@@ -119,6 +119,9 @@ events Kili adds later. A list that would leave every event out is refused.
 kili.upload_plugin(plugin_path="./my_plugin/", plugin_name="my_plugin", event_matcher=["!asset.updated"])
 ```
 
+`kili.update_plugin` declares the events again, from the annotations and its own `event_matcher`: pass the exclusions
+again on every update, or they are dropped.
+
 The upload reads your code without running it, so:
 
 - the decorated methods are those of the `PluginHandler` class of the plugin file (of `main.py` for a folder) — not the

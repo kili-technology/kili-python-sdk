@@ -313,6 +313,42 @@ def _method_patterns(method: ast.FunctionDef, names: _ImportedNames) -> list[str
     )
 
 
+def _covers(exclusion: str, pattern: str) -> bool:
+    """Whether an exclusion matches a pattern read as an event name.
+
+    As event-manager reads them, a `*` is a whole name standing for one or more names,
+    the pattern's own `*` included.
+    """
+    excluded, names = exclusion.split("."), pattern.split(".")
+    i = j = 0
+    star, mark = -1, 0
+    while j < len(names):
+        if i < len(excluded) and excluded[i] == "*":
+            star, i = i, i + 1
+            j += 1
+            mark = j
+        elif i < len(excluded) and excluded[i] == names[j]:
+            i += 1
+            j += 1
+        elif star >= 0:
+            i = star + 1
+            mark += 1
+            j = mark
+        else:
+            return False
+    return i == len(excluded)
+
+
+def receives_no_event(event_matcher: list[str]) -> bool:
+    """Whether every pattern of an event_matcher is an exclusion, or left out by one."""
+    exclusions = [pattern[1:] for pattern in event_matcher if pattern.startswith("!")]
+    return all(
+        any(_covers(exclusion, pattern) for exclusion in exclusions)
+        for pattern in event_matcher
+        if not pattern.startswith("!")
+    )
+
+
 def find_event_subscriptions(path: Path) -> dict[str, list[str]]:
     """Return the patterns each method of PluginHandler decorated with @on_kili_event receives.
 
@@ -517,6 +553,18 @@ class PluginUploader:
 
         if handler_types and self.event_matcher:
             raise ValueError("Cannot have both handler types and event matcher.")
+
+        # Refused here, before anything is uploaded: Kili would refuse it once the plugin exists.
+        if self.event_matcher and receives_no_event(self.event_matcher):
+            if subscriptions:
+                raise ValueError(
+                    "event_matcher leaves out every event the annotations of the @on_kili_event"
+                    " methods name: remove the exclusions that cover them."
+                )
+            raise ValueError(
+                "event_matcher would receive no event: list the events to receive without !,"
+                " and prefix with ! only those to leave out, e.g. ['asset.*', '!asset.updated']."
+            )
 
         self.handler_types = handler_types
 
