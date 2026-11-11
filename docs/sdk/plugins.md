@@ -137,7 +137,7 @@ The upload reads your code without running it, so:
 A family is uploaded as the pattern of its folder (`asset.workflow.*`), so an event Kili adds to it later reaches the
 plugin without changing its code. The method receives it once the plugin runs with a version of `kili_events` that
 knows it: on Kili's cloud, the packages are installed when the plugin is uploaded, so update the plugin
-(`kili.update_plugin`); on-premise, they are those of the plugins runner. Until then, like any event the plugin's
+(`kili.update_plugin`, with its exclusions again, if it has any); on-premise, they are those of the plugins runner. Until then, like any event the plugin's
 version of `kili_events` does not know, it is logged and skipped; an event that does not match its model is logged as
 an error and skipped.
 

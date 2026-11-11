@@ -896,31 +896,53 @@ def test_receives_no_event_reads_exclusions_as_event_manager_does():
     assert disagreements == []
 
 
-def test_upload_refuses_annotations_left_out_by_their_exclusions_before_uploading(kili, tmp_path):
-    uploader = _uploader(
-        kili, _plugin_file(tmp_path, SUBSCRIBED_PLUGIN), ["!asset.*", "!label.workflow.*"]
+ON_EVENT_PLUGIN = Path(
+    os.path.join(
+        "tests",
+        "unit",
+        "services",
+        "plugins",
+        "test_plugins",
+        "handlers_correctly_implemented_events.py",
     )
+)
 
-    with pytest.raises(ValueError, match="leaves out every event the annotations"):
-        uploader._retrieve_plugin_src()
 
+@pytest.mark.parametrize("action", ["create_plugin", "update_plugin"])
+@pytest.mark.parametrize(
+    ("plugin", "event_matcher", "message"),
+    [
+        (
+            "annotations",
+            ["!asset.*", "!label.workflow.*"],
+            "leaves out every event the annotations",
+        ),
+        ("on_event", ["!asset.updated"], "event_matcher would receive no event"),
+    ],
+)
+def test_upload_refuses_an_event_matcher_receiving_no_event_before_uploading_anything(
+    kili, tmp_path, action, plugin, event_matcher, message
+):
+    # Given
+    path = _plugin_file(tmp_path, SUBSCRIBED_PLUGIN) if plugin == "annotations" else ON_EVENT_PLUGIN
+    uploader = _uploader(kili, path, event_matcher)
+    uploader.http_client = MagicMock(spec=HttpClient)
+
+    # When
+    with pytest.raises(ValueError, match=message):
+        getattr(uploader, action)()
+
+    # Then — no upload url asked, no file sent, no runner
     kili.graphql_client.execute.assert_not_called()
+    uploader.http_client.put.assert_not_called()
 
 
-def test_upload_refuses_an_on_event_plugin_receiving_no_event_before_uploading(kili):
-    plugin_path = Path(
-        os.path.join(
-            "tests",
-            "unit",
-            "services",
-            "plugins",
-            "test_plugins",
-            "handlers_correctly_implemented_events.py",
-        )
-    )
-    uploader = _uploader(kili, plugin_path, ["!asset.updated"])
+def test_upload_leaves_a_list_with_an_invalid_pattern_to_kili(kili, tmp_path):
+    # Given — Kili answers it with the invalid pattern, not with "no event"
+    uploader = _uploader(kili, _plugin_file(tmp_path, SUBSCRIBED_PLUGIN), ["!*"])
 
-    with pytest.raises(ValueError, match="event_matcher would receive no event"):
-        uploader._retrieve_plugin_src()
+    # When
+    uploader._retrieve_plugin_src()
 
-    kili.graphql_client.execute.assert_not_called()
+    # Then
+    assert uploader.event_matcher[-1] == "!*"

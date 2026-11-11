@@ -1,6 +1,7 @@
 """Class to upload a plugin."""
 
 import ast
+import re
 import time
 from collections.abc import Iterator
 from pathlib import Path
@@ -313,6 +314,11 @@ def _method_patterns(method: ast.FunctionDef, names: _ImportedNames) -> list[str
     )
 
 
+# The shape of an event pattern, its stream left to Kili: a list holding another is not
+# judged here, and Kili answers with the invalid pattern.
+_PATTERN_SHAPE = re.compile(r"!?[A-Za-z0-9]+(\.(\*|[A-Za-z0-9]+))+")
+
+
 def _covers(exclusion: str, pattern: str) -> bool:
     """Whether an exclusion matches a pattern read as an event name.
 
@@ -555,7 +561,11 @@ class PluginUploader:
             raise ValueError("Cannot have both handler types and event matcher.")
 
         # Refused here, before anything is uploaded: Kili would refuse it once the plugin exists.
-        if self.event_matcher and receives_no_event(self.event_matcher):
+        if (
+            self.event_matcher
+            and all(_PATTERN_SHAPE.fullmatch(pattern) for pattern in self.event_matcher)
+            and receives_no_event(self.event_matcher)
+        ):
             if subscriptions:
                 raise ValueError(
                     "event_matcher leaves out every event the annotations of the @on_kili_event"
