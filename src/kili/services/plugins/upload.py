@@ -318,6 +318,12 @@ def _method_patterns(method: ast.FunctionDef, names: _ImportedNames) -> list[str
 # judged here, and Kili answers with the invalid pattern.
 _PATTERN_SHAPE = re.compile(r"!?[A-Za-z0-9]+(\.(\*|[A-Za-z0-9]+))+")
 
+# event-manager's bounds on a list holding an exclusion (src/entities/eventMatcher.ts), checked
+# here too so that the plugin is not created before Kili refuses its runner.
+_MAX_EXCLUSIONS = 100
+_MAX_PATTERNS_WITH_EXCLUSIONS = 500
+_MAX_PATTERN_LENGTH = 255
+
 
 def _covers(exclusion: str, pattern: str) -> bool:
     """Whether an exclusion matches a pattern read as an event name.
@@ -560,23 +566,47 @@ class PluginUploader:
         if handler_types and self.event_matcher:
             raise ValueError("Cannot have both handler types and event matcher.")
 
-        # Refused here, before anything is uploaded: Kili would refuse it once the plugin exists.
-        if (
-            self.event_matcher
-            and all(_PATTERN_SHAPE.fullmatch(pattern) for pattern in self.event_matcher)
-            and receives_no_event(self.event_matcher)
+        self._refuse_before_uploading(subscriptions)
+
+        self.handler_types = handler_types
+
+    def _refuse_before_uploading(self, subscriptions: dict[str, list[str]]) -> None:
+        """Refuse the exclusions Kili would refuse once the plugin exists, or that silence a method."""
+        event_matcher = self.event_matcher or []
+        exclusions = [pattern for pattern in event_matcher if pattern.startswith("!")]
+        if not exclusions:
+            return
+        if len(exclusions) > _MAX_EXCLUSIONS:
+            raise ValueError(
+                f"An event_matcher holds at most {_MAX_EXCLUSIONS} exclusions (patterns prefixed"
+                " with !): group them with *, e.g. !asset.workflow.*"
+            )
+        if len(event_matcher) > _MAX_PATTERNS_WITH_EXCLUSIONS or any(
+            len(pattern) > _MAX_PATTERN_LENGTH for pattern in event_matcher
         ):
-            if subscriptions:
-                raise ValueError(
-                    "event_matcher leaves out every event the annotations of the @on_kili_event"
-                    " methods name: remove the exclusions that cover them."
-                )
+            raise ValueError(
+                f"An event_matcher with exclusions holds at most {_MAX_PATTERNS_WITH_EXCLUSIONS}"
+                f" patterns of at most {_MAX_PATTERN_LENGTH} characters each: group events"
+                " with *, e.g. asset.workflow.*"
+            )
+        if not all(_PATTERN_SHAPE.fullmatch(pattern) for pattern in event_matcher):
+            return
+        silenced = [
+            method
+            for method, patterns in subscriptions.items()
+            if receives_no_event([*patterns, *exclusions])
+        ]
+        if silenced:
+            methods = ", ".join(f"PluginHandler.{method}" for method in silenced)
+            raise ValueError(
+                f"event_matcher leaves out every event of {methods}, which would never run:"
+                " remove the exclusions that cover them, or the method."
+            )
+        if not subscriptions and receives_no_event(event_matcher):
             raise ValueError(
                 "event_matcher would receive no event: list the events to receive without !,"
                 " and prefix with ! only those to leave out, e.g. ['asset.*', '!asset.updated']."
             )
-
-        self.handler_types = handler_types
 
     def _retrieve_requirements(self) -> Union[Path, None]:
         """Retrieve script from file_path and execute it to prevent an upload with indentation errors."""

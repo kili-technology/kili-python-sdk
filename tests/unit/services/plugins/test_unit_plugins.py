@@ -915,7 +915,7 @@ ON_EVENT_PLUGIN = Path(
         (
             "annotations",
             ["!asset.*", "!label.workflow.*"],
-            "leaves out every event the annotations",
+            "leaves out every event of PluginHandler",
         ),
         ("on_event", ["!asset.updated"], "event_matcher would receive no event"),
     ],
@@ -927,6 +927,8 @@ def test_upload_refuses_an_event_matcher_receiving_no_event_before_uploading_any
     path = _plugin_file(tmp_path, SUBSCRIBED_PLUGIN) if plugin == "annotations" else ON_EVENT_PLUGIN
     uploader = _uploader(kili, path, event_matcher)
     uploader.http_client = MagicMock(spec=HttpClient)
+    # an upload that went through would poll the runner's status: answered at once
+    uploader._check_plugin_runner_status = MagicMock()
 
     # When
     with pytest.raises(ValueError, match=message):
@@ -946,3 +948,32 @@ def test_upload_leaves_a_list_with_an_invalid_pattern_to_kili(kili, tmp_path):
 
     # Then
     assert uploader.event_matcher[-1] == "!*"
+
+
+def test_upload_refuses_an_exclusion_silencing_one_method_before_uploading(kili, tmp_path):
+    # Given on_skip receives asset.skipped only, on_issue_or_label asset.issue.* and label.workflow.*
+    uploader = _uploader(kili, _plugin_file(tmp_path, SUBSCRIBED_PLUGIN), ["!asset.skipped"])
+
+    # When / Then — refused while the source is read, before anything is uploaded
+    with pytest.raises(
+        ValueError, match=r"every event of PluginHandler\.on_skip, which would never"
+    ):
+        uploader._retrieve_plugin_src()
+
+
+@pytest.mark.parametrize(
+    ("event_matcher", "message"),
+    [
+        (["asset.*", *(f"!asset.e{i}" for i in range(101))], "at most 100 exclusions"),
+        ([*(f"asset.p{i}" for i in range(500)), "!asset.updated"], "at most 500 patterns"),
+        ([f"asset.{'a' * 250}", "!asset.updated"], "of at most 255 characters"),
+    ],
+    ids=["101 exclusions", "501 patterns", "a pattern of 256 characters"],
+)
+def test_upload_refuses_exclusions_past_kili_bounds_before_uploading(kili, event_matcher, message):
+    # Given
+    uploader = _uploader(kili, ON_EVENT_PLUGIN, event_matcher)
+
+    # When / Then — refused while the source is read, before anything is uploaded
+    with pytest.raises(ValueError, match=message):
+        uploader._retrieve_plugin_src()

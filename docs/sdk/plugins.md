@@ -113,7 +113,8 @@ kili.upload_plugin(plugin_path="./my_plugin/", plugin_name="my_plugin")
 
 To leave some of these events out, pass them in `event_matcher`, each prefixed with `!`, and nothing else: with a
 method annotated `AssetEvent`, the plugin below receives every asset event but `asset.updated`, including the asset
-events Kili adds later. A list that would leave every event out is refused.
+events Kili adds later. An exclusion that leaves a method no event is refused, since that method would never run, and
+so is a list of more than 100 exclusions.
 
 ```python
 kili.upload_plugin(plugin_path="./my_plugin/", plugin_name="my_plugin", event_matcher=["!asset.updated"])
