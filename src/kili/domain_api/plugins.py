@@ -78,7 +78,9 @@ class WebhooksNamespace:
                 Possible variants: `onSubmit`, `onReview`.
                 By default, is [`onSubmit`, `onReview`].
             event_pattern: Event pattern for which the webhook should be called.
-            event_matcher: List of events for which the webhook should be called.
+            event_matcher: Patterns of the events for which the webhook should be called, such
+                as `asset.*`. A pattern prefixed with `!` leaves out the events it matches,
+                even when another pattern matches them: `['asset.*', '!asset.updated']`.
 
         Returns:
             A string which indicates if the mutation was successful,
@@ -106,6 +108,13 @@ class WebhooksNamespace:
             ...     plugin_name='custom webhook',
             ...     handler_types=['onSubmit', 'onReview'],
             ...     event_matcher=['project.*', 'asset.*']
+            ... )
+
+            >>> # Create webhook called on every asset event but asset.updated
+            >>> result = kili.plugins.webhooks.create(
+            ...     webhook_url='https://my-webhook.com/api/kili',
+            ...     plugin_name='custom webhook',
+            ...     event_matcher=['asset.*', '!asset.updated']
             ... )
         """
         # Convert singular to plural
@@ -146,7 +155,9 @@ class WebhooksNamespace:
                 Possible variants: `onSubmit`, `onReview`.
                 By default, is [`onSubmit`, `onReview`]
             event_pattern: Event pattern for which the webhook should be called.
-            event_matcher: List of events for which the webhook should be called.
+            event_matcher: Patterns of the events for which the webhook should be called, such
+                as `asset.*`. A pattern prefixed with `!` leaves out the events it matches,
+                even when another pattern matches them: `['asset.*', '!asset.updated']`.
 
         Returns:
             A string which indicates if the mutation was successful,
@@ -481,6 +492,8 @@ class PluginsNamespace(DomainNamespace):
             event_pattern: A single `event_matcher`.
             event_matcher: Events for which a plugin overriding `on_event` is called. A plugin
                 using `@on_kili_event` leaves it out: its events come from the annotations.
+                A pattern prefixed with `!` leaves out the events it matches, even when
+                another pattern matches them: `['asset.*', '!asset.updated']`.
             verbose: If false, minimal logs are displayed
 
         Returns:
@@ -525,6 +538,8 @@ class PluginsNamespace(DomainNamespace):
             event_pattern: A single `event_matcher`.
             event_matcher: Events for which a plugin overriding `on_event` is called. A plugin
                 using `@on_kili_event` leaves it out: its events come from the annotations.
+                A pattern prefixed with `!` leaves out the events it matches, even when
+                another pattern matches them: `['asset.*', '!asset.updated']`.
             verbose: If false, minimal logs are displayed
 
         Returns:

@@ -39,6 +39,8 @@ class MutationsPlugins(BaseOperationEntrypointMixin):
             plugin_name: name of your plugin, if not provided, it will be the name from your file
             event_matcher: Events for which a plugin overriding `on_event` is called. A plugin
                 using `@on_kili_event` leaves it out: its events come from the annotations.
+                A pattern prefixed with `!` leaves out the events it matches, even when
+                another pattern matches them: `['asset.*', '!asset.updated']`.
             verbose: If false, minimal logs are displayed
 
         Returns:
@@ -97,7 +99,9 @@ class MutationsPlugins(BaseOperationEntrypointMixin):
             handler_types: List of actions for which the webhook should be called.
                 Possible variants: `onSubmit`, `onReview`.
                 By default, is [`onSubmit`, `onReview`].
-            event_matcher: List of events for which the webhook should be called.
+            event_matcher: Patterns of the events for which the webhook should be called, such
+                as `asset.*`. A pattern prefixed with `!` leaves out the events it matches,
+                even when another pattern matches them: `['asset.*', '!asset.updated']`.
 
         Returns:
             A string which indicates if the mutation was successful,
@@ -139,7 +143,9 @@ class MutationsPlugins(BaseOperationEntrypointMixin):
             handler_types: List of actions for which the webhook should be called.
                 Possible variants: `onSubmit`, `onReview`.
                 By default, is [`onSubmit`, `onReview`]
-            event_matcher: List of events for which the webhook should be called.
+            event_matcher: Patterns of the events for which the webhook should be called, such
+                as `asset.*`. A pattern prefixed with `!` leaves out the events it matches,
+                even when another pattern matches them: `['asset.*', '!asset.updated']`.
 
         Returns:
             A string which indicates if the mutation was successful,
@@ -226,6 +232,8 @@ class MutationsPlugins(BaseOperationEntrypointMixin):
             plugin_name: Name of the plugin
             event_matcher: Events for which a plugin overriding `on_event` is called. A plugin
                 using `@on_kili_event` leaves it out: its events come from the annotations.
+                A pattern prefixed with `!` leaves out the events it matches, even when
+                another pattern matches them: `['asset.*', '!asset.updated']`.
             verbose: If false, minimal logs are displayed
 
         Returns:

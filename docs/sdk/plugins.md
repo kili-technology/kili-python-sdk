@@ -138,7 +138,9 @@ declares them — no event id or timestamp.
 Overriding `on_event` with an `event_matcher` still works, but is deprecated in favour of `on_kili_event`. **`on_event` now
 receives the whole event**: the fields it received before are under `payload["payload"]`, beside `event`,
 `organizationId`, `projectId` and `userId`. Its `event_matcher` takes subjects and patterns, where `*` stands for one or
-more names (`label.workflow.*`, `project.workflow.bulkAction.*.started`).
+more names (`label.workflow.*`, `project.workflow.bulkAction.*.started`). A pattern prefixed with `!` leaves out the
+events it matches, even when another pattern matches them: `["asset.*", "!asset.updated"]` receives every asset event
+but `asset.updated`. A webhook's `event_matcher` takes the same patterns.
 
 Before:
 
