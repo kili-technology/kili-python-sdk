@@ -25,6 +25,7 @@ from .operations import (
     GQL_COPY_PROJECT,
     GQL_COUNT_PROJECTS,
     GQL_CREATE_PROJECT,
+    GQL_UPDATE_PROJECT_ANONYMIZATION,
     get_update_properties_in_project_mutation,
 )
 from .types import CopyProjectInput, ProjectDataKiliAPIGatewayInput
@@ -129,3 +130,8 @@ class ProjectOperationMixin(BaseOperationMixin):
         # Like any mutation, it is not resent when it times out.
         result = self.graphql_client.execute(GQL_COPY_PROJECT, variables, timeout=600)
         return ProjectId(result.get("data", ""))
+
+    def update_project_anonymization(self, project_id: ProjectId, should_anonymize: bool) -> None:
+        """Anonymize the members of a project for its labelers and reviewers, or stop doing so."""
+        variables = {"input": {"id": project_id, "shouldAnonymize": should_anonymize}}
+        self.graphql_client.execute(GQL_UPDATE_PROJECT_ANONYMIZATION, variables)

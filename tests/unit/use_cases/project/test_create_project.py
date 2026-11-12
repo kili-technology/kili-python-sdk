@@ -22,13 +22,14 @@ def use_cases(mock_gateway):
     return ProjectUseCases(mock_gateway)
 
 
-def _source_project(labeling_crs_code: str | None = None) -> dict:
+def _source_project(labeling_crs_code: str | None = None, is_anonymized: bool = False) -> dict:
     return {
         "geospatialSettings": (
             {"labelingCRSCode": labeling_crs_code} if labeling_crs_code else None
         ),
         "inputType": "GEOSPATIAL",
         "instructions": None,
+        "isAnonymized": is_anonymized,
         "jsonInterface": {"jobs": {}},
     }
 
@@ -113,3 +114,23 @@ def test_creating_a_project_forwards_the_mode(use_cases, mock_gateway):
     )
 
     assert mock_gateway.create_project.call_args.kwargs["pixel_labeling"] is True
+
+
+def test_copying_an_anonymized_project_keeps_it_anonymized(use_cases, mock_gateway):
+    """The backend receives no source, so only its organization's default would decide."""
+    _copy(use_cases, mock_gateway, _source_project(is_anonymized=True))
+
+    source_fields = mock_gateway.get_project.call_args_list[0].kwargs["fields"]
+    assert "isAnonymized" in source_fields
+    mock_gateway.update_project_anonymization.assert_called_once_with(
+        ProjectId("new-project"), should_anonymize=True
+    )
+
+
+def test_copying_a_project_that_is_not_anonymized_leaves_it_to_the_organization(
+    use_cases, mock_gateway
+):
+    """Its organization may still start every new project anonymized: the copy is not forced off."""
+    _copy(use_cases, mock_gateway, _source_project(is_anonymized=False))
+
+    mock_gateway.update_project_anonymization.assert_not_called()

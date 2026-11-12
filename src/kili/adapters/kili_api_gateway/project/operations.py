@@ -42,3 +42,11 @@ mutation CopyProject($data: CopyProjectData!) {
   data: copyProject(data: $data)
 }
 """
+
+GQL_UPDATE_PROJECT_ANONYMIZATION = """
+mutation UpdateProjectAnonymization($input: UpdateProjectAnonymizationInput!) {
+  data: updateProjectAnonymization(input: $input) {
+    id
+  }
+}
+"""

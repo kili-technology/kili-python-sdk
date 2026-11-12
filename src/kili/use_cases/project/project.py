@@ -122,10 +122,16 @@ class ProjectUseCases(BaseUseCases):
         compliance_tags: Optional[ListOrTuple[ComplianceTag]],
         from_demo_project: Optional[DemoProjectType],
     ) -> ProjectId:
-        """Create a project from an existing one, carrying over its instructions and tags."""
+        """Create a project from an existing one, carrying over its instructions, tags, anonymization."""
         project_copied = self._kili_api_gateway.get_project(
             project_id=project_id,
-            fields=["jsonInterface", "instructions", "inputType", "geospatialSettings"],
+            fields=[
+                "jsonInterface",
+                "instructions",
+                "inputType",
+                "geospatialSettings",
+                "isAnonymized",
+            ],
         )
         project_tag = self._kili_api_gateway.list_tags_by_project(
             project_id=project_id, fields=["id"]
@@ -143,6 +149,12 @@ class ProjectUseCases(BaseUseCases):
             self.update_properties_in_project(
                 project_id=new_project_id,
                 instructions=project_copied["instructions"],
+            )
+        # `createProject` takes no source, so the backend starts the copy anonymized only when its
+        # organization makes that the default: the source's anonymization is carried over here.
+        if project_copied.get("isAnonymized"):
+            self._kili_api_gateway.update_project_anonymization(
+                ProjectId(new_project_id), should_anonymize=True
             )
 
         tags_of_orga = self._kili_api_gateway.list_tags_by_org(fields=("id",))
