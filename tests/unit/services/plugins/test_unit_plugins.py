@@ -977,3 +977,49 @@ def test_upload_refuses_exclusions_past_kili_bounds_before_uploading(kili, event
     # When / Then — refused while the source is read, before anything is uploaded
     with pytest.raises(ValueError, match=message):
         uploader._retrieve_plugin_src()
+
+
+@pytest.mark.parametrize(
+    "event_matcher",
+    [
+        ["asset.*", *(f"!asset.e{i}" for i in range(100))],
+        [*(f"asset.p{i}" for i in range(499)), "!asset.updated"],
+        [f"asset.{'a' * 249}", "!asset.updated"],
+    ],
+    ids=["100 exclusions", "500 patterns", "a pattern of 255 characters"],
+)
+def test_upload_accepts_exclusions_at_kili_bounds(kili, event_matcher):
+    # Given
+    uploader = _uploader(kili, ON_EVENT_PLUGIN, event_matcher)
+
+    # When
+    uploader._retrieve_plugin_src()
+
+    # Then
+    assert uploader.event_matcher == event_matcher
+
+
+def test_upload_counts_the_exclusions_it_sends_beside_the_annotations(kili, tmp_path):
+    # Given 100 distinct exclusions, each passed twice for half of them
+    exclusions = [f"!asset.issue.e{i}" for i in range(100)]
+    uploader = _uploader(
+        kili, _plugin_file(tmp_path, SUBSCRIBED_PLUGIN), exclusions + exclusions[:50]
+    )
+
+    # When
+    uploader._retrieve_plugin_src()
+
+    # Then — sent once each, after the annotations' patterns
+    assert uploader.event_matcher == [
+        "asset.issue.*",
+        "asset.skipped",
+        "label.workflow.*",
+        *exclusions,
+    ]
+
+    # And one more distinct exclusion is past Kili's bound
+    uploader = _uploader(
+        kili, _plugin_file(tmp_path, SUBSCRIBED_PLUGIN), [*exclusions, "!asset.issue.e100"]
+    )
+    with pytest.raises(ValueError, match="at most 100 exclusions"):
+        uploader._retrieve_plugin_src()

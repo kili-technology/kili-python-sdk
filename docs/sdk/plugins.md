@@ -113,8 +113,8 @@ kili.upload_plugin(plugin_path="./my_plugin/", plugin_name="my_plugin")
 
 To leave some of these events out, pass them in `event_matcher`, each prefixed with `!`, and nothing else: with a
 method annotated `AssetEvent`, the plugin below receives every asset event but `asset.updated`, including the asset
-events Kili adds later. An exclusion that leaves a method no event is refused, since that method would never run, and
-so is a list of more than 100 exclusions.
+events Kili adds later. An exclusion that leaves a method no event is refused, since that method would never run. A
+list with exclusions holds at most 100 of them, and at most 500 patterns of 255 characters each.
 
 ```python
 kili.upload_plugin(plugin_path="./my_plugin/", plugin_name="my_plugin", event_matcher=["!asset.updated"])
@@ -151,7 +151,8 @@ Overriding `on_event` with an `event_matcher` still works, but is deprecated in 
 receives the whole event**: the fields it received before are under `payload["payload"]`, beside `event`,
 `organizationId`, `projectId` and `userId`. Its `event_matcher` takes subjects and patterns, where `*` stands for one or
 more names (`label.workflow.*`, `project.workflow.bulkAction.*.started`), and `!` before a pattern leaves its events
-out (`["asset.*", "!asset.updated"]`), as for a webhook's `event_matcher`. With `on_kili_event`, the annotations
+out (`["asset.*", "!asset.updated"]`), as for a webhook's `event_matcher` — at most 100 exclusions, and with them at
+most 500 patterns of 255 characters each. With `on_kili_event`, the annotations
 replace the patterns and `event_matcher` keeps only the exclusions (`["!asset.updated"]`).
 
 Before:
