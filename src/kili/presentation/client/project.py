@@ -55,6 +55,7 @@ class ProjectClientMethods(BaseClientMethods):
             description: Description of the project.
             project_id: Identifier of the project to copy.
             tags: Tags to add to the project. The tags must already exist in the organization.
+                A label matches exactly, else ignoring case and outer spaces.
             compliance_tags: Compliance tags of the project.
                 Compliance tags are used to categorize projects based on the sensitivity of
                 the data being handled and the legal constraints associated with it.
@@ -233,6 +234,7 @@ class ProjectClientMethods(BaseClientMethods):
             starred: If `True`, only starred projects are returned, if `False`, only unstarred projects are returned.
                 `None` disables this filter.
             tags_in: Returned projects should have at least one of these tags.
+                A label matches exactly, else ignoring case and outer spaces.
             organization_id: Returned projects should belong to this organization.
             fields: All the fields to request among the possible fields for the projects.
                 See [the documentation](https://docs.kili-technology.com/reference/graphql-api#project) for all possible fields.

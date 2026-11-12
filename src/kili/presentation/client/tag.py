@@ -56,6 +56,7 @@ class TagClientMethods(BaseClientMethods):
         Args:
             project_id: Id of the project.
             tags: Sequence of tag labels to associate to the project.
+                A label matches exactly, else ignoring case and outer spaces.
             tag_ids: Sequence of tag ids to associate to the project.
                 Only used if `tags` is not provided.
             disable_tqdm: Whether to disable the progress bar.
@@ -99,6 +100,7 @@ class TagClientMethods(BaseClientMethods):
         Args:
             project_id: Id of the project.
             tags: Sequence of tag labels to remove from the project.
+                A label matches exactly, else ignoring case and outer spaces.
             tag_ids: Sequence of tag ids to remove from the project.
             all: Whether to remove all tags from the project.
             disable_tqdm: Whether to disable the progress bar.
@@ -148,7 +150,7 @@ class TagClientMethods(BaseClientMethods):
         The tag will be updated for all projects of the organization.
 
         Args:
-            tag_name: Name of the tag to update.
+            tag_name: Name of the tag to update. A label matches exactly, else ignoring case and outer spaces.
             new_tag_name: New name of the tag.
 
         Returns:
@@ -170,7 +172,7 @@ class TagClientMethods(BaseClientMethods):
         If this tag is checked for one or more projects of the organization, it will be unchecked.
 
         Args:
-            tag_name: Name of the tag to remove.
+            tag_name: Name of the tag to remove. A label matches exactly, else ignoring case and outer spaces.
             tag_id: Id of the tag to remove.
                 Use this argument if you have several tags with the same name.
 

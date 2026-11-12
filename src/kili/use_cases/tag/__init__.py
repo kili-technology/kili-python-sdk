@@ -10,10 +10,17 @@ from kili.domain.types import ListOrTuple
 from kili.use_cases.base import BaseUseCases
 from kili.utils.tqdm import tqdm
 
+# What the backend's JavaScript `trim()` removes (ECMAScript WhiteSpace and LineTerminator):
+# Python's `strip()` also removes U+001C-U+001F and U+0085, and keeps U+FEFF.
+_JS_WHITESPACE = (
+    "\t\n\v\f\r \u00a0\u1680\u2000\u2001\u2002\u2003\u2004\u2005\u2006\u2007\u2008\u2009\u200a"
+    "\u2028\u2029\u202f\u205f\u3000\ufeff"
+)
+
 
 def _same_name(label: str) -> str:
     # The backend's rule for two tag names being the same name: outer spaces and case aside.
-    return label.strip().lower()
+    return label.strip(_JS_WHITESPACE).lower()
 
 
 class TagUseCases(BaseUseCases):
@@ -35,7 +42,7 @@ class TagUseCases(BaseUseCases):
         tags_of_orga_ids = [tag["id"] for tag in tags_of_orga]
 
         tags_of_project = self._kili_api_gateway.list_tags_by_project(project_id, fields=("id",))
-        tags_of_project_ids = [tag["id"] for tag in tags_of_project]
+        tags_of_project_ids = {tag["id"] for tag in tags_of_project}
 
         ret_tags = []
         for tag_id in tqdm(tag_ids, desc="Tagging project", disable=disable_tqdm):
@@ -50,6 +57,8 @@ class TagUseCases(BaseUseCases):
                 ret_tags.append(
                     self._kili_api_gateway.check_tag(project_id=project_id, tag_id=tag_id)
                 )
+                # Two names of one tag ("Q4", "q4") check it once.
+                tags_of_project_ids.add(tag_id)
 
         return ret_tags
 

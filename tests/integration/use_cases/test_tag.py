@@ -97,7 +97,7 @@ def test_given_tag_labels_when_i_convert_them_to_tag_ids_then_it_works(
     assert tag_ids == ["tag2_id", "tag1_id"]
 
 
-@pytest.mark.parametrize("label", ["  Q4  ", "q4", "  q4 "])
+@pytest.mark.parametrize("label", ["  Q4  ", "q4", "  q4 ", "\ufeffQ4", "Q4\u3000"])
 def test_given_a_tag_when_i_name_it_with_other_case_or_outer_spaces_then_it_is_found(
     kili_api_gateway: KiliAPIGateway, label: str
 ):
@@ -112,6 +112,54 @@ def test_given_a_tag_when_i_name_it_with_other_case_or_outer_spaces_then_it_is_f
 
     # Then
     assert tag_ids == ["q4_id"]
+
+
+def test_given_a_tag_stored_with_outer_spaces_when_i_name_it_without_them_then_it_is_found(
+    kili_api_gateway: KiliAPIGateway,
+):
+    # Given
+    kili_api_gateway.list_tags_by_org.return_value = [{"id": "padded_id", "label": "  Padded  "}]
+
+    # When
+    tag_ids = TagUseCases(kili_api_gateway).get_tag_ids_from_labels(labels=("padded",))
+
+    # Then
+    assert tag_ids == ["padded_id"]
+
+
+def test_given_tags_the_backend_tells_apart_when_i_name_one_then_only_it_is_found(
+    kili_api_gateway: KiliAPIGateway,
+):
+    # Given — the backend's trim() keeps U+001F, so "Q4\x1f" is another name than "Q4"
+    kili_api_gateway.list_tags_by_org.return_value = [
+        {"id": "q4_id", "label": "Q4"},
+        {"id": "q4_unit_id", "label": "Q4\x1f"},
+    ]
+
+    # When
+    tag_ids = TagUseCases(kili_api_gateway).get_tag_ids_from_labels(labels=("q4",))
+
+    # Then
+    assert tag_ids == ["q4_id"]
+
+
+def test_given_two_names_of_one_tag_when_tagging_a_project_then_it_is_checked_once(
+    kili_api_gateway: KiliAPIGateway,
+):
+    # Given
+    kili_api_gateway.list_tags_by_org.return_value = [{"id": "q4_id", "label": "Q4"}]
+    kili_api_gateway.list_tags_by_project.return_value = []
+    kili_api_gateway.check_tag.return_value = "q4_id"
+    tag_use_cases = TagUseCases(kili_api_gateway)
+    tag_ids = tag_use_cases.get_tag_ids_from_labels(labels=("Q4", "q4"))
+
+    # When
+    tag_use_cases.tag_project(
+        project_id=ProjectId("project_id"), tag_ids=tag_ids, disable_tqdm=True
+    )
+
+    # Then
+    kili_api_gateway.check_tag.assert_called_once_with(project_id="project_id", tag_id="q4_id")
 
 
 def test_given_old_duplicates_when_i_name_one_exactly_then_that_one_is_found(
