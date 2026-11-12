@@ -652,7 +652,9 @@ class ProjectsNamespace(DomainNamespace):
             json_interface: The json parameters of the project, see Edit your interface.
             title: Title of the project.
             description: Description of the project.
-            project_id: Identifier of the project to copy.
+            project_id: Identifier of the project to copy. The copy keeps its interface,
+                instructions and tags. It starts with user anonymization on when the project
+                copied has it on, or when the organization starts every new project anonymized.
             tags: Tags to add to the project. The tags must already exist in the organization.
             compliance_tags: Compliance tags of the project.
                 Compliance tags are used to categorize projects based on the sensitivity of
