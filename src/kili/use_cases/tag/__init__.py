@@ -11,6 +11,11 @@ from kili.use_cases.base import BaseUseCases
 from kili.utils.tqdm import tqdm
 
 
+def _same_name(label: str) -> str:
+    # The backend's rule for two tag names being the same name: outer spaces and case aside.
+    return label.strip().lower()
+
+
 class TagUseCases(BaseUseCases):
     """Tag use cases."""
 
@@ -76,25 +81,30 @@ class TagUseCases(BaseUseCases):
         ]
 
     def get_tag_ids_from_labels(self, labels: ListOrTuple[str]) -> list[TagId]:
-        """Get tag ids from labels."""
+        """Get tag ids from labels, matched exactly, else ignoring case and outer spaces."""
         tags_of_orga = self._kili_api_gateway.list_tags_by_org(fields=("id", "label"))
 
+        # An exact label first, so duplicates created before the backend made names unique
+        # (`Urgent` and `urgent`) still resolve; else the name as the backend compares it.
         tag_label_to_id = defaultdict(list)
+        tag_name_to_id = defaultdict(list)
         for tag in tags_of_orga:
             tag_label_to_id[tag["label"]].append(tag["id"])
+            tag_name_to_id[_same_name(tag["label"])].append(tag["id"])
 
         tag_ids = []
         for label in labels:
-            if label not in tag_label_to_id:
+            ids = tag_label_to_id.get(label) or tag_name_to_id.get(_same_name(label))
+            if not ids:
                 raise ValueError(
                     f"Tag `{label}` not found in organization with tag ids: {tags_of_orga}"
                 )
-            if len(tag_label_to_id[label]) > 1:
+            if len(ids) > 1:
                 raise ValueError(
-                    f"Several tags with ids ({tag_label_to_id[label]}) have the same label"
-                    f" `{label}`. Please use tag ids instead."
+                    f"Several tags with ids ({ids}) match the label `{label}`. Please use tag ids"
+                    " instead."
                 )
-            tag_ids.append(TagId(tag_label_to_id[label][0]))
+            tag_ids.append(TagId(ids[0]))
 
         return tag_ids
 

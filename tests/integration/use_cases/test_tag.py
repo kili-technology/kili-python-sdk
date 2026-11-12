@@ -97,6 +97,64 @@ def test_given_tag_labels_when_i_convert_them_to_tag_ids_then_it_works(
     assert tag_ids == ["tag2_id", "tag1_id"]
 
 
+@pytest.mark.parametrize("label", ["  Q4  ", "q4", "  q4 "])
+def test_given_a_tag_when_i_name_it_with_other_case_or_outer_spaces_then_it_is_found(
+    kili_api_gateway: KiliAPIGateway, label: str
+):
+    # Given
+    kili_api_gateway.list_tags_by_org.return_value = [
+        {"id": "q4_id", "label": "Q4"},
+        {"id": "other_id", "label": "Other"},
+    ]
+
+    # When
+    tag_ids = TagUseCases(kili_api_gateway).get_tag_ids_from_labels(labels=(label,))
+
+    # Then
+    assert tag_ids == ["q4_id"]
+
+
+def test_given_old_duplicates_when_i_name_one_exactly_then_that_one_is_found(
+    kili_api_gateway: KiliAPIGateway,
+):
+    # Given
+    kili_api_gateway.list_tags_by_org.return_value = [
+        {"id": "upper_id", "label": "Urgent"},
+        {"id": "lower_id", "label": "urgent"},
+    ]
+
+    # When
+    tag_ids = TagUseCases(kili_api_gateway).get_tag_ids_from_labels(labels=("urgent", "Urgent"))
+
+    # Then
+    assert tag_ids == ["lower_id", "upper_id"]
+
+
+def test_given_old_duplicates_when_i_name_neither_exactly_then_it_asks_for_ids(
+    kili_api_gateway: KiliAPIGateway,
+):
+    # Given
+    kili_api_gateway.list_tags_by_org.return_value = [
+        {"id": "upper_id", "label": "Urgent"},
+        {"id": "lower_id", "label": "urgent"},
+    ]
+
+    # When / Then
+    with pytest.raises(ValueError, match="Several tags with ids .* match the label `URGENT`"):
+        TagUseCases(kili_api_gateway).get_tag_ids_from_labels(labels=("URGENT",))
+
+
+def test_given_no_tag_of_that_name_when_i_name_it_then_it_crashes(
+    kili_api_gateway: KiliAPIGateway,
+):
+    # Given
+    kili_api_gateway.list_tags_by_org.return_value = [{"id": "q4_id", "label": "Q4"}]
+
+    # When / Then
+    with pytest.raises(ValueError, match="Tag `Q4 bis` not found in organization"):
+        TagUseCases(kili_api_gateway).get_tag_ids_from_labels(labels=("Q4 bis",))
+
+
 def test_when_tagging_project_with_invalid_organization_tag_then_it_crashes(
     kili_api_gateway: KiliAPIGateway,
 ):
