@@ -7,13 +7,14 @@ from typing import Optional
 from urllib.parse import unquote
 
 import requests
-from tenacity import retry
+from tenacity import Retrying
 from tenacity.retry import retry_if_exception
 from tenacity.stop import stop_after_attempt
 from tenacity.wait import wait_exponential, wait_random
 
 from kili.adapters.http_client import HttpClient
 from kili.adapters.kili_api_gateway.helpers.http_json import load_json_from_link
+from kili.core.graphql.retry import Outcome, classify
 from kili.core.helpers import is_url
 from kili.domain.types import ListOrTuple
 from kili.exceptions import JsonResponseDownloadError
@@ -34,21 +35,18 @@ _LABEL_JSON_RESPONSE_PATH = re.compile(r"assets/([^/?&#]+)/labels/([^/?&#]+)\.js
 def _is_transient(error: BaseException) -> bool:
     """Whether a failed download may succeed when tried again.
 
-    A timeout, a dropped connection, a body cut short, a 429 or a 5xx may; any other 4xx (an
-    expired signature, a missing file) will not.
+    A timeout, a dropped connection, a body cut short, a 408, a 429 or a 5xx may. Any other 4xx
+    (an expired signature, a missing file), an untrusted certificate or an invalid URL will not:
+    the GraphQL client's rule for errors that stay the same (`classify`).
     """
     if isinstance(error, requests.HTTPError):
         status = error.response.status_code if error.response is not None else None
         return status is None or status >= 500 or status in _TRANSIENT_CLIENT_ERRORS
-    return isinstance(error, (requests.RequestException, json.JSONDecodeError))
+    if isinstance(error, json.JSONDecodeError):  # requests' own JSONDecodeError subclasses it
+        return True
+    return isinstance(error, requests.RequestException) and classify(error) is not Outcome.FAILED
 
 
-@retry(
-    retry=retry_if_exception(_is_transient),
-    stop=stop_after_attempt(JSON_RESPONSE_DOWNLOAD_ATTEMPTS),
-    wait=wait_exponential(multiplier=1, min=1, max=4) + wait_random(0, 1),
-    reraise=True,
-)
 def _get_json_response(url: str, http_client: HttpClient) -> dict:
     response = http_client.get(url, timeout=30)
     response.raise_for_status()
@@ -77,12 +75,19 @@ def _download_json_response_sync(url: str, http_client: HttpClient) -> dict:
         JsonResponseDownloadError: the download still failed after its retries, or failed on an
             error that retrying does not fix
     """
+    retrying = Retrying(
+        retry=retry_if_exception(_is_transient),
+        stop=stop_after_attempt(JSON_RESPONSE_DOWNLOAD_ATTEMPTS),
+        wait=wait_exponential(multiplier=1, min=1, max=4) + wait_random(0, 1),
+        reraise=True,
+    )
     try:
-        return _get_json_response(url, http_client)
+        return retrying(_get_json_response, url, http_client)
     except (requests.RequestException, json.JSONDecodeError) as error:
         label_id, asset_id = _label_and_asset_ids(url)
-        attempts = JSON_RESPONSE_DOWNLOAD_ATTEMPTS if _is_transient(error) else 1
-        raise JsonResponseDownloadError(label_id, asset_id, error, attempts) from error
+        attempts = retrying.statistics.get("attempt_number", 1)
+        # Not chained: requests' message holds the signed URL, query included. It stays on .cause
+        raise JsonResponseDownloadError(label_id, asset_id, error, attempts) from None
 
 
 async def _download_json_response(url: str, http_client: HttpClient) -> dict:

@@ -1,5 +1,6 @@
 """Exceptions of the package."""
 
+import re
 from typing import Optional
 
 from requests.exceptions import ConnectionError as RequestsConnectionError
@@ -106,17 +107,18 @@ class MutationOutcomeUnknownError(RequestsConnectionError):
 class JsonResponseDownloadError(RequestException):
     """Raised when the jsonResponse of a label could not be downloaded from its storage.
 
-    The download was retried on errors that may be transient (a timeout, a dropped connection,
-    a 429 or a 5xx). The label itself is intact in Kili: running the call again downloads it.
-    Before, such a label was returned with an empty jsonResponse.
+    The download is retried when the error may be transient (a timeout, a dropped connection, a
+    429 or a 5xx). Nothing is changed in Kili: running the call again downloads the label with a
+    new link. Before, such a label was returned with an empty jsonResponse.
 
     It is a requests RequestException, so existing `except requests.RequestException` clauses
-    catch it.
+    catch it. Its message never holds the download link's query, which signs it.
 
     Attributes:
         label_id: the id of the label, or None when its URL does not name it.
         asset_id: the id of the asset the label belongs to, or None when its URL does not name it.
-        cause: the error the last attempt failed with.
+        cause: the error the last attempt failed with, as requests raised it: its message may
+            hold the signed link.
         attempts: how many times the download was tried.
     """
 
@@ -138,10 +140,13 @@ class JsonResponseDownloadError(RequestException):
         else:
             label = f"label {label_id} of asset {asset_id}"
         tries = "once" if attempts == 1 else f"{attempts} times"
+        # requests names the URL it failed on, query included: the signature of the link
+        reason = re.sub(r"\?[^\s'\")]*", "", str(cause))
         super().__init__(
             f"Could not download the jsonResponse of {label} (tried {tries}, last error"
-            f" {type(cause).__name__}: {cause}). The label is intact in Kili: run the call"
-            " again. If it keeps failing, check the network access to your Kili storage."
+            f" {type(cause).__name__}: {reason}). Run the call again: it downloads the label"
+            " with a new link. If it keeps failing, check that this machine can reach your Kili"
+            " storage, or contact Kili support."
         )
 
     def __reduce__(self):

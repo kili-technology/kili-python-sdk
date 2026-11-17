@@ -8,8 +8,10 @@ This test file verifies that download_json_responses_parallel correctly:
 """
 
 import asyncio
+import io
 import json
 import pickle
+import traceback
 from unittest.mock import AsyncMock, Mock, patch
 
 import pytest
@@ -18,6 +20,7 @@ import requests
 from kili.adapters.http_client import HttpClient
 from kili.adapters.kili_api_gateway.asset.formatters import (
     JSON_RESPONSE_BATCH_SIZE,
+    _is_transient,
     download_json_responses_parallel,
     load_asset_json_fields,
 )
@@ -314,23 +317,29 @@ class TestLoadAssetJsonFields:
             assert result["latestLabel"]["jsonResponse"] == {"data": "latest"}
 
 
-SIGNED_URL = (
-    "https://storage.example.com/bucket/projects/project1/assets/asset1/labels/label1.json"
-    "?X-Goog-Signature=secret-signature"
-)
+SIGNED_PATH = "/bucket/projects/project1/assets/asset1/labels/label1.json"
+SIGNED_URL = f"https://storage.example.com{SIGNED_PATH}?X-Goog-Signature=secret-signature&a=b"
 OTHER_URL = "https://storage.example.com/bucket/projects/project1/assets/asset2/labels/label2.json"
 ANNOTATIONS = {"OBJECT_DETECTION_JOB": {"annotations": [{"mid": "rect-1", "type": "rectangle"}]}}
 
 
-def _response(status=200, body=None):
-    response = Mock(spec=requests.Response)
+def _response(status=200, body=None, url=SIGNED_URL, raw=None):
+    """A real requests Response: raise_for_status names the URL, query included, as in production."""
+    response = requests.Response()
     response.status_code = status
-    if status >= 400:
-        response.raise_for_status.side_effect = requests.HTTPError(
-            f"{status} Server Error", response=response
-        )
-    response.json.return_value = body
+    response.reason = {200: "OK", 403: "Forbidden", 408: "Request Timeout"}.get(status, "Error")
+    response.url = url
+    response.raw = io.BytesIO(json.dumps(body).encode() if raw is None else raw)
     return response
+
+
+def _dropped_connection(url=SIGNED_URL):
+    """A ConnectionError worded as requests words one from urllib3: it names the URL's path and query."""
+    path = url.split("storage.example.com", 1)[-1]
+    return requests.ConnectionError(
+        "HTTPSConnectionPool(host='storage.example.com', port=443): Max retries exceeded with url:"
+        f" {path} (Caused by NewConnectionError('Failed to establish a new connection'))"
+    )
 
 
 def _run(path, function):
@@ -345,6 +354,12 @@ def _run(path, function):
     asyncio.run(in_running_loop())
 
 
+def _download(path, url, http_client):
+    label = {"jsonResponseUrl": url}
+    _run(path, lambda: download_json_responses_parallel([(url, label)], http_client))
+    return label
+
+
 @pytest.fixture(autouse=True)
 def no_retry_wait(mocker):
     """The retries' backoff, skipped."""
@@ -357,32 +372,27 @@ class TestJsonResponseDownloadFailures:
 
     def test_a_download_failing_once_is_retried(self, path):
         http_client = Mock(spec=HttpClient)
-        http_client.get.side_effect = [
-            requests.ConnectionError("connection dropped"),
-            _response(body=ANNOTATIONS),
-        ]
-        label = {"jsonResponseUrl": SIGNED_URL}
+        http_client.get.side_effect = [_dropped_connection(), _response(body=ANNOTATIONS)]
 
-        _run(path, lambda: download_json_responses_parallel([(SIGNED_URL, label)], http_client))
+        label = _download(path, SIGNED_URL, http_client)
 
         assert label == {"jsonResponse": ANNOTATIONS}
         assert http_client.get.call_count == 2
 
-    @pytest.mark.parametrize("status", [429, 500, 503])
+    @pytest.mark.parametrize("status", [408, 429, 500, 503])
     def test_a_transient_http_error_is_retried(self, path, status):
         http_client = Mock(spec=HttpClient)
         http_client.get.side_effect = [_response(status), _response(body=ANNOTATIONS)]
-        label = {"jsonResponseUrl": SIGNED_URL}
 
-        _run(path, lambda: download_json_responses_parallel([(SIGNED_URL, label)], http_client))
+        label = _download(path, SIGNED_URL, http_client)
 
         assert label == {"jsonResponse": ANNOTATIONS}
 
     def test_a_download_that_keeps_failing_raises_naming_the_label(self, path):
         def get(url, **_):
             if url == SIGNED_URL:
-                raise requests.ReadTimeout("read timed out")
-            return _response(body=ANNOTATIONS)
+                raise _dropped_connection()
+            return _response(body=ANNOTATIONS, url=url)
 
         http_client = Mock(spec=HttpClient)
         http_client.get.side_effect = get
@@ -399,46 +409,97 @@ class TestJsonResponseDownloadFailures:
 
         error = raised.value
         assert (error.label_id, error.asset_id, error.attempts) == ("label1", "asset1", 3)
-        assert isinstance(error.cause, requests.ReadTimeout)
-        assert "label label1 of asset asset1" in str(error)
-        assert "run the call again" in str(error)
-        assert "secret-signature" not in str(error)
+        assert isinstance(error.cause, requests.ConnectionError)
+        assert "label label1 of asset asset1 (tried 3 times" in str(error)
+        assert "Run the call again" in str(error)
         assert "jsonResponse" not in failing
         assert [c.args[0] for c in http_client.get.call_args_list].count(SIGNED_URL) == 3
 
     def test_a_client_error_is_not_retried(self, path):
         http_client = Mock(spec=HttpClient)
         http_client.get.return_value = _response(403)
-        label = {"jsonResponseUrl": SIGNED_URL}
 
         with pytest.raises(JsonResponseDownloadError) as raised:
-            _run(path, lambda: download_json_responses_parallel([(SIGNED_URL, label)], http_client))
+            _download(path, SIGNED_URL, http_client)
 
         assert raised.value.attempts == 1
         assert "tried once" in str(raised.value)
         http_client.get.assert_called_once()
 
-    def test_an_unreadable_body_raises(self, path):
+    def test_the_attempts_are_counted(self, path):
         http_client = Mock(spec=HttpClient)
-        response = _response()
-        response.json.side_effect = json.JSONDecodeError("Expecting value", "<html>", 0)
-        http_client.get.return_value = response
-        label = {"jsonResponseUrl": SIGNED_URL}
+        http_client.get.side_effect = [_response(503), _response(403)]
 
-        with pytest.raises(JsonResponseDownloadError):
-            _run(path, lambda: download_json_responses_parallel([(SIGNED_URL, label)], http_client))
+        with pytest.raises(JsonResponseDownloadError) as raised:
+            _download(path, SIGNED_URL, http_client)
 
-        assert "jsonResponse" not in label
+        assert raised.value.attempts == 2
+        assert "tried 2 times" in str(raised.value)
+
+    def test_an_unreadable_body_is_retried_then_raises(self, path):
+        http_client = Mock(spec=HttpClient)
+        http_client.get.return_value = _response(raw=b"<html>cut")
+
+        with pytest.raises(JsonResponseDownloadError) as raised:
+            _download(path, SIGNED_URL, http_client)
+
+        assert raised.value.attempts == 3
+        assert http_client.get.call_count == 3
+
+    @pytest.mark.parametrize(
+        "failure", [lambda: _response(403), _dropped_connection], ids=["403", "dropped"]
+    )
+    def test_the_signed_query_is_never_shown(self, path, failure):
+        http_client = Mock(spec=HttpClient)
+        http_client.get.side_effect = lambda *_, **__: _raise_or_return(failure())
+
+        with pytest.raises(JsonResponseDownloadError) as raised:
+            _download(path, SIGNED_URL, http_client)
+
+        assert "secret-signature" in str(raised.value.cause)  # what requests says, kept on .cause
+        shown = str(raised.value) + "".join(traceback.format_exception(raised.value))
+        assert "secret-signature" not in shown
+        assert SIGNED_PATH in str(raised.value)
 
     def test_a_stored_empty_json_response_stays_empty(self, path):
         http_client = Mock(spec=HttpClient)
         http_client.get.return_value = _response(body={})
-        label = {"jsonResponseUrl": SIGNED_URL}
 
-        _run(path, lambda: download_json_responses_parallel([(SIGNED_URL, label)], http_client))
+        label = _download(path, SIGNED_URL, http_client)
 
         assert label == {"jsonResponse": {}}
         http_client.get.assert_called_once_with(SIGNED_URL, timeout=30)
+
+
+def _raise_or_return(failure):
+    if isinstance(failure, Exception):
+        raise failure
+    return failure
+
+
+@pytest.mark.parametrize(
+    ("error", "transient"),
+    [
+        (requests.ConnectionError("connection dropped"), True),
+        (requests.ReadTimeout("read timed out"), True),
+        (requests.exceptions.ChunkedEncodingError("body cut short"), True),
+        (requests.exceptions.JSONDecodeError("Expecting value", "<html>", 0), True),
+        (json.JSONDecodeError("Expecting value", "<html>", 0), True),
+        (requests.HTTPError("no response"), True),
+        (requests.HTTPError(response=_response(408)), True),
+        (requests.HTTPError(response=_response(429)), True),
+        (requests.HTTPError(response=_response(500)), True),
+        (requests.HTTPError(response=_response(503)), True),
+        (requests.HTTPError(response=_response(400)), False),
+        (requests.HTTPError(response=_response(403)), False),
+        (requests.HTTPError(response=_response(404)), False),
+        (requests.exceptions.SSLError("certificate verify failed"), False),
+        (requests.exceptions.InvalidURL("bad url"), False),
+    ],
+    ids=lambda value: value if isinstance(value, bool) else repr(value)[:40],
+)
+def test_what_is_retried(error, transient):
+    assert _is_transient(error) is transient
 
 
 class TestJsonResponseDownloadError:
@@ -446,12 +507,11 @@ class TestJsonResponseDownloadError:
 
     def test_an_unknown_url_names_no_label(self, no_retry_wait):
         http_client = Mock(spec=HttpClient)
-        http_client.get.side_effect = requests.ConnectionError("connection dropped")
         url = "https://proxy.example.com/download?token=secret-token"
-        label = {"jsonResponseUrl": url}
+        http_client.get.side_effect = _dropped_connection(url)
 
         with pytest.raises(JsonResponseDownloadError) as raised:
-            download_json_responses_parallel([(url, label)], http_client)
+            download_json_responses_parallel([(url, {"jsonResponseUrl": url})], http_client)
 
         assert (raised.value.label_id, raised.value.asset_id) == (None, None)
         assert "jsonResponse of a label" in str(raised.value)
@@ -459,7 +519,7 @@ class TestJsonResponseDownloadError:
         assert no_retry_wait.call_count == 2
 
     def test_it_is_a_requests_exception_that_pickles(self):
-        error = JsonResponseDownloadError("label1", "asset1", requests.ConnectionError("x"), 3)
+        error = JsonResponseDownloadError("label1", "asset1", _dropped_connection(), 3)
 
         unpickled = pickle.loads(pickle.dumps(error))
 
@@ -475,7 +535,7 @@ class TestJsonResponseDownloadError:
 def test_load_asset_json_fields_raises_rather_than_return_an_empty_label():
     """An asset whose latest label cannot be downloaded raises from assets() (LAB-4963)."""
     http_client = Mock(spec=HttpClient)
-    http_client.get.side_effect = requests.ConnectionError("connection dropped")
+    http_client.get.side_effect = _dropped_connection()
     asset = {"externalId": "img-1", "latestLabel": {"jsonResponseUrl": SIGNED_URL}}
 
     with pytest.raises(JsonResponseDownloadError, match="label label1 of asset asset1"):

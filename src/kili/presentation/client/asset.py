@@ -349,6 +349,13 @@ class AssetClientMethods(BaseClientMethods):
         Returns:
             An asset list, an asset generator or a pandas DataFrame that match a set of constraints.
 
+        Raises:
+            ValueError: `as_generator=True` with `format="pandas"`.
+            ImportError: `format="pandas"` without pandas installed (`pip install kili[pandas]`).
+            JsonResponseDownloadError: A label's jsonResponse, queried in `fields`, could not be
+                downloaded from the storage, even after retries. Running the call again downloads
+                it with a new link.
+
         Example:
             ```
             # returns the assets list of the project
