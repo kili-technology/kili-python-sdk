@@ -38,7 +38,7 @@ kili = Kili()
 
 ### Designing the labeling interface
 
-An audio interface is made of two very different kinds of jobs, and it is worth understanding the
+An audio interface is made of two kinds of jobs, and it is worth understanding the
 distinction before writing any code.
 
 **Segment-level jobs.** A `TRANSCRIPTION` job that is *not* flagged as asset-level is the
@@ -46,12 +46,17 @@ transcription job of the project. It is the job that materializes the segments d
 waveform: every segment is one annotation of that job, with a time interval, a piece of text and a
 speaker. An audio project has **exactly one** such job — it is what makes the waveform editable.
 
+A `CLASSIFICATION` job that is *not* flagged as asset-level is segment-level too: it is answered
+**once per segment**, for instance with the emotion of the speaker. Its categories take no nested
+job.
+
 **Asset-level jobs.** Any job carrying `"level": "asset"` applies to the *whole recording* rather
 than to a segment. They are rendered in a side panel on the right of the interface and behave like
 the classification and transcription jobs you already know from image or text projects. Use them for
 metadata such as the language of the call, the audio quality, or a free-text summary.
 
-Let's build an interface with one transcription job and two asset-level classification jobs.
+Let's build an interface with one transcription job, one segment-level classification job and two
+asset-level classification jobs.
 
 
 ```python
@@ -63,6 +68,22 @@ json_interface = {
             "mlTask": "TRANSCRIPTION",
             "content": {"input": "textField"},
             "instruction": "Transcription",
+            "required": 0,
+            "isChild": False,
+        },
+        # Segment-level classification: a CLASSIFICATION job without "level": "asset" is answered
+        # once per segment.
+        "EMOTION_JOB": {
+            "mlTask": "CLASSIFICATION",
+            "content": {
+                "categories": {
+                    "NEUTRAL": {"children": [], "name": "Neutral", "id": "category_neutral"},
+                    "POSITIVE": {"children": [], "name": "Positive", "id": "category_positive"},
+                    "NEGATIVE": {"children": [], "name": "Negative", "id": "category_negative"},
+                },
+                "input": "radio",
+            },
+            "instruction": "Emotion of the speaker",
             "required": 0,
             "isChild": False,
         },
@@ -192,7 +213,8 @@ An audio `jsonResponse` has one key that no other input type has: `speakers`.
         "startTime": 2.0,
         "endTime": 2.3,
         "speakerId": "spk_customer",
-        "text": "Hello."
+        "text": "Hello.",
+        "children": {"EMOTION_JOB": {"categories": [{"name": "NEUTRAL"}]}}
       }
     ]
   },
@@ -229,6 +251,7 @@ The transcription job holds an `annotations` list — one entry per segment on t
 | `endTime` | `float` | yes | End of the segment, **in seconds**. |
 | `text` | `str` | yes | The transcription. Use `""` for a segment that still has to be transcribed. |
 | `speakerId` | `str` | no | Id of one of the entries of `speakers`. Omit it (or set it to `null`) to leave the segment unassigned — it will show up as *Unknown* in the interface. |
+| `children` | `dict` | no | The segment's answers to the segment-level classification jobs, keyed by job name: `{"EMOTION_JOB": {"categories": [{"name": "NEUTRAL"}]}}`. Omit it for a segment that answers none. |
 
 Times are expressed in seconds as floats, with millisecond precision — Kili stores them internally as
 integer milliseconds, so `2.3456` is rounded to `2.346`.
@@ -254,42 +277,47 @@ speakers = [
     {"id": "spk_customer", "name": "Customer", "color": "#059669"},
 ]
 
-# (start, end, speaker, text) as produced by a transcription + diarization pipeline
+# (start, end, speaker, text, emotion) as produced by a transcription + diarization pipeline,
+# with an emotion model on top; None where the model gave no emotion
 raw_segments = [
-    (2.00, 2.30, "spk_customer", "Hello."),
-    (3.90, 5.40, "spk_agent", "Hello, I'm speaking to Mariam."),
-    (6.40, 7.50, "spk_customer", "Yes, speaking."),
-    (8.20, 9.40, "spk_agent", "Hello, my name is Stephen."),
-    (9.50, 13.30, "spk_agent", "I'm calling you from the finance department."),
+    (2.00, 2.30, "spk_customer", "Hello.", "NEUTRAL"),
+    (3.90, 5.40, "spk_agent", "Hello, I'm speaking to Mariam.", "NEUTRAL"),
+    (6.40, 7.50, "spk_customer", "Yes, speaking.", "NEUTRAL"),
+    (8.20, 9.40, "spk_agent", "Hello, my name is Stephen.", "POSITIVE"),
+    (9.50, 13.30, "spk_agent", "I'm calling you from the finance department.", None),
     (
         14.20,
         18.10,
         "spk_agent",
         "You were speaking with Michael before, and your manager is Mr. Omar, correct?",
+        None,
     ),
-    (19.10, 20.10, "spk_customer", "Okay."),
+    (19.10, 20.10, "spk_customer", "Okay.", "NEUTRAL"),
     (
         20.10,
         31.40,
         "spk_agent",
         "All right. I was calling you because we were trying to find a way to make a quick and easy withdrawal of your money back to your bank.",
+        None,
     ),
     (
         31.70,
         36.30,
         "spk_agent",
         "I think we finally found an option, and that's why I'm calling you.",
+        "POSITIVE",
     ),
-    (36.80, 39.70, "spk_agent", "It will just take another five or ten minutes."),
+    (36.80, 39.70, "spk_agent", "It will just take another five or ten minutes.", None),
     (
         40.00,
         44.50,
         "spk_agent",
         "If you're available, I would like to guide you through the steps.",
+        None,
     ),
-    (48.30, 50.40, "spk_agent", "So are you available for me to help you with that?"),
-    (51.90, 52.30, "spk_customer", "Yes."),
-    (53.00, 54.10, "spk_agent", "Okay, wonderful."),
+    (48.30, 50.40, "spk_agent", "So are you available for me to help you with that?", None),
+    (51.90, 52.30, "spk_customer", "Yes.", "POSITIVE"),
+    (53.00, 54.10, "spk_agent", "Okay, wonderful.", "POSITIVE"),
 ]
 
 json_response = {
@@ -302,8 +330,14 @@ json_response = {
                 "endTime": end,
                 "speakerId": speaker_id,
                 "text": text,
+                # segment-level classification: a segment carries its answers under "children"
+                **(
+                    {"children": {"EMOTION_JOB": {"categories": [{"name": emotion}]}}}
+                    if emotion
+                    else {}
+                ),
             }
-            for index, (start, end, speaker_id, text) in enumerate(raw_segments)
+            for index, (start, end, speaker_id, text, emotion) in enumerate(raw_segments)
         ]
     },
     # asset-level jobs, filled in the same call
@@ -336,6 +370,8 @@ A few things to keep in mind when building the `jsonResponse`:
 - **Overlapping segments are allowed**, which matters when two people talk over each other.
 - **Every `speakerId` should exist in `speakers`.** A segment pointing at an unknown speaker is
   imported, but the interface will render it as *Unknown*.
+- **`children` only takes segment-level classification jobs.** A job or a category the interface does
+  not define is refused, and so is a segment-level job answered at the root of the `jsonResponse`.
 
 To import ground-truth labels rather than predictions, use the very same `jsonResponse` with the
 default `label_type="DEFAULT"`.
@@ -407,8 +443,25 @@ print(json.dumps(segments[:2], indent=2))
     ]
 
 
-`mid`, `startTime`, `endTime` and `text` come back exactly as they were imported — `mid` in
-particular is your stable join key back to your own data.
+`mid`, `startTime`, `endTime`, `text` and `children` come back exactly as they were imported — `mid`
+in particular is your stable join key back to your own data.
+
+Labels can also be read as objects rather than as raw dictionaries, with `output_format="parsed_label"`:
+each segment then exposes its transcription, its times, its speaker and its classifications.
+
+
+```python
+parsed_label = kili.labels(
+    project_id=project_id,
+    asset_external_id_in=["support_call_en"],
+    output_format="parsed_label",
+)[0]
+
+segment = parsed_label.jobs["TRANSCRIPTION_JOB"].annotations[0]
+
+print(segment.start_time, segment.end_time, segment.speaker_id, segment.text)
+print(segment.children["EMOTION_JOB"].category.name)
+```
 
 ### Exporting the whole project to a file
 
@@ -442,7 +495,7 @@ kili.delete_project(project_id)
 
 ## Summary
 
-We created an audio project, learned the difference between the segment-level transcription job and
+We created an audio project, learned the difference between the segment-level jobs and the
 asset-level jobs, imported audio assets from a URL and from disk, imported speaker-attributed
 predictions, and exported them back.
 

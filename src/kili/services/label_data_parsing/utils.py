@@ -31,3 +31,15 @@ def get_children_job_names(json_interface: dict, job_interface: Union[Job, dict]
                 )
 
     return children_job_names
+
+
+def get_audio_segment_classification_job_names(json_interface: dict) -> list[str]:
+    """Returns the classification jobs an audio project answers once per segment."""
+    # A root classification job without a level is segment level, as the transcription job is
+    return [
+        job_name
+        for job_name, job_interface in json_interface.items()
+        if job_interface["mlTask"] == "CLASSIFICATION"
+        and not job_interface["isChild"]
+        and job_interface.get("level") != "asset"
+    ]

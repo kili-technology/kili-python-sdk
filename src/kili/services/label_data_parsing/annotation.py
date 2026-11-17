@@ -15,7 +15,7 @@ from .bounding_poly import BoundingPolyList
 from .decorators import for_all_properties
 from .exceptions import AttributeNotCompatibleWithJobError, InvalidMutationError
 from .types import NormalizedVertex, Project
-from .utils import get_children_job_names
+from .utils import get_audio_segment_classification_job_names, get_children_job_names
 
 
 def _is_pdf_object_detection(project_info: Project, job_interface: Job) -> bool:
@@ -169,12 +169,76 @@ class _BaseAnnotation:
             json_interface=self._project_info["jsonInterface"],
             job_interface=self._job_interface,  # type: ignore
         )
+        # an audio segment answers the segment-level classification jobs of the interface
+        if (
+            self._project_info["inputType"] == "AUDIO"
+            and self._job_interface["mlTask"] == "TRANSCRIPTION"
+        ):
+            job_names_to_parse = get_audio_segment_classification_job_names(
+                self._project_info["jsonInterface"]
+            )
         parsed_children_job = json_response_module.ParsedJobs(
             project_info=self._project_info,
             json_response=children,
             job_names_to_parse=job_names_to_parse,
         )
         self._json_data["children"] = parsed_children_job
+
+
+class AudioSegmentAnnotation(_BaseAnnotation):
+    """Class for parsing the "annotations" key of a job response for the segments of an audio."""
+
+    @staticmethod
+    def _get_compatible_ml_task() -> Literal["TRANSCRIPTION"]:
+        return "TRANSCRIPTION"
+
+    @property
+    def text(self) -> str:
+        """Returns the transcription of the segment."""
+        return self._json_data["text"]
+
+    @text.setter
+    @typechecked
+    def text(self, text: str) -> None:
+        """Set the transcription of the segment."""
+        self._json_data["text"] = text
+
+    @property
+    def start_time(self) -> float:
+        """Returns the start of the segment, in seconds."""
+        return self._json_data["startTime"]
+
+    @start_time.setter
+    @typechecked
+    def start_time(self, start_time: Union[int, float]) -> None:
+        """Set the start of the segment, in seconds."""
+        if start_time < 0:
+            raise ValueError(f"start_time must be positive, got {start_time}")
+        self._json_data["startTime"] = start_time
+
+    @property
+    def end_time(self) -> float:
+        """Returns the end of the segment, in seconds."""
+        return self._json_data["endTime"]
+
+    @end_time.setter
+    @typechecked
+    def end_time(self, end_time: Union[int, float]) -> None:
+        """Set the end of the segment, in seconds."""
+        if end_time < 0:
+            raise ValueError(f"end_time must be positive, got {end_time}")
+        self._json_data["endTime"] = end_time
+
+    @property
+    def speaker_id(self) -> Optional[str]:
+        """Returns the id of the speaker of the segment, one of the label's speakers."""
+        return self._json_data.get("speakerId")
+
+    @speaker_id.setter
+    @typechecked
+    def speaker_id(self, speaker_id: Optional[str]) -> None:
+        """Set the id of the speaker of the segment."""
+        self._json_data["speakerId"] = speaker_id
 
 
 class _BaseNamedEntityRecognitionAnnotation(_BaseAnnotation):
@@ -585,6 +649,7 @@ def check_attribute_compatible_with_job(func):
 @for_all_properties(check_attribute_compatible_with_job)
 # pylint: disable=too-many-ancestors
 class Annotation(
+    AudioSegmentAnnotation,
     EntityAnnotation,
     PointAnnotation,
     PolyLineAnnotation,
