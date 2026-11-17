@@ -2,16 +2,92 @@
 
 import asyncio
 import json
+import re
+from typing import Optional
+from urllib.parse import unquote
 
 import requests
+from tenacity import Retrying
+from tenacity.retry import retry_if_exception
+from tenacity.stop import stop_after_attempt
+from tenacity.wait import wait_exponential, wait_random
 
 from kili.adapters.http_client import HttpClient
 from kili.adapters.kili_api_gateway.helpers.http_json import load_json_from_link
+from kili.core.graphql.retry import Outcome, classify
 from kili.core.helpers import is_url
 from kili.domain.types import ListOrTuple
+from kili.exceptions import JsonResponseDownloadError
 
 # Batch size for parallel JSON response downloads (same as export service)
 JSON_RESPONSE_BATCH_SIZE = 10
+
+# How many times a label's jsonResponse download is tried when it fails on a transient error
+JSON_RESPONSE_DOWNLOAD_ATTEMPTS = 3
+
+# A 4xx that may succeed when tried again: request timeout, too many requests
+_TRANSIENT_CLIENT_ERRORS = {408, 429}
+
+# The path the backend stores a label's jsonResponse at: projects/<p>/assets/<a>/labels/<l>.json
+_LABEL_JSON_RESPONSE_PATH = re.compile(r"assets/([^/?&#]+)/labels/([^/?&#]+)\.json")
+
+
+def _is_transient(error: BaseException) -> bool:
+    """Whether a failed download may succeed when tried again.
+
+    A timeout, a dropped connection, a body cut short, a 408, a 429 or a 5xx may. Any other 4xx
+    (an expired signature, a missing file), an untrusted certificate or an invalid URL will not:
+    the GraphQL client's rule for errors that stay the same (`classify`).
+    """
+    if isinstance(error, requests.HTTPError):
+        status = error.response.status_code if error.response is not None else None
+        return status is None or status >= 500 or status in _TRANSIENT_CLIENT_ERRORS
+    if isinstance(error, json.JSONDecodeError):  # requests' own JSONDecodeError subclasses it
+        return True
+    return isinstance(error, requests.RequestException) and classify(error) is not Outcome.FAILED
+
+
+def _get_json_response(url: str, http_client: HttpClient) -> dict:
+    response = http_client.get(url, timeout=30)
+    response.raise_for_status()
+    return response.json()
+
+
+def _label_and_asset_ids(url: str) -> tuple[Optional[str], Optional[str]]:
+    """The label id and the asset id a jsonResponse URL names in its path, if it does."""
+    match = _LABEL_JSON_RESPONSE_PATH.search(unquote(url.split("?", 1)[0]))
+    if match is None:
+        return None, None
+    return match.group(2), match.group(1)
+
+
+def _download_json_response_sync(url: str, http_client: HttpClient) -> dict:
+    """Download and parse a label's jsonResponse, retrying on transient errors.
+
+    Args:
+        url: URL to download the JSON response from
+        http_client: HttpClient instance with SSL verification already configured
+
+    Returns:
+        Parsed JSON response as a dictionary
+
+    Raises:
+        JsonResponseDownloadError: the download still failed after its retries, or failed on an
+            error that retrying does not fix
+    """
+    retrying = Retrying(
+        retry=retry_if_exception(_is_transient),
+        stop=stop_after_attempt(JSON_RESPONSE_DOWNLOAD_ATTEMPTS),
+        wait=wait_exponential(multiplier=1, min=1, max=4) + wait_random(0, 1),
+        reraise=True,
+    )
+    try:
+        return retrying(_get_json_response, url, http_client)
+    except (requests.RequestException, json.JSONDecodeError) as error:
+        label_id, asset_id = _label_and_asset_ids(url)
+        attempts = retrying.statistics.get("attempt_number", 1)
+        # Not chained: requests' message holds the signed URL, query included. It stays on .cause
+        raise JsonResponseDownloadError(label_id, asset_id, error, attempts) from None
 
 
 async def _download_json_response(url: str, http_client: HttpClient) -> dict:
@@ -23,15 +99,12 @@ async def _download_json_response(url: str, http_client: HttpClient) -> dict:
 
     Returns:
         Parsed JSON response as a dictionary
+
+    Raises:
+        JsonResponseDownloadError: the download still failed after its retries
     """
-    try:
-        # Run synchronous requests call in a thread
-        response = await asyncio.to_thread(http_client.get, url, timeout=30)
-        response.raise_for_status()
-        return response.json()
-    except (requests.RequestException, json.JSONDecodeError):
-        # Return empty dict on error to ensure consistent response format
-        return {}
+    # Run the synchronous download, retries included, in a thread
+    return await asyncio.to_thread(_download_json_response_sync, url, http_client)
 
 
 async def _download_json_responses_async(
@@ -66,6 +139,10 @@ def download_json_responses_parallel(
     Args:
         url_to_label_mapping: List of tuples (url, label_dict) to download
         http_client: HttpClient instance with SSL verification already configured
+
+    Raises:
+        JsonResponseDownloadError: a label's jsonResponse could not be downloaded; no label is
+            given an empty one in its place
     """
     if not url_to_label_mapping:
         return
@@ -80,12 +157,7 @@ def download_json_responses_parallel(
         # Already in a loop - fall back to sequential downloads to avoid RuntimeError
         # This happens in Jupyter notebooks, FastAPI, and other async contexts
         for url, label in url_to_label_mapping:
-            try:
-                response = http_client.get(url, timeout=30)
-                response.raise_for_status()
-                label["jsonResponse"] = response.json()
-            except (requests.RequestException, json.JSONDecodeError):
-                label["jsonResponse"] = {}
+            label["jsonResponse"] = _download_json_response_sync(url, http_client)
 
             if "jsonResponseUrl" in label:
                 del label["jsonResponseUrl"]

@@ -1518,6 +1518,11 @@ class LabelClientMethods(BaseClientMethods):
                 - `"polygon"`: their four corners, in the Segment task, beside the polygons and
                     semantic segmentations.
 
+        Raises:
+            ValueError: `step_id_in` and `step_name_in` both given in `asset_filter_kwargs`.
+            JsonResponseDownloadError: A label's jsonResponse could not be downloaded from the
+                storage, even after retries. Running the call again downloads it with a new link.
+
         !!! Info
             The supported formats are:
 

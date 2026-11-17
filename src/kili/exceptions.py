@@ -1,8 +1,10 @@
 """Exceptions of the package."""
 
+import re
 from typing import Optional
 
 from requests.exceptions import ConnectionError as RequestsConnectionError
+from requests.exceptions import RequestException
 
 
 class GraphQLError(Exception):
@@ -100,6 +102,60 @@ class MutationOutcomeUnknownError(RequestsConnectionError):
     def for_assets(self, external_ids: list[str]) -> "MutationOutcomeUnknownError":
         """The same error, for the batch of assets with these external ids."""
         return MutationOutcomeUnknownError(self.operation, self.cause, external_ids=external_ids)
+
+
+class JsonResponseDownloadError(RequestException):
+    """Raised when the jsonResponse of a label could not be downloaded from its storage.
+
+    The download is retried when the error may be transient (a timeout, a dropped connection, a
+    429 or a 5xx). Nothing is changed in Kili: running the call again downloads the label with a
+    new link. Before, such a label was returned with an empty jsonResponse.
+
+    It is a requests RequestException, so existing `except requests.RequestException` clauses
+    catch it. Its message never holds the download link's query, which signs it.
+
+    Attributes:
+        label_id: the id of the label, or None when its URL does not name it.
+        asset_id: the id of the asset the label belongs to, or None when its URL does not name it.
+        cause: the error the last attempt failed with, as requests raised it: its message may
+            hold the signed link.
+        attempts: how many times the download was tried.
+    """
+
+    def __init__(
+        self,
+        label_id: Optional[str],
+        asset_id: Optional[str],
+        cause: BaseException,
+        attempts: int,
+    ) -> None:
+        self.label_id = label_id
+        self.asset_id = asset_id
+        self.cause = cause
+        self.attempts = attempts
+        if label_id is None:
+            label = "a label"
+        elif asset_id is None:
+            label = f"label {label_id}"
+        else:
+            label = f"label {label_id} of asset {asset_id}"
+        tries = "once" if attempts == 1 else f"{attempts} times"
+        # requests names the URL it failed on, query included: the signature of the link
+        reason = re.sub(r"\?[^\s'\")]*", "", str(cause))
+        super().__init__(
+            f"Could not download the jsonResponse of {label} (tried {tries}, last error"
+            f" {type(cause).__name__}: {reason}). Run the call again: it downloads the label"
+            " with a new link. If it keeps failing, check that this machine can reach your Kili"
+            " storage, or contact Kili support."
+        )
+
+    def __reduce__(self):
+        """Rebuild from the attributes: args holds only the message, which __init__ cannot take."""
+        return (
+            type(self),
+            (self.label_id, self.asset_id, self.cause, self.attempts),
+            {"args": self.args},
+        )
 
 
 class NotFound(Exception):
