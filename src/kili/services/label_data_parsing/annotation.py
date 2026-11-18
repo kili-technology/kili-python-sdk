@@ -102,9 +102,10 @@ class _BaseAnnotation:
         if "points" in self._json_data:
             ret["points"] = [point.as_dict() for point in self._json_data["points"]]
         if "children" in self._json_data:
+            # parsed children are dumped; a dict, or the null the API also serves, is kept as given
             ret["children"] = (
                 self._json_data["children"].to_dict()
-                if not isinstance(self._json_data["children"], dict)
+                if isinstance(self._json_data["children"], json_response_module.ParsedJobs)
                 else self._json_data["children"]
             )
         return ret

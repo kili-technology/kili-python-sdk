@@ -134,6 +134,24 @@ def test_given_an_audio_label_when_i_read_a_segment_then_i_get_its_classificatio
     assert segment.children["TONE_JOB"].category.name == "FORMAL"
 
 
+def test_given_a_segment_whose_children_are_null_when_i_dump_the_label_then_it_round_trips():
+    # Given
+    json_response = {
+        "TRANSCRIPTION_JOB": {
+            "annotations": [
+                {"children": None, "endTime": 2, "mid": "segment-1", "startTime": 1, "text": "Hi"}
+            ]
+        }
+    }
+
+    # When
+    parsed_jobs = _parse(json_response)
+
+    # Then
+    assert parsed_jobs.to_dict() == json_response
+    assert str(parsed_jobs["TRANSCRIPTION_JOB"].annotations[0])
+
+
 def test_given_a_segment_without_classification_when_i_parse_it_then_it_has_no_children_key():
     # Given
     parsed_jobs = _parse()
