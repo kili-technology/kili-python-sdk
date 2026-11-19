@@ -121,7 +121,7 @@ image = [
   "kili-formats[image] == 1.8.0"
 ]
 image-utils = ["opencv-python >=4.0.0, <5.1.0"]
-pandas = ["pandas >= 1.0.0, < 3.0.0"]
+pandas = ["pandas >=1.0.0, <3.2.0"]
 
 video = [
   "kili-formats[video] == 1.8.0"
