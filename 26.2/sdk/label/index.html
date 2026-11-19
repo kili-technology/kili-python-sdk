@@ -3706,6 +3706,11 @@
 <span class="sd">                - `"polygon"`: their four corners, in the Segment task, beside the polygons and</span>
 <span class="sd">                    semantic segmentations.</span>
 
+<span class="sd">        Raises:</span>
+<span class="sd">            ValueError: `step_id_in` and `step_name_in` both given in `asset_filter_kwargs`.</span>
+<span class="sd">            JsonResponseDownloadError: A label's jsonResponse could not be downloaded from the</span>
+<span class="sd">                storage, even after retries. Running the call again downloads it with a new link.</span>
+
 <span class="sd">        !!! Info</span>
 <span class="sd">            The supported formats are:</span>
 
@@ -5985,6 +5990,26 @@ By default, only <code>DEFAULT</code> and <code>REVIEW</code> labels are exporte
         <td><code>&#39;box&#39;</code></td>
       </tr>
   </tbody>
+</table>
+<p><strong>Exceptions:</strong></p>
+<table>
+  <thead>
+    <tr>
+      <th>Type</th>
+      <th>Description</th>
+    </tr>
+  </thead>
+  <tbody>
+      <tr>
+        <td><code>ValueError</code></td>
+        <td><p><code>step_id_in</code> and <code>step_name_in</code> both given in <code>asset_filter_kwargs</code>.</p></td>
+      </tr>
+      <tr>
+        <td><code>JsonResponseDownloadError</code></td>
+        <td><p>A label's jsonResponse could not be downloaded from the
+storage, even after retries. Running the call again downloads it with a new link.</p></td>
+      </tr>
+  </tbody>
 </table>      <div class="admonition info">
 <p class="admonition-title">Info</p>
 <p>The supported formats are:</p>
@@ -6120,6 +6145,11 @@ image, written once; a video, a file per frame holding a shape.</li>
 <span class="sd">            - `"obb"`: their four corners, for the OBB task: a rotated box keeps its angle.</span>
 <span class="sd">            - `"polygon"`: their four corners, in the Segment task, beside the polygons and</span>
 <span class="sd">                semantic segmentations.</span>
+
+<span class="sd">    Raises:</span>
+<span class="sd">        ValueError: `step_id_in` and `step_name_in` both given in `asset_filter_kwargs`.</span>
+<span class="sd">        JsonResponseDownloadError: A label's jsonResponse could not be downloaded from the</span>
+<span class="sd">            storage, even after retries. Running the call again downloads it with a new link.</span>
 
 <span class="sd">    !!! Info</span>
 <span class="sd">        The supported formats are:</span>

@@ -3956,13 +3956,13 @@ See <a href="https://api-docs.kili-technology.com/types/objects/plugin">the docu
 <span class="w">    </span><span class="sd">"""Set of Plugins mutations."""</span>
 
     <span class="nd">@typechecked</span>
-    <span class="k">def</span><span class="w"> </span><span class="nf">upload_plugin</span><span class="p">(</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">upload_plugin</span><span class="p">(</span>  <span class="c1"># pylint: disable=missing-param-doc</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">plugin_path</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="n">plugin_name</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="n">verbose</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
         <span class="n">event_matcher</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
-        <span class="o">**</span><span class="n">kwargs</span><span class="p">,</span>  <span class="c1"># pylint: disable=missing-param-doc</span>
+        <span class="o">**</span><span class="n">kwargs</span><span class="p">,</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">LiteralString</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">"""Uploads a plugin.</span>
 
@@ -4143,13 +4143,13 @@ See <a href="https://api-docs.kili-technology.com/types/objects/plugin">the docu
         <span class="k">return</span> <span class="n">delete_plugin</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">plugin_name</span><span class="p">)</span>
 
     <span class="nd">@typechecked</span>
-    <span class="k">def</span><span class="w"> </span><span class="nf">update_plugin</span><span class="p">(</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">update_plugin</span><span class="p">(</span>  <span class="c1"># pylint: disable=missing-param-doc</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">plugin_path</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="n">plugin_name</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="n">verbose</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
         <span class="n">event_matcher</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
-        <span class="o">**</span><span class="n">kwargs</span><span class="p">,</span>  <span class="c1"># pylint: disable=missing-param-doc</span>
+        <span class="o">**</span><span class="n">kwargs</span><span class="p">,</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">LiteralString</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">"""Update a plugin with new code.</span>
 
@@ -4683,13 +4683,13 @@ using <code>@on_kili_event</code> leaves it out: its events come from the annota
 
         <details class="quote">
           <summary>Source code in <code>kili/entrypoints/mutations/plugins/__init__.py</code></summary>
-          <div class="highlight"><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">update_plugin</span><span class="p">(</span>
+          <div class="highlight"><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">update_plugin</span><span class="p">(</span>  <span class="c1"># pylint: disable=missing-param-doc</span>
     <span class="bp">self</span><span class="p">,</span>
     <span class="n">plugin_path</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="n">plugin_name</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="n">verbose</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
     <span class="n">event_matcher</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
-    <span class="o">**</span><span class="n">kwargs</span><span class="p">,</span>  <span class="c1"># pylint: disable=missing-param-doc</span>
+    <span class="o">**</span><span class="n">kwargs</span><span class="p">,</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">LiteralString</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">"""Update a plugin with new code.</span>
 
@@ -4952,13 +4952,13 @@ using <code>@on_kili_event</code> leaves it out: its events come from the annota
 
         <details class="quote">
           <summary>Source code in <code>kili/entrypoints/mutations/plugins/__init__.py</code></summary>
-          <div class="highlight"><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">upload_plugin</span><span class="p">(</span>
+          <div class="highlight"><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">upload_plugin</span><span class="p">(</span>  <span class="c1"># pylint: disable=missing-param-doc</span>
     <span class="bp">self</span><span class="p">,</span>
     <span class="n">plugin_path</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="n">plugin_name</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="n">verbose</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
     <span class="n">event_matcher</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
-    <span class="o">**</span><span class="n">kwargs</span><span class="p">,</span>  <span class="c1"># pylint: disable=missing-param-doc</span>
+    <span class="o">**</span><span class="n">kwargs</span><span class="p">,</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">LiteralString</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">"""Uploads a plugin.</span>
 

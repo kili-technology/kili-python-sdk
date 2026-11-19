@@ -2580,6 +2580,13 @@
 <span class="sd">        Returns:</span>
 <span class="sd">            An asset list, an asset generator or a pandas DataFrame that match a set of constraints.</span>
 
+<span class="sd">        Raises:</span>
+<span class="sd">            ValueError: `as_generator=True` with `format="pandas"`.</span>
+<span class="sd">            ImportError: `format="pandas"` without pandas installed (`pip install kili[pandas]`).</span>
+<span class="sd">            JsonResponseDownloadError: A label's jsonResponse, queried in `fields`, could not be</span>
+<span class="sd">                downloaded from the storage, even after retries. Running the call again downloads</span>
+<span class="sd">                it with a new link.</span>
+
 <span class="sd">        Example:</span>
 <span class="sd">            ```</span>
 <span class="sd">            # returns the assets list of the project</span>
@@ -3597,6 +3604,31 @@ with the assets (and not only the ones matching the criteria)</p>
     </tr>
   </tbody>
 </table>
+<p><strong>Exceptions:</strong></p>
+<table>
+  <thead>
+    <tr>
+      <th>Type</th>
+      <th>Description</th>
+    </tr>
+  </thead>
+  <tbody>
+      <tr>
+        <td><code>ValueError</code></td>
+        <td><p><code>as_generator=True</code> with <code>format="pandas"</code>.</p></td>
+      </tr>
+      <tr>
+        <td><code>ImportError</code></td>
+        <td><p><code>format="pandas"</code> without pandas installed (<code>pip install kili[pandas]</code>).</p></td>
+      </tr>
+      <tr>
+        <td><code>JsonResponseDownloadError</code></td>
+        <td><p>A label's jsonResponse, queried in <code>fields</code>, could not be
+downloaded from the storage, even after retries. Running the call again downloads
+it with a new link.</p></td>
+      </tr>
+  </tbody>
+</table>
 <p><strong>Examples:</strong></p>
     <div class="highlight"><pre><span></span><code># returns the assets list of the project
 &gt;&gt;&gt; kili.assets(project_id)
@@ -3803,6 +3835,13 @@ with the assets (and not only the ones matching the criteria)</p>
 
 <span class="sd">    Returns:</span>
 <span class="sd">        An asset list, an asset generator or a pandas DataFrame that match a set of constraints.</span>
+
+<span class="sd">    Raises:</span>
+<span class="sd">        ValueError: `as_generator=True` with `format="pandas"`.</span>
+<span class="sd">        ImportError: `format="pandas"` without pandas installed (`pip install kili[pandas]`).</span>
+<span class="sd">        JsonResponseDownloadError: A label's jsonResponse, queried in `fields`, could not be</span>
+<span class="sd">            downloaded from the storage, even after retries. Running the call again downloads</span>
+<span class="sd">            it with a new link.</span>
 
 <span class="sd">    Example:</span>
 <span class="sd">        ```</span>

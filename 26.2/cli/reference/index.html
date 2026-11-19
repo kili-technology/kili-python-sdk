@@ -2270,13 +2270,13 @@
 <td><code>--version</code></td>
 <td>boolean</td>
 <td>Show the version and exit.</td>
-<td><code>False</code></td>
+<td><code>Sentinel.UNSET</code></td>
 </tr>
 <tr>
 <td><code>-h</code>, <code>--help</code></td>
 <td>boolean</td>
 <td>Show this message and exit.</td>
-<td><code>False</code></td>
+<td><code>Sentinel.UNSET</code></td>
 </tr>
 </tbody>
 </table>
@@ -2300,7 +2300,7 @@
 <td><code>-h</code>, <code>--help</code></td>
 <td>boolean</td>
 <td>Show this message and exit.</td>
-<td><code>False</code></td>
+<td><code>Sentinel.UNSET</code></td>
 </tr>
 </tbody>
 </table>
@@ -2357,13 +2357,13 @@ Copy the json interface but not the members:
 <td><code>--title</code></td>
 <td>text</td>
 <td>New project title.</td>
-<td>None</td>
+<td><code>Sentinel.UNSET</code></td>
 </tr>
 <tr>
 <td><code>--description</code></td>
 <td>text</td>
 <td>New project description.</td>
-<td>None</td>
+<td><code>Sentinel.UNSET</code></td>
 </tr>
 <tr>
 <td><code>--with-json-interface</code> / <code>--without-json-interface</code></td>
@@ -2399,7 +2399,7 @@ Copy the json interface but not the members:
 <td><code>-h</code>, <code>--help</code></td>
 <td>boolean</td>
 <td>Show this message and exit.</td>
-<td><code>False</code></td>
+<td><code>Sentinel.UNSET</code></td>
 </tr>
 </tbody>
 </table>
@@ -2455,19 +2455,19 @@ https://docs.kili-technology.com/docs/customizing-the-interface-through-json-set
 <td><code>--from-project</code></td>
 <td>text</td>
 <td>project_id of another Kili project</td>
-<td>None</td>
+<td><code>Sentinel.UNSET</code></td>
 </tr>
 <tr>
 <td><code>--title</code></td>
 <td>text</td>
 <td>Project Title.</td>
-<td>_required</td>
+<td><code>Sentinel.UNSET</code></td>
 </tr>
 <tr>
 <td><code>--input-type</code></td>
 <td>choice (<code>IMAGE</code> &#x7C; <code>PDF</code> &#x7C; <code>TEXT</code> &#x7C; <code>VIDEO</code> &#x7C; <code>LLM_RLHF</code> &#x7C; <code>LLM_INSTR_FOLLOWING</code> &#x7C; <code>LLM_STATIC</code>)</td>
 <td>Project input data type. Please check your license to see which ones you have access to.</td>
-<td>_required</td>
+<td><code>Sentinel.UNSET</code></td>
 </tr>
 <tr>
 <td><code>--description</code></td>
@@ -2485,7 +2485,7 @@ https://docs.kili-technology.com/docs/customizing-the-interface-through-json-set
 <td><code>-h</code>, <code>--help</code></td>
 <td>boolean</td>
 <td>Show this message and exit.</td>
-<td><code>False</code></td>
+<td><code>Sentinel.UNSET</code></td>
 </tr>
 </tbody>
 </table>
@@ -2527,7 +2527,7 @@ https://docs.kili-technology.com/docs/customizing-the-interface-through-json-set
 <td><code>-h</code>, <code>--help</code></td>
 <td>boolean</td>
 <td>Show this message and exit.</td>
-<td><code>False</code></td>
+<td><code>Sentinel.UNSET</code></td>
 </tr>
 </tbody>
 </table>
@@ -2581,13 +2581,13 @@ https://docs.kili-technology.com/docs/customizing-the-interface-through-json-set
 <td><code>--output-format</code></td>
 <td>choice (<code>raw</code> &#x7C; <code>kili</code> &#x7C; <code>yolo</code> &#x7C; <code>yolo_v4</code> &#x7C; <code>yolo_v5</code> &#x7C; <code>yolo_v7</code> &#x7C; <code>yolo_v8</code> &#x7C; <code>coco</code> &#x7C; <code>pascal_voc</code> &#x7C; <code>geojson</code>)</td>
 <td>Format into which the label data will be converted. yolo_v4, yolo_v5, yolo_v7 and yolo_v8 are deprecated: use yolo.</td>
-<td>_required</td>
+<td><code>Sentinel.UNSET</code></td>
 </tr>
 <tr>
 <td><code>--output-file</code></td>
 <td>text</td>
 <td>File into which the labels are saved.</td>
-<td>_required</td>
+<td><code>Sentinel.UNSET</code></td>
 </tr>
 <tr>
 <td><code>--layout</code></td>
@@ -2599,7 +2599,7 @@ https://docs.kili-technology.com/docs/customizing-the-interface-through-json-set
 <td><code>--single-file</code></td>
 <td>boolean</td>
 <td>Layout of the label files. Single file mode is only available for some specific formats (COCO and Kili).</td>
-<td><code>False</code></td>
+<td><code>Sentinel.UNSET</code></td>
 </tr>
 <tr>
 <td><code>--with-assets</code> / <code>--without-assets</code></td>
@@ -2635,7 +2635,7 @@ https://docs.kili-technology.com/docs/customizing-the-interface-through-json-set
 <td><code>--project-id</code></td>
 <td>text</td>
 <td>Id of the project</td>
-<td>_required</td>
+<td><code>Sentinel.UNSET</code></td>
 </tr>
 <tr>
 <td><code>--verbose</code></td>
@@ -2647,7 +2647,7 @@ https://docs.kili-technology.com/docs/customizing-the-interface-through-json-set
 <td><code>-h</code>, <code>--help</code></td>
 <td>boolean</td>
 <td>Show this message and exit.</td>
-<td><code>False</code></td>
+<td><code>Sentinel.UNSET</code></td>
 </tr>
 </tbody>
 </table>
@@ -2720,13 +2720,13 @@ assets from a CSV file with two columns:</p>
 <td><code>--project-id</code></td>
 <td>text</td>
 <td>Id of the project</td>
-<td>_required</td>
+<td><code>Sentinel.UNSET</code></td>
 </tr>
 <tr>
 <td><code>--from-csv</code></td>
 <td>path</td>
 <td>path to a csv file with required columns:external_id, content required columns:</td>
-<td>None</td>
+<td><code>Sentinel.UNSET</code></td>
 </tr>
 <tr>
 <td><code>--frames</code></td>
@@ -2738,7 +2738,7 @@ assets from a CSV file with two columns:</p>
 <td><code>--fps</code></td>
 <td>integer</td>
 <td>Only for a frame project, import videos with a specific frame rate</td>
-<td>None</td>
+<td><code>Sentinel.UNSET</code></td>
 </tr>
 <tr>
 <td><code>--verbose</code></td>
@@ -2750,7 +2750,7 @@ assets from a CSV file with two columns:</p>
 <td><code>-h</code>, <code>--help</code></td>
 <td>boolean</td>
 <td>Show this message and exit.</td>
-<td><code>False</code></td>
+<td><code>Sentinel.UNSET</code></td>
 </tr>
 </tbody>
 </table>
@@ -2819,7 +2819,7 @@ To import labels as predictions in the YOLO format into a target job:
 <td><code>--project-id</code></td>
 <td>text</td>
 <td>Id of the project</td>
-<td>_required</td>
+<td><code>Sentinel.UNSET</code></td>
 </tr>
 <tr>
 <td><code>--prediction</code></td>
@@ -2831,7 +2831,7 @@ To import labels as predictions in the YOLO format into a target job:
 <td><code>--model-name</code></td>
 <td>text</td>
 <td>Name of the model that generated predictions, if labels are sent as predictions</td>
-<td>None</td>
+<td><code>Sentinel.UNSET</code></td>
 </tr>
 <tr>
 <td><code>--verbose</code></td>
@@ -2849,13 +2849,13 @@ To import labels as predictions in the YOLO format into a target job:
 <td><code>--metadata-file</code></td>
 <td>text</td>
 <td>File containing format metadata (if relevant to the input format)</td>
-<td>None</td>
+<td><code>Sentinel.UNSET</code></td>
 </tr>
 <tr>
 <td><code>--target-job</code></td>
 <td>text</td>
 <td>Job name in the project where to upload the labels (if relevant to the input format)</td>
-<td>None</td>
+<td><code>Sentinel.UNSET</code></td>
 </tr>
 <tr>
 <td><code>--overwrite</code></td>
@@ -2867,7 +2867,7 @@ To import labels as predictions in the YOLO format into a target job:
 <td><code>-h</code>, <code>--help</code></td>
 <td>boolean</td>
 <td>Show this message and exit.</td>
-<td><code>False</code></td>
+<td><code>Sentinel.UNSET</code></td>
 </tr>
 </tbody>
 </table>
@@ -2921,7 +2921,7 @@ To import labels as predictions in the YOLO format into a target job:
 <td><code>-h</code>, <code>--help</code></td>
 <td>boolean</td>
 <td>Show this message and exit.</td>
-<td><code>False</code></td>
+<td><code>Sentinel.UNSET</code></td>
 </tr>
 </tbody>
 </table>
@@ -2945,7 +2945,7 @@ To import labels as predictions in the YOLO format into a target job:
 <td><code>-h</code>, <code>--help</code></td>
 <td>boolean</td>
 <td>Show this message and exit.</td>
-<td><code>False</code></td>
+<td><code>Sentinel.UNSET</code></td>
 </tr>
 </tbody>
 </table>
@@ -2999,7 +2999,7 @@ You can provide several emails separated by spaces.</p>
 <td><code>--project-id</code></td>
 <td>text</td>
 <td>Id of the project</td>
-<td>_required</td>
+<td><code>Sentinel.UNSET</code></td>
 </tr>
 <tr>
 <td><code>--role</code></td>
@@ -3011,19 +3011,19 @@ You can provide several emails separated by spaces.</p>
 <td><code>--from-csv</code></td>
 <td>path</td>
 <td>path to a csv file with required columns:email required columns: role</td>
-<td>None</td>
+<td><code>Sentinel.UNSET</code></td>
 </tr>
 <tr>
 <td><code>--from-project</code></td>
 <td>text</td>
 <td>project_id of another Kili project</td>
-<td>None</td>
+<td><code>Sentinel.UNSET</code></td>
 </tr>
 <tr>
 <td><code>-h</code>, <code>--help</code></td>
 <td>boolean</td>
 <td>Show this message and exit.</td>
-<td><code>False</code></td>
+<td><code>Sentinel.UNSET</code></td>
 </tr>
 </tbody>
 </table>
@@ -3070,7 +3070,7 @@ You can provide several emails separated by spaces.</p>
 <td><code>-h</code>, <code>--help</code></td>
 <td>boolean</td>
 <td>Show this message and exit.</td>
-<td><code>False</code></td>
+<td><code>Sentinel.UNSET</code></td>
 </tr>
 </tbody>
 </table>
@@ -3123,13 +3123,13 @@ You can provide several emails separated by spaces.</p>
 <td><code>--project-id</code></td>
 <td>text</td>
 <td>Id of the project</td>
-<td>_required</td>
+<td><code>Sentinel.UNSET</code></td>
 </tr>
 <tr>
 <td><code>--from-csv</code></td>
 <td>path</td>
 <td>path to a csv file with required columns:email required columns: role</td>
-<td>None</td>
+<td><code>Sentinel.UNSET</code></td>
 </tr>
 <tr>
 <td><code>--all</code></td>
@@ -3141,7 +3141,7 @@ You can provide several emails separated by spaces.</p>
 <td><code>-h</code>, <code>--help</code></td>
 <td>boolean</td>
 <td>Show this message and exit.</td>
-<td><code>False</code></td>
+<td><code>Sentinel.UNSET</code></td>
 </tr>
 </tbody>
 </table>
@@ -3195,7 +3195,7 @@ You can provide several emails separated by spaces.</p>
 <td><code>--project-id</code></td>
 <td>text</td>
 <td>Id of the project</td>
-<td>_required</td>
+<td><code>Sentinel.UNSET</code></td>
 </tr>
 <tr>
 <td><code>--role</code></td>
@@ -3207,19 +3207,19 @@ You can provide several emails separated by spaces.</p>
 <td><code>--from-csv</code></td>
 <td>path</td>
 <td>path to a csv file with required columns:email required columns: role</td>
-<td>None</td>
+<td><code>Sentinel.UNSET</code></td>
 </tr>
 <tr>
 <td><code>--from-project</code></td>
 <td>text</td>
 <td>project_id of another Kili project</td>
-<td>None</td>
+<td><code>Sentinel.UNSET</code></td>
 </tr>
 <tr>
 <td><code>-h</code>, <code>--help</code></td>
 <td>boolean</td>
 <td>Show this message and exit.</td>
-<td><code>False</code></td>
+<td><code>Sentinel.UNSET</code></td>
 </tr>
 </tbody>
 </table>
