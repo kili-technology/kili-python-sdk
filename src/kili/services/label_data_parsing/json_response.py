@@ -7,8 +7,12 @@ from kili.services.label_data_parsing import job_response as job_response_module
 
 from .exceptions import FrameIndexError, JobNotExistingError
 from .types import Project
+from .utils import get_audio_segment_classification_job_names
 
 IGNORED_JOBS = ["ANNOTATION_JOB_COUNTER", "ANNOTATION_NAMES_JOB", "ROTATION_JOB"]
+
+# The speakers of an audio label sit beside its jobs, at the root of the json response
+SPEAKERS_KEY = "speakers"
 
 
 # pylint: disable=too-few-public-methods
@@ -82,19 +86,28 @@ class _ParsedJobs:
         self._json_data: dict[str, "job_response_module.JobPayload"] = {}
 
         json_interface = project_info["jsonInterface"]
+        is_audio = project_info["inputType"] == "AUDIO"
+
+        self._speakers: Optional[list[dict]] = json_response.get(SPEAKERS_KEY) if is_audio else None
 
         # all job names in the json response should be in the json interface too
         for job_name in json_response:
+            if is_audio and job_name == SPEAKERS_KEY:
+                continue
             if job_name not in json_interface and job_name not in IGNORED_JOBS:
                 raise JobNotExistingError(job_name)
 
         # define the list of job names to parse
         # by default, parse all the jobs that are not children
         if job_names_to_parse is None:
+            # the segments of an audio label answer the segment-level classification jobs
+            jobs_answered_per_segment = (
+                get_audio_segment_classification_job_names(json_interface) if is_audio else []
+            )
             job_names_to_parse = [
                 job_name
                 for job_name, job_interface in json_interface.items()
-                if not job_interface["isChild"]
+                if not job_interface["isChild"] and job_name not in jobs_answered_per_segment
             ]
 
         for job_name in job_names_to_parse:
@@ -107,8 +120,13 @@ class _ParsedJobs:
 
     def to_dict(self) -> dict[str, dict]:
         """Returns the parsed json response as a dict."""
-        ret = {job_name: job_payload.to_dict() for job_name, job_payload in self._json_data.items()}
-        return {k: v for k, v in ret.items() if v}  # remove empty json responses
+        jobs = {
+            job_name: job_payload.to_dict() for job_name, job_payload in self._json_data.items()
+        }
+        ret: dict = {k: v for k, v in jobs.items() if v}  # remove empty json responses
+        if self._speakers is not None:
+            ret[SPEAKERS_KEY] = self._speakers
+        return ret
 
 
 def _is_video_response(project_info: Project, json_response: dict) -> bool:
