@@ -18,16 +18,26 @@ from typing import (
 from typeguard import typechecked
 from typing_extensions import deprecated
 
-from kili.core.helpers import is_url
+from kili.core.helpers import is_empty_list_with_warning, is_url
 from kili.domain.asset import (
     AssetStatus,
 )
-from kili.domain.asset.asset import AssetActionOutcome, StatusInStep
+from kili.domain.asset.asset import (
+    AssetActionOutcome,
+    AssetExternalId,
+    AssetId,
+    StatusInStep,
+)
 from kili.domain.issue import IssueStatus, IssueType
 from kili.domain.label import LabelType
+from kili.domain.project import ProjectId
 from kili.domain.types import ListOrTuple
 from kili.domain_api.base import DomainNamespace
 from kili.domain_api.namespace_utils import get_available_methods
+from kili.entrypoints.mutations.asset import empty_asset_action_outcome, execute_asset_action
+from kili.entrypoints.mutations.asset.queries import GQL_ADD_ASSETS_TO_STEP
+from kili.use_cases.asset.utils import AssetUseCasesUtils
+from kili.use_cases.project_workflow.helpers import conditional_routing_required
 
 if TYPE_CHECKING:
     import pandas as pd
@@ -2201,6 +2211,7 @@ class AssetsNamespace(DomainNamespace):  # pylint: disable=too-many-public-metho
         *,
         asset_id: str,
         project_id: str = "",
+        to_step_id: Optional[str] = None,
     ) -> AssetActionOutcome:
         ...
 
@@ -2210,6 +2221,7 @@ class AssetsNamespace(DomainNamespace):  # pylint: disable=too-many-public-metho
         *,
         asset_ids: List[str],
         project_id: str = "",
+        to_step_id: Optional[str] = None,
     ) -> AssetActionOutcome:
         ...
 
@@ -2219,6 +2231,7 @@ class AssetsNamespace(DomainNamespace):  # pylint: disable=too-many-public-metho
         *,
         external_id: str,
         project_id: str = "",
+        to_step_id: Optional[str] = None,
     ) -> AssetActionOutcome:
         ...
 
@@ -2228,6 +2241,7 @@ class AssetsNamespace(DomainNamespace):  # pylint: disable=too-many-public-metho
         *,
         external_ids: List[str],
         project_id: str = "",
+        to_step_id: Optional[str] = None,
     ) -> AssetActionOutcome:
         ...
 
@@ -2240,6 +2254,7 @@ class AssetsNamespace(DomainNamespace):  # pylint: disable=too-many-public-metho
         external_id: Optional[str] = None,
         external_ids: Optional[List[str]] = None,
         project_id: str = "",
+        to_step_id: Optional[str] = None,
     ) -> AssetActionOutcome:
         """Move assets to the next workflow step (typically review).
 
@@ -2252,6 +2267,12 @@ class AssetsNamespace(DomainNamespace):  # pylint: disable=too-many-public-metho
             external_id: The asset external ID to add to review.
             external_ids: The asset external IDs to add to review.
             project_id: The project ID. Only required if `external_id(s)` argument is provided.
+            to_step_id: The step to move the assets to: any step their step's transitions, or
+                their group's, lead to, whatever the conditions of these transitions, which a move
+                by hand bypasses. A reviewer moves assets only to a step they are assigned to. An
+                asset done on its step that cannot go there refuses the whole call. Without it,
+                each asset goes where its transitions send it. Needs a version of Kili that serves
+                the conditional routing workflow.
 
         Returns:
             A dictionary with three keys, each a list covering every asset given:
@@ -2280,11 +2301,29 @@ class AssetsNamespace(DomainNamespace):  # pylint: disable=too-many-public-metho
         if external_id is not None:
             external_ids = [external_id]
 
-        return self._client.add_to_review(
-            asset_ids=asset_ids,
-            external_ids=external_ids,
-            project_id=project_id,
+        if to_step_id is None:
+            return self._client.add_to_review(
+                asset_ids=asset_ids,
+                external_ids=external_ids,
+                project_id=project_id,
+            )
+
+        if is_empty_list_with_warning(
+            "move_to_next_step", "asset_ids", asset_ids
+        ) or is_empty_list_with_warning("move_to_next_step", "external_ids", external_ids):
+            return empty_asset_action_outcome()
+        resolved_asset_ids = AssetUseCasesUtils(self._gateway).get_asset_ids_or_throw_error(
+            cast(Optional[list[AssetId]], asset_ids),
+            cast(Optional[list[AssetExternalId]], external_ids),
+            ProjectId(project_id) if project_id else None,
         )
+        with conditional_routing_required("kili.assets.move_to_next_step(to_step_id=...)"):
+            return execute_asset_action(
+                self._gateway.graphql_client,
+                GQL_ADD_ASSETS_TO_STEP,
+                resolved_asset_ids,
+                {"stepId": to_step_id},
+            )
 
     @overload
     def assign(

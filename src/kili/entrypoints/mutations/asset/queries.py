@@ -80,6 +80,28 @@ mutation($where: AssetWhere!) {
 }
 """
 
+# addAssetsToReview with the step to move the assets to, which a server predating the conditional
+# routing workflow does not take.
+GQL_ADD_ASSETS_TO_STEP = """
+mutation($where: AssetWhere!, $stepId: ID) {
+  data: addAssetsToReview(where: $where, stepId: $stepId) {
+    succeeded {
+      assetId
+      externalId
+    }
+    declined {
+      assetId
+      externalId
+    }
+    failed {
+      assetId
+      externalId
+      details
+    }
+  }
+}
+"""
+
 GQL_SEND_ASSETS_BACK_TO_QUEUE = """
 mutation($where: AssetWhere!) {
   data: sendAssetsBackToQueue(where: $where) {
