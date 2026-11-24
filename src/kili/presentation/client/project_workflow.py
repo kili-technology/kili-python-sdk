@@ -3,6 +3,7 @@
 from typing import Any, Optional, TypeVar
 
 from typeguard import typechecked
+from typing_extensions import deprecated
 
 from kili.domain.project import (
     ProjectId,
@@ -17,6 +18,12 @@ from ...domain.types import ListOrTuple
 from .base import BaseClientMethods
 
 T = TypeVar("T")
+
+DELETE_LAST_STEP_DEPRECATION = (
+    "delete_last_step is deprecated and will be removed: use"
+    " kili.projects.workflow.steps.delete() of kili.client_domain.Kili instead, which deletes any"
+    " step, given by its id or its name."
+)
 
 
 def _required(value: Optional[T], name: str) -> T:
@@ -377,12 +384,16 @@ class ProjectWorkflowClientMethods(BaseClientMethods):
             step_id=step_id,
         )
 
+    @deprecated(DELETE_LAST_STEP_DEPRECATION)
     @typechecked
     def delete_last_step(
         self,
         project_id: str,
     ) -> dict[str, Any]:
         """Delete the last review step from a project workflow.
+
+        Deprecated: use `kili.projects.workflow.steps.delete()` of `kili.client_domain.Kili`,
+        which deletes any step, given by its id or its name.
 
         Args:
             project_id: Id of the project.

@@ -4,6 +4,7 @@ from functools import cached_property
 from typing import TYPE_CHECKING, Any, List, Literal, Optional, Union
 
 from typeguard import typechecked
+from typing_extensions import deprecated
 
 from kili.domain.project import (
     ProjectId,
@@ -21,6 +22,11 @@ from kili.utils.logcontext import for_all_methods, log_call_in_namespace
 if TYPE_CHECKING:
     from kili.adapters.kili_api_gateway.kili_api_gateway import KiliAPIGateway
     from kili.client import Kili as KiliLegacy
+
+WORKFLOW_LIST_DEPRECATION = (
+    "kili.projects.workflow.list() is deprecated and will be removed: use"
+    " kili.projects.workflow.steps.list() instead, which answers the same."
+)
 
 
 @for_all_methods(log_call_in_namespace("projects.workflow.groups"), exclude=["__init__"])
@@ -449,9 +455,12 @@ class WorkflowNamespace:
             delete_step_groups=delete_step_groups,
         )
 
+    @deprecated(WORKFLOW_LIST_DEPRECATION)
     @typechecked
     def list(self, project_id: str) -> list[dict[str, Any]]:
         """Get steps in a project workflow.
+
+        Deprecated: use `kili.projects.workflow.steps.list()`, which answers the same.
 
         Args:
             project_id: Id of the project.
