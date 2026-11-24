@@ -13,6 +13,11 @@ A step is given by its id, by its name when no other step of the project has it,
 `{"name": ..., "group_name": ...}`. A step group is given by its id or its name. Step groups only
 exist in the multi-group workflow.
 
+A review sends its rejected assets back to a step of its group before it, or to the labeling step
+of another group from which the transitions lead to its group: give it in `send_back_to_step` of
+`steps.create()` or `steps.update()`, as `{"name": "Labeling", "group_name": "Team"}` for instance.
+The server refuses a target no path leads from.
+
 ## Transitions
 
 A transition says where an asset goes when a step completes, or when it reaches the end of a group:
