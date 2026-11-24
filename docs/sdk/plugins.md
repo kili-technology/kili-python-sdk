@@ -71,7 +71,7 @@ The plugins for the on-premise deployments work exactly the same as the plugins 
 
 1. It's not possible to add custom python packages to your plugin with the help of the `requirements.txt` file, but we selected a list of the most useful packages that you can directly use, including :
     * `numpy`, `pandas`, `scikit-learn`, `opencv-python-headless`, `Pillow`, `requests`, `uuid` and of course `kili`
-    * `opencv-python-headless` is built without FFmpeg: `cv2.VideoCapture` and `cv2.VideoWriter` can't open video files, except Motion-JPEG AVI
+    * `opencv-python-headless` is built without FFmpeg and without AVIF support: `cv2.VideoCapture` and `cv2.VideoWriter` can't open video files, except Motion-JPEG AVI, and `cv2` can't read or write AVIF images. `Pillow` reads and writes them
 2. In order to save the logs during the execution of your plugin, you should only use the provided logger in the plugin class (the simple `print` function will not save the log). For an example, see the code below:
 
 ```python
