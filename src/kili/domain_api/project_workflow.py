@@ -17,6 +17,7 @@ from kili.domain.project import (
 from kili.use_cases.project_workflow import ProjectWorkflowUseCases
 from kili.use_cases.project_workflow.step_groups import WorkflowStepGroupUseCases
 from kili.use_cases.project_workflow.steps import WorkflowStepUseCases
+from kili.use_cases.project_workflow.transitions import WorkflowTransitionUseCases
 from kili.utils.logcontext import for_all_methods, log_call_in_namespace
 
 if TYPE_CHECKING:
@@ -370,6 +371,37 @@ class WorkflowNamespace:
             WorkflowGroupsNamespace instance for step group operations
         """
         return WorkflowGroupsNamespace(self._gateway)
+
+    @typechecked
+    def get(self, project_id: str) -> dict[str, Any]:
+        """Get the whole workflow of a project, in one query.
+
+        Args:
+            project_id: Id of the project.
+
+        Returns:
+            A dict with:
+
+            - `steps`: each with its `id`, `name`, `type` (`DEFAULT` for a labeling step, or
+              `REVIEW`), `stepGroupId`, `sendBackStepId`, `sendBackToPreviousStep`,
+              `stepCoverage`, `consensusCoverage`, `numberOfExpectedLabelsForConsensus`,
+              `useHoneypot` and `assignees`.
+            - `stepGroups`: each with its `id`, `name`, `order` and `allowedJobNames`.
+            - `workflowTransitions`: where an asset goes when a step completes, or when it
+              reaches the end of a group. Each has its `id`, the step it leaves (`fromStepId`) or
+              the group whose end it leaves (`fromStepGroupId`), the step it leads to
+              (`toStepId`, null when the asset leaves the workflow), its `priority`, and its
+              `condition`: `type`, `percentage`, `jobName`, `categories`, `quantifier`, `value`.
+            - `usesConditionalRouting`: whether the project routes its assets otherwise than a
+              chain of steps per group, which only a user who `canEditTransitions` edits.
+            - `canEditTransitions`: whether you can save transitions that route by conditions.
+            - `enforceStepSeparation`.
+
+        Examples:
+            >>> workflow = kili.projects.workflow.get(project_id="my_project")
+            >>> workflow["workflowTransitions"]
+        """
+        return WorkflowTransitionUseCases(self._gateway).get_workflow(ProjectId(project_id))
 
     @typechecked
     def update(

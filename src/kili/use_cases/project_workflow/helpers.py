@@ -1,9 +1,28 @@
 """Helpers shared by the project workflow use cases."""
 
+from collections.abc import Iterator
+from contextlib import contextmanager
 from typing import Optional
 
 from kili.adapters.kili_api_gateway.project_workflow.common import get_assignees_to_add_ids
-from kili.exceptions import NotFound
+from kili.exceptions import GraphQLError, NotFound
+
+# How a GraphQL server refuses a field, an argument or an input field it does not know.
+_UNKNOWN_TO_THE_SERVER = ("Cannot query field", "Unknown argument", "is not defined by type")
+
+
+@contextmanager
+def conditional_routing_required(method: str) -> Iterator[None]:
+    """Explain the refusal of a Kili server that predates the conditional routing workflow."""
+    try:
+        yield
+    except GraphQLError as error:
+        if any(marker in str(error) for marker in _UNKNOWN_TO_THE_SERVER):
+            raise GraphQLError(
+                f"{method} needs a version of Kili that serves the conditional routing workflow"
+                f" (LAB-4823), which this Kili server does not: {error}"
+            ) from error
+        raise
 
 
 def check_percentage(name: str, value: int) -> None:
