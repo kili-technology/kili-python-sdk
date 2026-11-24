@@ -1,7 +1,9 @@
 """Project workflow use cases."""
 
+from collections.abc import Sequence
 from typing import Optional, cast
 
+from kili.adapters.kili_api_gateway.project_workflow.common import find_step_group
 from kili.adapters.kili_api_gateway.project_workflow.types import (
     AddReviewStepInput,
     DeleteStepInput,
@@ -14,6 +16,8 @@ from kili.domain.project import (
     ProjectId,
     WorkflowStepCreate,
     WorkflowStepDesignation,
+    WorkflowStepGroupToCreate,
+    WorkflowStepGroupToUpdate,
     WorkflowStepUpdate,
 )
 from kili.domain.types import ListOrTuple
@@ -28,23 +32,53 @@ class ProjectWorkflowUseCases(BaseUseCases):
         self,
         project_id: ProjectId,
         enforce_step_separation: Optional[bool] = None,
-        create_steps: Optional[list[WorkflowStepCreate]] = None,
+        create_steps: Optional[Sequence[WorkflowStepCreate]] = None,
         update_steps: Optional[list[WorkflowStepUpdate]] = None,
         delete_steps: Optional[list[str | WorkflowStepDesignation]] = None,
+        create_step_groups: Optional[list[WorkflowStepGroupToCreate]] = None,
+        update_step_groups: Optional[list[WorkflowStepGroupToUpdate]] = None,
+        delete_step_groups: Optional[list[str]] = None,
     ) -> dict[str, object]:
         """Update properties in a project workflow.
 
         A step to update or delete is sent by id: one given by name, with its group when several
-        groups use that name, is resolved to its id first.
+        groups use that name, is resolved to its id first. So is a group to delete given by name.
         """
+        for group in create_step_groups or []:
+            if any(step.get("step_group_id") is not None for step in group["steps"]):
+                raise ValueError(
+                    f"The steps of the new group '{group['name']}' are created in it: they take"
+                    " no step_group_id"
+                )
         project_workflow_data = ProjectWorkflowDataKiliAPIGatewayInput(
             enforce_step_separation=enforce_step_separation,
             create_steps=create_steps,
             update_steps=self._update_steps_by_id(project_id, update_steps),
             delete_steps=self._delete_steps_by_id(project_id, delete_steps),
+            create_step_groups=create_step_groups,
+            update_step_groups=update_step_groups,
+            delete_step_groups=self._delete_step_groups_by_id(project_id, delete_step_groups),
         )
 
-        return self._kili_api_gateway.update_project_workflow(project_id, project_workflow_data)
+        if not (create_step_groups or update_step_groups or delete_step_groups):
+            return self._kili_api_gateway.update_project_workflow(project_id, project_workflow_data)
+        return self._kili_api_gateway.update_project_workflow(
+            project_id,
+            project_workflow_data,
+            fields=["enforceStepSeparation", "steps{id}", "stepGroups{id}"],
+        )
+
+    def _delete_step_groups_by_id(
+        self, project_id: ProjectId, delete_step_groups: Optional[list[str]]
+    ) -> Optional[list[str]]:
+        """The ids of the step groups to delete, each given by id or by name."""
+        if not delete_step_groups:
+            return delete_step_groups
+
+        context = self._kili_api_gateway.get_project_workflow_context(project_id)
+        return list(
+            dict.fromkeys(find_step_group(context, group)["id"] for group in delete_step_groups)
+        )
 
     def _update_steps_by_id(
         self, project_id: ProjectId, update_steps: Optional[list[WorkflowStepUpdate]]

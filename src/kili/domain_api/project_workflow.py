@@ -7,10 +7,13 @@ from typeguard import typechecked
 
 from kili.domain.project import (
     ProjectId,
-    WorkflowStepCreate,
     WorkflowStepDesignation,
+    WorkflowStepGroupToCreate,
+    WorkflowStepGroupToUpdate,
+    WorkflowStepToCreate,
     WorkflowStepUpdate,
 )
+from kili.use_cases.project_workflow import ProjectWorkflowUseCases
 from kili.use_cases.project_workflow.step_groups import WorkflowStepGroupUseCases
 from kili.utils.logcontext import for_all_methods, log_call_in_namespace
 
@@ -162,6 +165,7 @@ class WorkflowGroupsNamespace:
         )
 
 
+@for_all_methods(log_call_in_namespace("projects.workflow"), exclude=["__init__"])
 class WorkflowNamespace:
     """Nested namespace for project workflow operations."""
 
@@ -189,36 +193,83 @@ class WorkflowNamespace:
         self,
         project_id: str,
         enforce_step_separation: Optional[bool] = None,
-        create_steps: Optional[list[WorkflowStepCreate]] = None,
+        create_steps: Optional[list[WorkflowStepToCreate]] = None,
         update_steps: Optional[list[WorkflowStepUpdate]] = None,
         delete_steps: Optional[list[str | WorkflowStepDesignation]] = None,
+        create_step_groups: Optional[list[WorkflowStepGroupToCreate]] = None,
+        update_step_groups: Optional[list[WorkflowStepGroupToUpdate]] = None,
+        delete_step_groups: Optional[list[str]] = None,
     ) -> dict[str, Any]:
-        """Update properties of a project workflow.
+        """Update properties of a project workflow, its steps and its step groups, in one call.
+
+        The server applies the changes in this order: step deletions, group deletions, group
+        updates, step updates, group creations with their steps, step creations. It saves them all
+        or none. The labeling interface settings of the workflow (navigation, skip, automatic
+        assignment) are changed with `kili.projects.update_workflow_settings()`.
 
         Args:
             project_id: Id of the project.
             enforce_step_separation: Prevents the same user from being assigned to
                 multiple steps in the workflow for a same asset,
                 ensuring independent review and labeling processes
-            create_steps: List of steps to create in the project workflow. In the multi-group
-                workflow, each step gives the `step_group_id` of the group to create it in, and
-                consensus can only be set on the labeling step of the first group.
+            create_steps: List of steps to create in the project workflow, assignees given by user
+                id. In the multi-group workflow, each step gives the `step_group_id` of the group
+                to create it in, and consensus can only be set on the labeling step of the first
+                group. A step can be given an `id` (see below), for a step created after it to
+                send back to it in `send_back_step_id`.
             update_steps: List of steps to update in the project workflow, each given by its `id`,
                 or by its `name` with `group_name` when several groups use that name.
             delete_steps: List of steps to delete from the project workflow, each given by its ID,
                 by its name, or as `{"name": ..., "group_name": ...}` when several groups use
                 that name.
+            create_step_groups: List of step groups to create after the last one, in the
+                multi-group workflow, each with its `name`, its `steps` (its labeling step, then at
+                least one review, as in `create_steps` without `step_group_id`), and optionally
+                its `allowed_job_names` and an `id` (see below), for a step of `create_steps` to
+                name the group in `step_group_id`.
+            update_step_groups: List of step groups to update, each given by its `id`, with its
+                new `name` or `allowed_job_names`.
+            delete_step_groups: List of step groups to delete with their steps, each given by its
+                id or its name.
+
+        The `id` given to a step or a group created is its id in Kili: it must be unique across
+        Kili, and 5 to 32 characters long, such as `uuid.uuid4().hex`. Without one, the server
+        chooses it.
 
         Returns:
             A dict with the changed properties which indicates if the mutation was successful,
                 else an error message.
+
+        Examples:
+            >>> import uuid
+            >>> kili.projects.workflow.update(
+            ...     project_id="my_project",
+            ...     create_step_groups=[
+            ...         {
+            ...             "id": uuid.uuid4().hex,
+            ...             "name": "Experts",
+            ...             "steps": [
+            ...                 {"type": "DEFAULT", "name": "Labeling", "assignees": [labeler_id]},
+            ...                 {
+            ...                     "type": "REVIEW",
+            ...                     "name": "Review",
+            ...                     "assignees": [reviewer_id],
+            ...                     "step_coverage": 100,
+            ...                 },
+            ...             ],
+            ...         }
+            ...     ],
+            ... )
         """
-        return self._client.update_project_workflow(
-            project_id=project_id,
+        return ProjectWorkflowUseCases(self._gateway).update_project_workflow(
+            project_id=ProjectId(project_id),
             enforce_step_separation=enforce_step_separation,
             create_steps=create_steps,
             update_steps=update_steps,
             delete_steps=delete_steps,
+            create_step_groups=create_step_groups,
+            update_step_groups=update_step_groups,
+            delete_step_groups=delete_step_groups,
         )
 
     @typechecked
