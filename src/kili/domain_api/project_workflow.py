@@ -1,5 +1,6 @@
 """Workflow namespaces of the projects domain, for the Kili Python SDK."""
 
+import warnings
 from functools import cached_property
 from typing import TYPE_CHECKING, Any, List, Literal, Optional, Union
 
@@ -26,6 +27,12 @@ if TYPE_CHECKING:
     from kili.adapters.kili_api_gateway.kili_api_gateway import KiliAPIGateway
     from kili.client import Kili as KiliLegacy
 
+STEP_COVERAGE_DEPRECATION = (
+    "The step_coverage key of kili.projects.workflow.update() is deprecated and will be removed: a"
+    " review's percentage is set at its creation by"
+    " kili.projects.workflow.steps.create(sample_percentage=...), and changed by"
+    " kili.projects.workflow.transitions.update() on the SAMPLE transition leading to it."
+)
 WORKFLOW_LIST_DEPRECATION = (
     "kili.projects.workflow.list() is deprecated and will be removed: use"
     " kili.projects.workflow.steps.list() instead, which answers the same."
@@ -609,7 +616,9 @@ class WorkflowNamespace:
                 id. In the multi-group workflow, each step gives the `step_group_id` of the group
                 to create it in, and consensus can only be set on the labeling step of the first
                 group. A step can be given an `id` (see below), for a step created after it to
-                send back to it in `send_back_step_id`.
+                send back to it in `send_back_step_id`. Its `step_coverage` is deprecated, here
+                and in `update_steps`: see `kili.projects.workflow.steps.create()` and
+                `kili.projects.workflow.transitions.update()`.
             update_steps: List of steps to update in the project workflow, each given by its `id`,
                 or by its `name` with `group_name` when several groups use that name.
             delete_steps: List of steps to delete from the project workflow, each given by its ID,
@@ -642,26 +651,58 @@ class WorkflowNamespace:
                 did beyond what it asked for.
 
         Examples:
-            >>> import uuid
+            >>> # Without transitions: the server wires the changes
+            >>> kili.projects.workflow.update(
+            ...     project_id="my_project",
+            ...     update_steps=[{"id": step_id, "name": "Expert review"}],
+            ...     delete_step_groups=["Juniors"],
+            ... )
+            >>> # With them: a new group, which the end of "Experts" leads to for doubtful assets
             >>> kili.projects.workflow.update(
             ...     project_id="my_project",
             ...     create_step_groups=[
             ...         {
-            ...             "id": uuid.uuid4().hex,
-            ...             "name": "Experts",
+            ...             "name": "Audit",
             ...             "steps": [
-            ...                 {"type": "DEFAULT", "name": "Labeling", "assignees": [labeler_id]},
-            ...                 {
-            ...                     "type": "REVIEW",
-            ...                     "name": "Review",
-            ...                     "assignees": [reviewer_id],
-            ...                     "step_coverage": 100,
-            ...                 },
+            ...                 {"type": "DEFAULT", "name": "Audit labeling", "assignees": [labeler]},
+            ...                 {"type": "REVIEW", "name": "Audit review", "assignees": [reviewer]},
             ...             ],
             ...         }
             ...     ],
+            ...     update_transitions=[{"id": experts_default_transition_id, "priority": 2}],
+            ...     create_transitions=[
+            ...         {
+            ...             "from_step_group": "Experts",
+            ...             "to_step": "Audit labeling",
+            ...             "priority": 1,
+            ...             "condition": {
+            ...                 "type": "CLASSIFICATION_INCLUDES",
+            ...                 "job_name": "QUALITY",
+            ...                 "categories": ["DOUBTFUL"],
+            ...             },
+            ...         },
+            ...         {
+            ...             "from_step": "Audit labeling",
+            ...             "to_step": "Audit review",
+            ...             "priority": 1,
+            ...             "condition": {"type": "SAMPLE", "percentage": 100},
+            ...         },
+            ...         {
+            ...             "from_step_group": "Audit",
+            ...             "priority": 1,
+            ...             "condition": {"type": "ALWAYS"},
+            ...         },
+            ...     ],
             ... )
         """
+        steps_given = [
+            *(create_steps or []),
+            *(update_steps or []),
+            *(step for group in create_step_groups or [] for step in group["steps"]),
+        ]
+        if any(step.get("step_coverage") is not None for step in steps_given):
+            # Past the logging wrapper, to the caller's line
+            warnings.warn(STEP_COVERAGE_DEPRECATION, DeprecationWarning, stacklevel=3)
         return ProjectWorkflowUseCases(self._gateway).update_project_workflow(
             project_id=ProjectId(project_id),
             enforce_step_separation=enforce_step_separation,
