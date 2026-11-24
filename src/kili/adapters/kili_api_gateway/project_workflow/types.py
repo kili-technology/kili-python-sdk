@@ -3,7 +3,12 @@
 from dataclasses import dataclass
 from typing import Optional
 
-from kili.domain.project import WorkflowStepCreate, WorkflowStepUpdate
+from kili.domain.project import (
+    WorkflowStepCreate,
+    WorkflowStepGroupToCreate,
+    WorkflowStepGroupToUpdate,
+    WorkflowStepUpdate,
+)
 
 
 @dataclass
@@ -16,6 +21,10 @@ class ProjectWorkflowDataKiliAPIGatewayInput:
     # Step ids only: names are resolved to ids before the request is built.
     delete_steps: Optional[list[str]]
     null_fields: frozenset[str] = frozenset()
+    create_step_groups: Optional[list[WorkflowStepGroupToCreate]] = None
+    update_step_groups: Optional[list[WorkflowStepGroupToUpdate]] = None
+    # Group ids only, as the steps to delete.
+    delete_step_groups: Optional[list[str]] = None
 
 
 @dataclass

@@ -71,6 +71,39 @@ class WorkflowStepUpdate(TypedDict, total=False):
     group_name: Optional[str]
 
 
+class WorkflowStepToCreate(WorkflowStepCreate, total=False):
+    """A step to create, with the id to give it.
+
+    The id, unique across Kili and 5 to 32 characters long, is chosen by the caller, so that the
+    other changes of the same call can name the step: a step created after it sends back to it with
+    `send_back_step_id`.
+    """
+
+    id: Optional[str]
+
+
+class WorkflowStepGroupToCreate(TypedDict, total=False):
+    """A step group to create, with its steps, in the multi-group workflow.
+
+    Its steps are its labeling step first, then at least one review. The id, unique across Kili and
+    5 to 32 characters long, is chosen by the caller, so that a step created in the same call can
+    name the group by it in `step_group_id`.
+    """
+
+    id: Optional[str]
+    name: Required[str]
+    allowed_job_names: Optional[list[str]]
+    steps: Required[list[WorkflowStepToCreate]]
+
+
+class WorkflowStepGroupToUpdate(TypedDict, total=False):
+    """A step group to update, given by its id, in the multi-group workflow."""
+
+    id: Required[str]
+    name: Optional[str]
+    allowed_job_names: Optional[list[str]]
+
+
 class InputTypeEnum(str, Enum):
     """Input type enum."""
 

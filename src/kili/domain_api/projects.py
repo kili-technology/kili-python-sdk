@@ -273,7 +273,7 @@ class ProjectsNamespace(DomainNamespace):
         Returns:
             WorkflowNamespace instance for workflow operations
         """
-        return WorkflowNamespace(self._client)
+        return WorkflowNamespace(self._client, self._gateway)
 
     @typechecked
     def list(

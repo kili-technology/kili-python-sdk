@@ -51,11 +51,27 @@ def for_all_methods(decorator: Callable, exclude: list[str]):
 
 def log_call(func: Callable):
     """Decorator to add call info to the client logging context."""
+    return _log_call_as(func, func.__name__)
 
+
+def log_call_in_namespace(namespace: str) -> Callable[[Callable], Callable]:
+    """Decorator like `log_call`, naming a domain namespace method by its path from the client.
+
+    `kili.projects.workflow.steps.create()` is logged as `projects.workflow.steps.create`: its
+    name alone would not tell it from the `create` of the other namespaces.
+    """
+
+    def decorator(func: Callable) -> Callable:
+        return _log_call_as(func, f"{namespace}.{func.__name__}")
+
+    return decorator
+
+
+def _log_call_as(func: Callable, method_name: str) -> Callable:
     @functools.wraps(func)
     def wrapper(*args, **kwargs):
         context = LogContext()
-        context["kili-client-method-name"] = func.__name__
+        context["kili-client-method-name"] = method_name
         context["kili-client-call-time"] = (
             datetime.now(timezone.utc).isoformat().replace("+00:00", "Z")
         )

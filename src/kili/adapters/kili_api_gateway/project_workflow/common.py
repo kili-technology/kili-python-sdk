@@ -4,25 +4,29 @@ import warnings
 from typing import Optional, cast
 
 
-def get_assignees_to_add_ids(existing_members: list[dict], assignees: list[str]) -> list:
-    """Get list of assignees ids to add."""
+def get_assignees_to_add_ids(
+    existing_members: list[dict], assignees: list[str], exclude_labelers: bool = True
+) -> list:
+    """Get list of assignees ids to add.
+
+    A review takes members who can review, so labelers are left out unless `exclude_labelers` is
+    False, as for a labeling step.
+    """
     members_by_email = {m["user"]["email"]: m for m in (existing_members or [])}
     assignees_to_add = []
     assignees_added = []
     assignees_not_added = []
     for email in assignees:
         member = members_by_email.get(email)
-        if member and member.get("role") != "LABELER":
+        if member and (not exclude_labelers or member.get("role") != "LABELER"):
             user_id = member["user"]["id"]
             assignees_to_add.append(user_id)
             assignees_added.append(email)
         else:
             assignees_not_added.append(email)
     if assignees_not_added:
-        warnings.warn(
-            "These emails were not added (not found or can not review): "
-            + ", ".join(assignees_not_added)
-        )
+        reason = "not found or can not review" if exclude_labelers else "not project members"
+        warnings.warn(f"These emails were not added ({reason}): " + ", ".join(assignees_not_added))
     return assignees_to_add
 
 
@@ -103,3 +107,20 @@ def resolve_step(
     if step is None:
         raise ValueError(f"Step '{step_id}' not found in project workflow")
     return step
+
+
+def find_step_group(project: dict, group: str) -> dict:
+    """Find the step group of a multi-group workflow project given by its id or its name."""
+    if project.get("workflowVersion") != "V3":
+        raise ValueError("Step groups are only available in the multi-group workflow")
+    group_by_id = next(
+        (
+            candidate
+            for candidate in project.get("stepGroups") or []
+            if candidate.get("id") == group
+        ),
+        None,
+    )
+    if group_by_id is not None:
+        return group_by_id
+    return find_step_group_by_name(project, group)

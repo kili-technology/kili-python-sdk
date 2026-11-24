@@ -1,25 +1,188 @@
 """Workflow namespaces of the projects domain, for the Kili Python SDK."""
 
+from functools import cached_property
 from typing import TYPE_CHECKING, Any, List, Optional
 
 from typeguard import typechecked
 
-from kili.domain.project import WorkflowStepCreate, WorkflowStepDesignation, WorkflowStepUpdate
+from kili.domain.project import (
+    ProjectId,
+    WorkflowStepCreate,
+    WorkflowStepDesignation,
+    WorkflowStepUpdate,
+)
+from kili.use_cases.project_workflow.step_groups import WorkflowStepGroupUseCases
+from kili.utils.logcontext import for_all_methods, log_call_in_namespace
 
 if TYPE_CHECKING:
+    from kili.adapters.kili_api_gateway.kili_api_gateway import KiliAPIGateway
     from kili.client import Kili as KiliLegacy
+
+
+@for_all_methods(log_call_in_namespace("projects.workflow.groups"), exclude=["__init__"])
+class WorkflowGroupsNamespace:
+    """Nested namespace for the step groups of a project workflow.
+
+    Step groups only exist in the multi-group workflow: the server refuses to create, update or
+    delete one on any other project. Each group has one labeling step, first, followed by at least
+    one review. A group is given by its id or by its name.
+    """
+
+    def __init__(self, gateway: "KiliAPIGateway") -> None:
+        """Initialize the step groups namespace.
+
+        Args:
+            gateway: The KiliAPIGateway instance for API operations
+        """
+        self._gateway = gateway
+
+    @typechecked
+    def list(self, project_id: str) -> list[dict[str, Any]]:
+        """List the step groups of a project workflow.
+
+        Args:
+            project_id: Id of the project.
+
+        Returns:
+            One dict per group: its `id`, `name`, `order`, `allowedJobNames`, and its `steps`,
+                each with its `id`, `name` and `type`.
+
+        Examples:
+            >>> kili.projects.workflow.groups.list(project_id="my_project")
+        """
+        return WorkflowStepGroupUseCases(self._gateway).list_step_groups(ProjectId(project_id))
+
+    @typechecked
+    def create(
+        self,
+        project_id: str,
+        name: str,
+        labeling_step_name: str,
+        labelers: List[str],
+        review_step_name: str,
+        reviewers: List[str],
+        sample_percentage: int,
+        allowed_job_names: Optional[List[str]] = None,
+    ) -> dict[str, Any]:
+        """Create a step group after the last one, with its labeling step and its first review.
+
+        The server saves a group only with its labeling step and at least one review, so both are
+        created in the same call. Add other reviews with `kili.projects.workflow.steps.create()`.
+        Multi-group workflow only.
+
+        Args:
+            project_id: Id of the project.
+            name: Name of the group, unique in the project.
+            labeling_step_name: Name of the labeling step of the group.
+            labelers: Emails of the project members to assign to the labeling step.
+            review_step_name: Name of the review step of the group.
+            reviewers: Emails of the project members to assign to the review. Labelers cannot
+                review: they are left out, with a warning.
+            sample_percentage: Percentage of the assets labeled in the group that the review
+                samples, from 0 to 100.
+            allowed_job_names: Names of the jobs the steps of the group annotate. Every job when
+                not given.
+
+        Returns:
+            The created group: its `id`, `name`, `order`, `allowedJobNames`, and its `steps`, each
+                with its `id`, `name` and `type`.
+
+        Examples:
+            >>> kili.projects.workflow.groups.create(
+            ...     project_id="my_project",
+            ...     name="Experts",
+            ...     labeling_step_name="Expert labeling",
+            ...     labelers=["expert@acme.com"],
+            ...     review_step_name="Expert review",
+            ...     reviewers=["lead@acme.com"],
+            ...     sample_percentage=100,
+            ... )
+        """
+        return WorkflowStepGroupUseCases(self._gateway).create_step_group(
+            ProjectId(project_id),
+            name=name,
+            labeling_step_name=labeling_step_name,
+            labelers=labelers,
+            review_step_name=review_step_name,
+            reviewers=reviewers,
+            sample_percentage=sample_percentage,
+            allowed_job_names=allowed_job_names,
+        )
+
+    @typechecked
+    def update(
+        self,
+        project_id: str,
+        group: str,
+        name: Optional[str] = None,
+        allowed_job_names: Optional[List[str]] = None,
+    ) -> dict[str, Any]:
+        """Rename a step group, or change the jobs its steps annotate.
+
+        Multi-group workflow only.
+
+        Args:
+            project_id: Id of the project.
+            group: Id or name of the group.
+            name: New name of the group, unique in the project.
+            allowed_job_names: Names of the jobs the steps of the group annotate. An empty list
+                allows every job.
+
+        Returns:
+            The updated group: its `id`, `name`, `order`, `allowedJobNames`, and its `steps`, each
+                with its `id`, `name` and `type`.
+
+        Examples:
+            >>> kili.projects.workflow.groups.update(
+            ...     project_id="my_project", group="Experts", allowed_job_names=["CLASSIFICATION"]
+            ... )
+        """
+        return WorkflowStepGroupUseCases(self._gateway).update_step_group(
+            ProjectId(project_id), group, name=name, allowed_job_names=allowed_job_names
+        )
+
+    @typechecked
+    def delete(self, project_id: str, group: str) -> dict[str, str]:
+        """Delete a step group with its steps.
+
+        A project keeps at least one group. Multi-group workflow only.
+
+        Args:
+            project_id: Id of the project.
+            group: Id or name of the group.
+
+        Returns:
+            A dict with the `id` of the deleted group.
+
+        Examples:
+            >>> kili.projects.workflow.groups.delete(project_id="my_project", group="Experts")
+        """
+        return WorkflowStepGroupUseCases(self._gateway).delete_step_group(
+            ProjectId(project_id), group
+        )
 
 
 class WorkflowNamespace:
     """Nested namespace for project workflow operations."""
 
-    def __init__(self, client: "KiliLegacy") -> None:
+    def __init__(self, client: "KiliLegacy", gateway: Optional["KiliAPIGateway"] = None) -> None:
         """Initialize workflow namespace.
 
         Args:
             client: The Kili client instance
+            gateway: The KiliAPIGateway instance for API operations, the client's by default
         """
         self._client = client
+        self._gateway = gateway if gateway is not None else client.kili_api_gateway
+
+    @cached_property
+    def groups(self) -> WorkflowGroupsNamespace:
+        """Access the step groups of the workflow: `kili.projects.workflow.groups`.
+
+        Returns:
+            WorkflowGroupsNamespace instance for step group operations
+        """
+        return WorkflowGroupsNamespace(self._gateway)
 
     @typechecked
     def update(

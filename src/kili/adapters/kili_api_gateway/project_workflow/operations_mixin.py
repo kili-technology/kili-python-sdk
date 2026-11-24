@@ -48,11 +48,13 @@ class ProjectWorkflowOperationMixin(BaseOperationMixin):
         self,
         project_id: ProjectId,
         project_workflow_data: ProjectWorkflowDataKiliAPIGatewayInput,
+        fields: Optional[ListOrTuple[str]] = None,
     ) -> dict:
-        """Update properties in a project workflow."""
+        """Update properties in a project workflow, answering the given fields of its settings."""
         project_workflow_input = project_input_mapper(data=project_workflow_data)
 
-        fields = ["enforceStepSeparation", "steps{id}"]
+        if fields is None:
+            fields = ["enforceStepSeparation", "steps{id}"]
         fragment = fragment_builder(fields)
         mutation = get_update_project_workflow_mutation(fragment)
 
@@ -82,6 +84,18 @@ class ProjectWorkflowOperationMixin(BaseOperationMixin):
             )
 
         return steps
+
+    def get_step_groups(self, project_id: str, fields: ListOrTuple[str]) -> list[dict]:
+        """Get the step groups of a project workflow, the fields given as `stepGroups.<field>`."""
+        fragment = fragment_builder(fields)
+        query = get_steps_query(fragment)
+        variables = {"where": {"id": project_id}, "first": 1, "skip": 0}
+        project = self.graphql_client.execute(query, variables)["data"]
+
+        if len(project) == 0:
+            raise NotFound(f"project ID: {project_id}. The project does not exist.")
+
+        return project[0].get("stepGroups") or []
 
     def get_project_workflow_context(
         self, project_id: str, include_assignee_emails: bool = False
