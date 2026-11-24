@@ -2165,6 +2165,11 @@ class AssetsNamespace(DomainNamespace):  # pylint: disable=too-many-public-metho
         This method sends assets back to the queue, effectively invalidating their
         current workflow step status.
 
+        In the multi-step and multi-group workflows, an asset in review goes back to the step
+        its review sends back to. That step goes to Rework if it already submitted a label on the
+        asset, else to To do; the review that sends the asset back, and every Done step that step
+        can reach through the transitions, go to Rework.
+
         Args:
             asset_id: Internal ID of asset to send back to queue.
             asset_ids: List of internal IDs of assets to send back to queue.
