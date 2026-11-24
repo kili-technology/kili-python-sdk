@@ -42,6 +42,9 @@ def project_input_mapper(data: ProjectWorkflowDataKiliAPIGatewayInput) -> dict:
             "updates": [step_group_update_mapper(group) for group in data.update_step_groups or []],
             "deletes": data.delete_step_groups or [],
         }
+    # Sent only when given: without it, the server rewires the transitions around each change.
+    if data.transitions is not None:
+        result["transitions"] = data.transitions
     return result
 
 
