@@ -11,6 +11,7 @@ from kili.domain.project import (
     WorkflowStepUpdate,
 )
 from kili.use_cases.project_workflow import ProjectWorkflowUseCases
+from kili.utils.logcontext import for_all_methods, log_call
 
 from ...domain.types import ListOrTuple
 from .base import BaseClientMethods
@@ -25,6 +26,7 @@ def _required(value: Optional[T], name: str) -> T:
     return value
 
 
+@for_all_methods(log_call, exclude=["__init__"])
 class ProjectWorkflowClientMethods(BaseClientMethods):
     """Client presentation methods for project workflow."""
 
