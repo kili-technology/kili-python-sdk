@@ -83,9 +83,10 @@ class WorkflowStepToCreate(WorkflowStepCreate, total=False):
 
 
 class WorkflowStepToUpdate(WorkflowStepUpdate, total=False):
-    """A step to update, honeypot included."""
+    """A step to update, honeypot and send back to the previous step included."""
 
     use_honeypot: Optional[bool]
+    send_back_to_previous_step: Optional[bool]
 
 
 class WorkflowStepGroupToCreate(TypedDict, total=False):

@@ -43,6 +43,7 @@ class AddReviewStepInput:
     # The group to add the step to, by name; resolved to its id before the request is built.
     group_name: str | None = None
     step_group_id: str | None = None
+    send_back_to_previous_step: bool | None = None
 
 
 @dataclass

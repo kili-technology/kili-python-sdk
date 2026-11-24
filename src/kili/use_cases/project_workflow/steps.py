@@ -1,5 +1,7 @@
 """Use cases of the steps of a project workflow, for the domain client."""
 
+from collections.abc import Iterator
+from contextlib import contextmanager
 from typing import Literal, Optional, Union
 
 from cuid import cuid
@@ -20,7 +22,12 @@ from kili.domain.project import (
 )
 from kili.exceptions import NotFound
 from kili.use_cases.base import BaseUseCases
-from kili.use_cases.project_workflow.helpers import assignee_ids_of, check_percentage, find_by_id
+from kili.use_cases.project_workflow.helpers import (
+    assignee_ids_of,
+    check_percentage,
+    conditional_routing_required,
+    find_by_id,
+)
 
 # What the domain client answers for a step, as the method client's get_steps does by default.
 STEP_FIELDS = (
@@ -52,6 +59,7 @@ class WorkflowStepUseCases(BaseUseCases):
         consensus_coverage: Optional[int] = None,
         number_of_expected_labels_for_consensus: Optional[int] = None,
         use_honeypot: Optional[bool] = None,
+        send_back_to_previous_step: Optional[bool] = None,
     ) -> dict[str, object]:
         """Create a step at the end of its group.
 
@@ -70,14 +78,19 @@ class WorkflowStepUseCases(BaseUseCases):
                 or number_of_expected_labels_for_consensus is not None
             ):
                 raise ValueError("Consensus is set on a labeling step, not on a review")
+            _check_send_back(send_back_to_step, send_back_to_previous_step)
         else:
             if sample_percentage is not None:
                 raise ValueError(
                     "sample_percentage is set on a review: a labeling step takes every asset"
                     " that reaches it"
                 )
-            if send_back_to_step is not None:
-                raise ValueError("send_back_to_step is set on a review, not on a labeling step")
+            for parameter, value in (
+                ("send_back_to_step", send_back_to_step),
+                ("send_back_to_previous_step", send_back_to_previous_step),
+            ):
+                if value is not None:
+                    raise ValueError(f"{parameter} is set on a review, not on a labeling step")
             if use_honeypot is not None:
                 raise ValueError(
                     "use_honeypot cannot be given at a labeling step's creation: set it with"
@@ -95,18 +108,20 @@ class WorkflowStepUseCases(BaseUseCases):
         assignee_ids = assignee_ids_of(members, assignees, step_type, name)
 
         if step_type == "REVIEW":
-            result = self._kili_api_gateway.create_review_step(
-                AddReviewStepInput(
-                    project_id=project_id,
-                    step_name=name,
-                    assignees=assignee_ids,
-                    step_coverage=sample_percentage,
-                    use_honeypot=use_honeypot,
-                    send_back_to_step=send_back_step_id,
-                    step_group_id=group_id,
-                ),
-                fields=STEP_FIELDS,
-            )
+            with _previous_step_required(send_back_to_previous_step):
+                result = self._kili_api_gateway.create_review_step(
+                    AddReviewStepInput(
+                        project_id=project_id,
+                        step_name=name,
+                        assignees=assignee_ids,
+                        step_coverage=sample_percentage,
+                        use_honeypot=use_honeypot,
+                        send_back_to_step=send_back_step_id,
+                        step_group_id=group_id,
+                        send_back_to_previous_step=send_back_to_previous_step,
+                    ),
+                    fields=STEP_FIELDS,
+                )
             return _new_step(result, name, group_id)
 
         step_id = cuid()
@@ -140,6 +155,7 @@ class WorkflowStepUseCases(BaseUseCases):
         number_of_expected_labels_for_consensus: Optional[int] = None,
         use_honeypot: Optional[bool] = None,
         send_back_to_step: Optional[Union[str, WorkflowStepDesignation]] = None,
+        send_back_to_previous_step: Optional[bool] = None,
     ) -> dict[str, object]:
         """Update the properties of a step, refusing those that do not fit its type."""
         context = self._kili_api_gateway.get_project_workflow_context(project_id)
@@ -147,10 +163,17 @@ class WorkflowStepUseCases(BaseUseCases):
         has_consensus = (
             consensus_coverage is not None or number_of_expected_labels_for_consensus is not None
         )
-        if target.get("type") == "DEFAULT" and send_back_to_step is not None:
-            raise ValueError(
-                f"send_back_to_step is set on a review: step '{target['name']}' is a labeling step"
-            )
+        if target.get("type") == "DEFAULT":
+            for parameter, value in (
+                ("send_back_to_step", send_back_to_step),
+                ("send_back_to_previous_step", send_back_to_previous_step),
+            ):
+                if value is not None:
+                    raise ValueError(
+                        f"{parameter} is set on a review: step '{target['name']}' is a labeling"
+                        " step"
+                    )
+        _check_send_back(send_back_to_step, send_back_to_previous_step)
         if target.get("type") == "REVIEW" and has_consensus:
             raise ValueError(
                 f"Consensus is set on a labeling step: step '{target['name']}' is a review"
@@ -162,6 +185,7 @@ class WorkflowStepUseCases(BaseUseCases):
             and not has_consensus
             and use_honeypot is None
             and send_back_to_step is None
+            and send_back_to_previous_step is None
         ):
             raise ValueError("Give at least one property of the step to change")
 
@@ -176,17 +200,19 @@ class WorkflowStepUseCases(BaseUseCases):
                 if send_back_to_step is not None
                 else None
             ),
+            "send_back_to_previous_step": send_back_to_previous_step,
         }
-        result = self._kili_api_gateway.update_project_workflow(
-            project_id,
-            ProjectWorkflowDataKiliAPIGatewayInput(
-                enforce_step_separation=None,
-                create_steps=None,
-                update_steps=[update],
-                delete_steps=None,
-            ),
-            fields=STEP_FIELDS,
-        )
+        with _previous_step_required(send_back_to_previous_step):
+            result = self._kili_api_gateway.update_project_workflow(
+                project_id,
+                ProjectWorkflowDataKiliAPIGatewayInput(
+                    enforce_step_separation=None,
+                    create_steps=None,
+                    update_steps=[update],
+                    delete_steps=None,
+                ),
+                fields=STEP_FIELDS,
+            )
         return find_by_id(result.get("steps"), target["id"], "step")
 
     def delete_step(
@@ -206,6 +232,26 @@ class WorkflowStepUseCases(BaseUseCases):
             fields=["steps{id}"],
         )
         return {"id": step_id}
+
+
+def _check_send_back(
+    send_back_to_step: Optional[Union[str, WorkflowStepDesignation]],
+    send_back_to_previous_step: Optional[bool],
+) -> None:
+    if send_back_to_previous_step and send_back_to_step is not None:
+        raise ValueError(
+            "A review sends back to the step given in send_back_to_step, or to the step the asset"
+            " came from with send_back_to_previous_step: not both"
+        )
+
+
+@contextmanager
+def _previous_step_required(send_back_to_previous_step: Optional[bool]) -> Iterator[None]:
+    if send_back_to_previous_step is None:
+        yield
+        return
+    with conditional_routing_required("send_back_to_previous_step"):
+        yield
 
 
 def _group_id_for_new_step(context: dict, group_name: Optional[str]) -> Optional[str]:

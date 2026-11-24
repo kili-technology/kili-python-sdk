@@ -221,6 +221,7 @@ class WorkflowStepsNamespace:
         consensus_coverage: Optional[int] = None,
         number_of_expected_labels_for_consensus: Optional[int] = None,
         use_honeypot: Optional[bool] = None,
+        send_back_to_previous_step: Optional[bool] = None,
     ) -> dict[str, Any]:
         """Create a step at the end of its group.
 
@@ -247,6 +248,9 @@ class WorkflowStepsNamespace:
                 each consensus asset gets.
             use_honeypot: For a review: whether it uses honeypot. Set a labeling step's with
                 `update()` once it exists.
+            send_back_to_previous_step: For a review: whether it sends its rejected assets back
+                to the step each came from, which differs per asset where several steps lead to
+                it. Not with `send_back_to_step`.
 
         Returns:
             The created step: its `id`, `name`, `type`, `stepGroupId` and `assignees`.
@@ -271,6 +275,7 @@ class WorkflowStepsNamespace:
             consensus_coverage=consensus_coverage,
             number_of_expected_labels_for_consensus=number_of_expected_labels_for_consensus,
             use_honeypot=use_honeypot,
+            send_back_to_previous_step=send_back_to_previous_step,
         )
 
     @typechecked
@@ -283,6 +288,7 @@ class WorkflowStepsNamespace:
         number_of_expected_labels_for_consensus: Optional[int] = None,
         use_honeypot: Optional[bool] = None,
         send_back_to_step: Optional[Union[str, WorkflowStepDesignation]] = None,
+        send_back_to_previous_step: Optional[bool] = None,
     ) -> dict[str, Any]:
         """Update the properties of a step, in one call.
 
@@ -300,6 +306,10 @@ class WorkflowStepsNamespace:
             use_honeypot: Whether the step uses honeypot. One step of the project at most does.
             send_back_to_step: For a review: the step to send its rejected assets back to, by
                 id, by name, or as `{"name": ..., "group_name": ...}`.
+            send_back_to_previous_step: For a review: whether it sends its rejected assets back
+                to the step each came from, which differs per asset where several steps lead to
+                it. Naming a step in `send_back_to_step` turns it off. Not `True` with
+                `send_back_to_step`.
 
         Returns:
             The updated step: its `id`, `name`, `type`, `stepGroupId` and `assignees`.
@@ -320,6 +330,7 @@ class WorkflowStepsNamespace:
             number_of_expected_labels_for_consensus=number_of_expected_labels_for_consensus,
             use_honeypot=use_honeypot,
             send_back_to_step=send_back_to_step,
+            send_back_to_previous_step=send_back_to_previous_step,
         )
 
     @typechecked
