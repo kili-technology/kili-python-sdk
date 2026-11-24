@@ -519,6 +519,10 @@ class ProjectsNamespace(DomainNamespace):
     ) -> dict[str, Any]:
         """Update workflow and assignment settings of a project.
 
+        These are the settings of the labeling interface. The steps and step groups of the workflow
+        are changed with `kili.projects.workflow.update()`, `kili.projects.workflow.steps` and
+        `kili.projects.workflow.groups`.
+
         Args:
             project_id: Identifier of the project.
             can_navigate_between_assets:
