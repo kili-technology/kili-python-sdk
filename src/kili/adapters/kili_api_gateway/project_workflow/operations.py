@@ -23,14 +23,14 @@ def get_steps_query(fragment: str) -> str:
         """
 
 
-def get_add_review_step_mutation() -> str:
+def get_add_review_step_mutation(fragment: str = "steps{id,name,stepGroupId}") -> str:
     """Return the GraphQL addReviewStep mutation."""
-    return """
-        mutation addReviewStep($input: AddReviewStepInput!) {
-            data: addReviewStep(input: $input) {
-            steps{id,name,stepGroupId}
-            }
-        }
+    return f"""
+        mutation addReviewStep($input: AddReviewStepInput!) {{
+            data: addReviewStep(input: $input) {{
+            {fragment}
+            }}
+        }}
         """
 
 

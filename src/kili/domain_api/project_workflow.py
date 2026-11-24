@@ -1,7 +1,7 @@
 """Workflow namespaces of the projects domain, for the Kili Python SDK."""
 
 from functools import cached_property
-from typing import TYPE_CHECKING, Any, List, Optional
+from typing import TYPE_CHECKING, Any, List, Literal, Optional, Union
 
 from typeguard import typechecked
 
@@ -15,6 +15,7 @@ from kili.domain.project import (
 )
 from kili.use_cases.project_workflow import ProjectWorkflowUseCases
 from kili.use_cases.project_workflow.step_groups import WorkflowStepGroupUseCases
+from kili.use_cases.project_workflow.steps import WorkflowStepUseCases
 from kili.utils.logcontext import for_all_methods, log_call_in_namespace
 
 if TYPE_CHECKING:
@@ -165,6 +166,173 @@ class WorkflowGroupsNamespace:
         )
 
 
+@for_all_methods(log_call_in_namespace("projects.workflow.steps"), exclude=["__init__"])
+class WorkflowStepsNamespace:
+    """Nested namespace for the steps of a project workflow.
+
+    A step is given by its id, by its name when no other step of the project has it, or as
+    `{"name": ..., "group_name": ...}`. Its assignees are changed with
+    `kili.projects.workflow.add_reviewers()`, `add_labelers()` and their `remove_` pairs.
+    """
+
+    def __init__(self, gateway: "KiliAPIGateway") -> None:
+        """Initialize the steps namespace.
+
+        Args:
+            gateway: The KiliAPIGateway instance for API operations
+        """
+        self._gateway = gateway
+
+    @typechecked
+    def list(self, project_id: str) -> list[dict[str, Any]]:
+        """List the steps of a project workflow.
+
+        Args:
+            project_id: Id of the project.
+
+        Returns:
+            One dict per step: its `id`, `name`, `type` (`DEFAULT` for a labeling step, or
+                `REVIEW`), `stepGroupId`, and its `assignees`, each with its `id` and `email`.
+
+        Examples:
+            >>> kili.projects.workflow.steps.list(project_id="my_project")
+        """
+        return WorkflowStepUseCases(self._gateway).list_steps(ProjectId(project_id))
+
+    @typechecked
+    def create(
+        self,
+        project_id: str,
+        name: str,
+        assignees: List[str],
+        group_name: Optional[str] = None,
+        type: Literal["DEFAULT", "REVIEW"] = "REVIEW",
+        sample_percentage: Optional[int] = None,
+        send_back_to_step: Optional[Union[str, WorkflowStepDesignation]] = None,
+        consensus_coverage: Optional[int] = None,
+        number_of_expected_labels_for_consensus: Optional[int] = None,
+        use_honeypot: Optional[bool] = None,
+    ) -> dict[str, Any]:
+        """Create a step at the end of its group.
+
+        A review samples `sample_percentage` % of the assets completing the last step of its
+        group; the others go on as before. A labeling step is accepted by the server only in a
+        group that has no step yet, which it opens: a new group is created with its steps by
+        `kili.projects.workflow.groups.create()`.
+
+        Args:
+            project_id: Id of the project.
+            name: Name of the step, unique in its group.
+            assignees: Emails of the project members to assign to the step. Labelers cannot
+                review: they are left out of a review, with a warning.
+            group_name: Name of the group to add the step to, in the multi-group workflow.
+                Required when the project has several groups.
+            type: `REVIEW`, or `DEFAULT` for a labeling step.
+            sample_percentage: For a review, which requires it: the percentage of the assets it
+                samples, from 0 to 100.
+            send_back_to_step: For a review: the step to send its rejected assets back to, by
+                id, by name, or as `{"name": ..., "group_name": ...}`.
+            consensus_coverage: For a labeling step: percentage of the assets labeled for
+                consensus, from 0 to 100. Only on the labeling step of the first group.
+            number_of_expected_labels_for_consensus: For a labeling step: the number of labels
+                each consensus asset gets.
+            use_honeypot: For a review: whether it uses honeypot. Set a labeling step's with
+                `update()` once it exists.
+
+        Returns:
+            The created step: its `id`, `name`, `type`, `stepGroupId` and `assignees`.
+
+        Examples:
+            >>> kili.projects.workflow.steps.create(
+            ...     project_id="my_project",
+            ...     name="Second review",
+            ...     assignees=["reviewer@acme.com"],
+            ...     group_name="Experts",
+            ...     sample_percentage=20,
+            ... )
+        """
+        return WorkflowStepUseCases(self._gateway).create_step(
+            ProjectId(project_id),
+            name=name,
+            assignees=assignees,
+            group_name=group_name,
+            step_type=type,
+            sample_percentage=sample_percentage,
+            send_back_to_step=send_back_to_step,
+            consensus_coverage=consensus_coverage,
+            number_of_expected_labels_for_consensus=number_of_expected_labels_for_consensus,
+            use_honeypot=use_honeypot,
+        )
+
+    @typechecked
+    def update(
+        self,
+        project_id: str,
+        step: Union[str, WorkflowStepDesignation],
+        name: Optional[str] = None,
+        consensus_coverage: Optional[int] = None,
+        number_of_expected_labels_for_consensus: Optional[int] = None,
+        use_honeypot: Optional[bool] = None,
+        send_back_to_step: Optional[Union[str, WorkflowStepDesignation]] = None,
+    ) -> dict[str, Any]:
+        """Update the properties of a step, in one call.
+
+        A property that does not fit the step's type is refused. The assignees are changed with
+        `kili.projects.workflow.add_reviewers()`, `add_labelers()` and their `remove_` pairs.
+
+        Args:
+            project_id: Id of the project.
+            step: The step, by id, by name, or as `{"name": ..., "group_name": ...}`.
+            name: New name of the step, unique in its group.
+            consensus_coverage: For a labeling step: percentage of the assets labeled for
+                consensus, from 0 to 100. Only on the labeling step of the first group.
+            number_of_expected_labels_for_consensus: For a labeling step: the number of labels
+                each consensus asset gets.
+            use_honeypot: Whether the step uses honeypot. One step of the project at most does.
+            send_back_to_step: For a review: the step to send its rejected assets back to, by
+                id, by name, or as `{"name": ..., "group_name": ...}`.
+
+        Returns:
+            The updated step: its `id`, `name`, `type`, `stepGroupId` and `assignees`.
+
+        Examples:
+            >>> kili.projects.workflow.steps.update(
+            ...     project_id="my_project",
+            ...     step={"name": "Review", "group_name": "Experts"},
+            ...     name="Expert review",
+            ...     send_back_to_step={"name": "Labeling", "group_name": "Experts"},
+            ... )
+        """
+        return WorkflowStepUseCases(self._gateway).update_step(
+            ProjectId(project_id),
+            step,
+            name=name,
+            consensus_coverage=consensus_coverage,
+            number_of_expected_labels_for_consensus=number_of_expected_labels_for_consensus,
+            use_honeypot=use_honeypot,
+            send_back_to_step=send_back_to_step,
+        )
+
+    @typechecked
+    def delete(self, project_id: str, step: Union[str, WorkflowStepDesignation]) -> dict[str, str]:
+        """Delete a step, wherever it is in its group.
+
+        The server refuses a deletion that leaves a group without its labeling step or without a
+        review: delete the group with `kili.projects.workflow.groups.delete()` instead.
+
+        Args:
+            project_id: Id of the project.
+            step: The step, by id, by name, or as `{"name": ..., "group_name": ...}`.
+
+        Returns:
+            A dict with the `id` of the deleted step.
+
+        Examples:
+            >>> kili.projects.workflow.steps.delete(project_id="my_project", step="Second review")
+        """
+        return WorkflowStepUseCases(self._gateway).delete_step(ProjectId(project_id), step)
+
+
 @for_all_methods(log_call_in_namespace("projects.workflow"), exclude=["__init__"])
 class WorkflowNamespace:
     """Nested namespace for project workflow operations."""
@@ -178,6 +346,15 @@ class WorkflowNamespace:
         """
         self._client = client
         self._gateway = gateway if gateway is not None else client.kili_api_gateway
+
+    @cached_property
+    def steps(self) -> WorkflowStepsNamespace:
+        """Access the steps of the workflow: `kili.projects.workflow.steps`.
+
+        Returns:
+            WorkflowStepsNamespace instance for step operations
+        """
+        return WorkflowStepsNamespace(self._gateway)
 
     @cached_property
     def groups(self) -> WorkflowGroupsNamespace:

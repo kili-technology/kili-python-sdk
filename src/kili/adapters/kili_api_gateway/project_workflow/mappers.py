@@ -94,6 +94,7 @@ def update_step_mapper(
         "assignees": "assignees",
         "sendBackStepId": "send_back_step_id",
         "stepGroupId": "step_group_id",
+        "useHoneypot": "use_honeypot",
     }
     return {
         gql_key: data[py_key]

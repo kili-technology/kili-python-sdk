@@ -360,6 +360,16 @@ class ProjectWorkflowOperationMixin(BaseOperationMixin):
             raise NotFound(f"Could not find the stepId of the step {data.step_name}.")
         return step
 
+    def create_review_step(self, data: AddReviewStepInput, fields: ListOrTuple[str]) -> dict:
+        """Add a review step given by ids only, answering the given fields of the workflow settings.
+
+        Unlike `add_review_step`, it resolves nothing: the assignees, the group and the send back
+        target are already ids.
+        """
+        variables = {"input": add_review_step_input_mapper(data)}
+        mutation = get_add_review_step_mutation(fragment_builder(fields))
+        return self.graphql_client.execute(mutation, variables)["data"]
+
     def update_labeling_step_properties(self, data: UpdateLabelingStepPropertiesInput) -> dict:
         """Update properties of a labeling step."""
         variables = {"input": update_labeling_step_properties_input_mapper(data)}

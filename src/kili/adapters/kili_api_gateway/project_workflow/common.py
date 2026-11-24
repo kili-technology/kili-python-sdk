@@ -1,7 +1,8 @@
 """Project Workflow gateway common."""
 
 import warnings
-from typing import Optional, cast
+from collections.abc import Mapping
+from typing import Optional, Union, cast
 
 
 def get_assignees_to_add_ids(
@@ -107,6 +108,23 @@ def resolve_step(
     if step is None:
         raise ValueError(f"Step '{step_id}' not found in project workflow")
     return step
+
+
+def find_step(project: dict, step: Union[str, Mapping]) -> dict:
+    """Find the workflow step given by its id, by its name, or as `{"name", "group_name"}`.
+
+    A string is read as an id first, then as a name, which must then be unique in the project.
+    The whole project is searched, whichever group the step is in.
+    """
+    if isinstance(step, str):
+        step_by_id = next(
+            (candidate for candidate in project.get("steps") or [] if candidate.get("id") == step),
+            None,
+        )
+        if step_by_id is not None:
+            return step_by_id
+        return find_step_by_name(project, step, None)
+    return find_step_by_name(project, step["name"], step.get("group_name"))
 
 
 def find_step_group(project: dict, group: str) -> dict:

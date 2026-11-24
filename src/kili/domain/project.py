@@ -82,6 +82,12 @@ class WorkflowStepToCreate(WorkflowStepCreate, total=False):
     id: Optional[str]
 
 
+class WorkflowStepToUpdate(WorkflowStepUpdate, total=False):
+    """A step to update, honeypot included."""
+
+    use_honeypot: Optional[bool]
+
+
 class WorkflowStepGroupToCreate(TypedDict, total=False):
     """A step group to create, with its steps, in the multi-group workflow.
 
