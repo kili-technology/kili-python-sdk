@@ -8,6 +8,7 @@ from kili.adapters.kili_api_gateway.project_workflow.types import (
 )
 from kili.domain.label import LabelFilters
 from kili.domain.project import ProjectId, WorkflowStepCreate, WorkflowStepUpdate
+from kili.exceptions import GraphQLError
 from kili.use_cases.base import BaseUseCases
 
 logger = logging.getLogger(__name__)
@@ -52,6 +53,7 @@ class WorkflowCopyUseCases(BaseUseCases):
             raise ValueError(f"Source project {source_project_id} has no workflow steps to copy.")
 
         _validate_source_has_one_group(source_project_id, source_steps)
+        self._validate_source_routes_by_chains(source_project_id)
 
         step_names = [step["name"] for step in source_steps]
         if len(step_names) != len(set(step_names)):
@@ -150,6 +152,27 @@ class WorkflowCopyUseCases(BaseUseCases):
             destination_project_id,
         )
         return result
+
+    def _validate_source_routes_by_chains(self, source_project_id: ProjectId) -> None:
+        """Validate that the source workflow is a chain of steps per group.
+
+        The copy rebuilds the steps in their order, so it would lose any transition that routes
+        otherwise. A server that does not know `usesConditionalRouting` has no such project.
+        """
+        try:
+            source = self._kili_api_gateway.get_workflow(
+                source_project_id, ["usesConditionalRouting"]
+            )
+        except GraphQLError as error:
+            if "Cannot query field" in str(error):
+                return
+            raise
+        if source.get("usesConditionalRouting") is True:
+            raise ValueError(
+                f"Source project {source_project_id} routes its assets by conditions: its"
+                " workflow cannot be copied, as the copy rebuilds its steps in order and would"
+                " lose its transitions."
+            )
 
     def _validate_consensus_labelers(
         self, destination_project_id: ProjectId, source_steps: list[dict[str, object]]
