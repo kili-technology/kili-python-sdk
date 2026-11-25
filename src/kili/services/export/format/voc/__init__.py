@@ -66,7 +66,8 @@ class VocExporter(AbstractExporter):
 
         images: set[Path] = set()
         frames_by_asset: dict[str, list[str]] = {}
-        for asset in tqdm(self.preprocess_assets(assets), disable=self.disable_tqdm):
+        clean_assets = self._count_ontology_versions(self.preprocess_assets(assets))
+        for asset in tqdm(clean_assets, disable=self.disable_tqdm):
             asset_images, frame_names = _process_asset(
                 asset,
                 labels_folder,

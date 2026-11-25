@@ -51,7 +51,7 @@ class CocoExporter(AbstractExporter):
 
     def process_and_save(self, assets: list[dict], output_filename: Path):
         """Extract formatted annotations from labels."""
-        clean_assets = self.preprocess_assets(assets)
+        clean_assets = self._count_ontology_versions(self.preprocess_assets(assets))
         # An asset with several labels is exported once per label, as the app exports it
         expanded_assets = [copy for asset in clean_assets for copy in one_asset_per_label(asset)]
         try:

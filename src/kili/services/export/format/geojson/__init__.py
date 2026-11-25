@@ -83,6 +83,7 @@ class GeoJsonExporter(AbstractExporter):
             if project_type == "GEOSPATIAL"
             or is_geotiff_asset_with_lat_lon_coords(asset, self.kili.http_client)
         ]
+        geotiff_assets = self._count_ontology_versions(geotiff_assets)
         if len(geotiff_assets) < len(assets):
             self.logger.warning(
                 f"Among {len(assets)} assets, only {len(geotiff_assets)} are geotiff assets and"

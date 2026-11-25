@@ -173,7 +173,7 @@ class KiliExporter(AbstractExporter):
 
     def process_and_save(self, assets: list[dict], output_filename: Path) -> None:
         """Extract formatted annotations from labels and save the json in the buckets."""
-        clean_assets = self.preprocess_assets(assets)
+        clean_assets = self._count_ontology_versions(self.preprocess_assets(assets))
         if is_pixel_labeling_project(self.project):
             # Labels were stored in the image's own pixel grid, normalized as for an
             # image asset: unnormalize them rather than leaving geographic coordinates.

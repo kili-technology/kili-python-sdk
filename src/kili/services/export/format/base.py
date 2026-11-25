@@ -53,6 +53,8 @@ if TYPE_CHECKING:
 
 # The asset field holding the labels an export type fetches, when it is not `labels`
 _LABELS_FIELDS = {"latest": "latestLabel", "latest_from_last_step": "latestLabels"}
+# How the API refuses a field its version does not have
+_UNKNOWN_FIELD = "Cannot query field"
 
 
 class ExportParams(NamedTuple):
@@ -180,28 +182,41 @@ class AbstractExporter(ABC):  # pylint: disable=too-many-instance-attributes
     def _fetch_current_ontology_version(self) -> Optional[int]:
         # The project's current ontology version, with which the export writes its ontology
         # versions. None when ontology versioning is off for the organization, or on a Kili
-        # version that has none: the export is then written without them.
+        # version that does not export them: the export is then written without them.
+        gateway = self.kili.kili_api_gateway
         try:
-            project = self.kili.kili_api_gateway.get_project(
-                self.project_id, ["ontologyVersionNumber"]
+            number = gateway.get_project(self.project_id, ["ontologyVersionNumber"]).get(
+                "ontologyVersionNumber"
             )
-        except GraphQLError:
-            return None
-        number = project.get("ontologyVersionNumber")
-        return number if isinstance(number, int) else None
+            if not isinstance(number, int):
+                return None
+            # A Kili version may know the project's version without exporting the versions: this
+            # query came with the label field the export fetches
+            gateway.list_ontology_version_snapshots(self.project_id, [])
+        except GraphQLError as error:
+            if _UNKNOWN_FIELD in str(error):
+                return None
+            raise
+        return number
 
     def _keep_ontology_versions(self, assets: list[dict]) -> list[dict]:
-        # Keeps the labels of the current version when asked, counts the versions of the labels
-        # kept and names each label's as the Kili format writes it.
-        if self.ontology_version == "current":
-            assets = [
-                asset
-                for asset in assets
-                if keep_labels_of_version(asset, self.current_ontology_version)  # type: ignore
-            ]
-        for asset in assets:
-            self.ontology_versions.add(asset)
-            write_ontology_versions(asset)
+        # The assets with a label made with the current version, their other labels left out,
+        # when the export is asked for the current version only.
+        if self.ontology_version != "current":
+            return assets
+        return [
+            asset
+            for asset in assets
+            if keep_labels_of_version(asset, self.current_ontology_version)  # type: ignore
+        ]
+
+    def _count_ontology_versions(self, assets: list[dict]) -> list[dict]:
+        # Counts the versions of the labels the export is about to write, and names each label's
+        # as the Kili format writes it.
+        if self.current_ontology_version is not None:
+            for asset in assets:
+                self.ontology_versions.add(asset)
+                write_ontology_versions(asset)
         return assets
 
     def _write_ontology_versions_files(self, path_folder: Path) -> None:
@@ -219,6 +234,11 @@ class AbstractExporter(ABC):  # pylint: disable=too-many-instance-attributes
             if numbers
             else {}
         )
+        missing = [number for number in numbers if number not in snapshots]
+        if missing:
+            raise ValueError(
+                f"No ontology found for the versions {missing} of project {self.project_id}"
+            )
         contents = {
             ontology_file(number): ontology_snapshot(snapshots[number]) for number in numbers
         }
