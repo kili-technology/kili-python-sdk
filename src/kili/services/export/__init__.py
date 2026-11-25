@@ -20,6 +20,7 @@ from kili.services.export.types import (
     CocoAnnotationModifier,
     ExportType,
     LabelFormat,
+    OntologyVersionFilter,
     SplitOption,
     YoloBoundingBoxes,
 )
@@ -47,6 +48,7 @@ def export_labels(  # pylint: disable=too-many-arguments, too-many-locals
     label_type_in: Optional[list[str]],
     include_sent_back_labels: Optional[bool],
     bbox_as: YoloBoundingBoxes = "box",
+    ontology_version: OntologyVersionFilter = "all",
 ) -> Optional[list[dict[str, Union[list[str], str]]]]:
     """Export the selected assets into the required format, and save it into a file archive."""
     if label_format in DEPRECATED_YOLO_FORMATS:
@@ -60,6 +62,11 @@ def export_labels(  # pylint: disable=too-many-arguments, too-many-locals
     if bbox_as not in get_args(YoloBoundingBoxes):
         raise ValueError(
             f'bbox_as="{bbox_as}" is none of {", ".join(get_args(YoloBoundingBoxes))}.'
+        )
+    if ontology_version not in get_args(OntologyVersionFilter):
+        raise ValueError(
+            f'ontology_version="{ontology_version}" is none of'
+            f' {", ".join(get_args(OntologyVersionFilter))}.'
         )
     if bbox_as != "box" and label_format not in ("yolo", "yolo_v5", "yolo_v7", "yolo_v8"):
         raise NotCompatibleOptions(f'bbox_as="{bbox_as}" is only available for the "yolo" format.')
@@ -84,6 +91,7 @@ def export_labels(  # pylint: disable=too-many-arguments, too-many-locals
         label_type_in=label_type_in,
         include_sent_back_labels=include_sent_back_labels,
         bbox_as=bbox_as,
+        ontology_version=ontology_version,
     )
 
     logger = get_logger(log_level)

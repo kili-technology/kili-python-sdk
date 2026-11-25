@@ -9,17 +9,26 @@ from pathlib import Path
 from typing import TYPE_CHECKING, NamedTuple, Optional, Union
 
 from kili_formats.layout import (
+    ONTOLOGY_MANIFEST_FILE,
     README_FILE,
+    RECORDED_ONTOLOGY_VERSION_FIELD,
     REMOTE_ASSETS_FILE,
     REMOTE_ASSETS_HEADER,
     VIDEO_METADATA_FILE,
+    OntologyVersions,
+    keep_labels_of_version,
+    ontology_file,
+    ontology_manifest,
+    ontology_snapshot,
     readme,
+    write_ontology_versions,
 )
 from kili_formats.layout import video_metadata as layout_video_metadata
 from kili_formats.types import Job
 
 from kili.domain.asset import AssetId
 from kili.domain.project import ProjectId
+from kili.exceptions import GraphQLError
 from kili.services.export.exceptions import (
     NotCompatibleOptions,
 )
@@ -32,6 +41,7 @@ from kili.services.export.types import (
     CocoAnnotationModifier,
     ExportType,
     LabelFormat,
+    OntologyVersionFilter,
     SplitOption,
     YoloBoundingBoxes,
 )
@@ -39,6 +49,10 @@ from kili.utils.tempfile import TemporaryDirectory
 
 if TYPE_CHECKING:
     from kili.client import Kili
+
+
+# The asset field holding the labels an export type fetches, when it is not `labels`
+_LABELS_FIELDS = {"latest": "latestLabel", "latest_from_last_step": "latestLabels"}
 
 
 class ExportParams(NamedTuple):
@@ -58,6 +72,7 @@ class ExportParams(NamedTuple):
     label_type_in: Optional[list[str]]
     include_sent_back_labels: Optional[bool]
     bbox_as: YoloBoundingBoxes = "box"
+    ontology_version: OntologyVersionFilter = "all"
 
 
 def keep_only_images(images_folder: Path, images: set[Path]) -> None:
@@ -92,6 +107,10 @@ def reverse_rotation_vertices(normalized_vertices, rotation_angle) -> list[dict]
 class AbstractExporter(ABC):  # pylint: disable=too-many-instance-attributes
     """Abstract class defining the interface for all exporters."""
 
+    # The project's current ontology version, once an export has read it: None without ontology
+    # versioning, and the export then writes no ontology version
+    current_ontology_version: Optional[int] = None
+
     # pylint: disable=too-many-arguments
     def __init__(
         self,
@@ -121,6 +140,8 @@ class AbstractExporter(ABC):  # pylint: disable=too-many-instance-attributes
         self.normalized_coordinates = export_params.normalized_coordinates
         self.label_type_in = export_params.label_type_in or ["DEFAULT", "REVIEW"]
         self.include_sent_back_labels = export_params.include_sent_back_labels
+        self.ontology_version: OntologyVersionFilter = export_params.ontology_version
+        self.ontology_versions = OntologyVersions()
 
         self.project = kili.kili_api_gateway.get_project(
             self.project_id,
@@ -156,9 +177,63 @@ class AbstractExporter(ABC):  # pylint: disable=too-many-instance-attributes
         """Converts the asset."""
         raise ValueError("Output file is required for this export format.")
 
+    def _fetch_current_ontology_version(self) -> Optional[int]:
+        # The project's current ontology version, with which the export writes its ontology
+        # versions. None when ontology versioning is off for the organization, or on a Kili
+        # version that has none: the export is then written without them.
+        try:
+            project = self.kili.kili_api_gateway.get_project(
+                self.project_id, ["ontologyVersionNumber"]
+            )
+        except GraphQLError:
+            return None
+        number = project.get("ontologyVersionNumber")
+        return number if isinstance(number, int) else None
+
+    def _keep_ontology_versions(self, assets: list[dict]) -> list[dict]:
+        # Keeps the labels of the current version when asked, counts the versions of the labels
+        # kept and names each label's as the Kili format writes it.
+        if self.ontology_version == "current":
+            assets = [
+                asset
+                for asset in assets
+                if keep_labels_of_version(asset, self.current_ontology_version)  # type: ignore
+            ]
+        for asset in assets:
+            self.ontology_versions.add(asset)
+            write_ontology_versions(asset)
+        return assets
+
+    def _write_ontology_versions_files(self, path_folder: Path) -> None:
+        # The ontology of each version the exported labels were made with, and their manifest.
+        if self.current_ontology_version is None:
+            return
+        numbers = self.ontology_versions.numbers
+        snapshots = (
+            {
+                snapshot["number"]: snapshot["jsonInterface"]
+                for snapshot in self.kili.kili_api_gateway.list_ontology_version_snapshots(
+                    self.project_id, numbers
+                )
+            }
+            if numbers
+            else {}
+        )
+        contents = {
+            ontology_file(number): ontology_snapshot(snapshots[number]) for number in numbers
+        }
+        contents[ONTOLOGY_MANIFEST_FILE] = ontology_manifest(
+            self.ontology_versions, self.current_ontology_version, self.ontology_version
+        )
+        for name, content in contents.items():
+            file = path_folder / name
+            file.parent.mkdir(parents=True, exist_ok=True)
+            file.write_text(content, encoding="utf8", newline="")
+
     def make_archive(self, root_folder: Path, output_filename: Path) -> Path:
         """Make the export archive."""
         path_folder = root_folder / self.project_id
+        self._write_ontology_versions_files(path_folder)
         path_archive = shutil.make_archive(str(path_folder), "zip", path_folder)
         output_filename.parent.mkdir(parents=True, exist_ok=True)
         shutil.copy(path_archive, output_filename)
@@ -200,6 +275,12 @@ class AbstractExporter(ABC):  # pylint: disable=too-many-instance-attributes
         self._check_arguments_compatibility()
         self._check_project_compatibility()
         self._check_and_ensure_asset_access()
+        self.current_ontology_version = self._fetch_current_ontology_version()
+        if self.ontology_version == "current" and self.current_ontology_version is None:
+            raise NotCompatibleOptions(
+                'ontology_version="current" needs ontology versioning, which is not activated for'
+                " your organization: export without it."
+            )
 
         self.logger.info("Fetching assets...")
 
@@ -211,8 +292,11 @@ class AbstractExporter(ABC):  # pylint: disable=too-many-instance-attributes
             additional_fields = (
                 ["geospatialExportMetadata"]
                 if self.project.get("inputType") == "GEOSPATIAL"
-                else None
+                else []
             )
+            if self.current_ontology_version is not None:
+                labels = _LABELS_FIELDS.get(self.export_type, "labels")
+                additional_fields.append(f"{labels}.{RECORDED_ONTOLOGY_VERSION_FIELD}")
             assets = fetch_assets(
                 self.kili,
                 project_id=self.project_id,
@@ -227,6 +311,8 @@ class AbstractExporter(ABC):  # pylint: disable=too-many-instance-attributes
             )
 
             self._check_geotiff_export_compatibility(assets)
+            if self.current_ontology_version is not None:
+                assets = self._keep_ontology_versions(assets)
 
             if self.output_file is None:
                 return self.process(assets)

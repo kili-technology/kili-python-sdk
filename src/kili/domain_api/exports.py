@@ -16,6 +16,7 @@ from kili.services.export.types import (
     CocoAnnotationModifier,
     ExportType,
     LabelFormat,
+    OntologyVersionFilter,
     SplitOption,
     YoloBoundingBoxes,
 )
@@ -168,6 +169,7 @@ class ExportNamespace(DomainNamespace):
         label_type_in: Optional[list[LabelType]] = None,
         single_file: Optional[bool] = False,
         export_type: Optional[ExportType] = None,
+        ontology_version: OntologyVersionFilter = "all",
     ):
         """Export project labels in Kili native format.
 
@@ -200,6 +202,11 @@ class ExportNamespace(DomainNamespace):
                 - `"latest"`: exports the latest label for each asset
                   (deprecated, use `"latest_from_last_step"` instead).
                 - `"normal"`: exports all labels for each asset.
+            ontology_version: With ontology versioning activated for the organization, the labels
+                exported by the ontology version they were made with: `"all"`, the labels of every
+                version, or `"current"`, only those made with the project's current version. The
+                export then holds, in `ontologies/`, the ontology of each version its labels use
+                and a manifest.
 
         Returns:
             Export information or None if export failed.
@@ -216,6 +223,7 @@ class ExportNamespace(DomainNamespace):
             fmt="kili",
             single_file=bool(single_file),
             export_type=export_type,
+            ontology_version=ontology_version,
         )
 
     def coco(
@@ -230,6 +238,7 @@ class ExportNamespace(DomainNamespace):
         label_type_in: Optional[list[LabelType]] = None,
         layout: SplitOption = "split",
         export_type: Optional[ExportType] = None,
+        ontology_version: OntologyVersionFilter = "all",
     ):
         """Export project labels in COCO format.
 
@@ -265,6 +274,11 @@ class ExportNamespace(DomainNamespace):
                 - `"latest"`: exports the latest label for each asset
                   (deprecated, use `"latest_from_last_step"` instead).
                 - `"normal"`: exports all labels for each asset.
+            ontology_version: With ontology versioning activated for the organization, the labels
+                exported by the ontology version they were made with: `"all"`, the labels of every
+                version, or `"current"`, only those made with the project's current version. The
+                export then holds, in `ontologies/`, the ontology of each version its labels use
+                and a manifest.
 
         Returns:
             Export information or None if export failed.
@@ -281,6 +295,7 @@ class ExportNamespace(DomainNamespace):
             layout=layout,
             fmt="coco",
             export_type=export_type,
+            ontology_version=ontology_version,
         )
 
     def yolo(
@@ -295,6 +310,7 @@ class ExportNamespace(DomainNamespace):
         label_type_in: Optional[list[LabelType]] = None,
         export_type: Optional[ExportType] = None,
         bbox_as: YoloBoundingBoxes = "box",
+        ontology_version: OntologyVersionFilter = "all",
     ):
         """Export project labels in the YOLO format, the one the Kili app exports.
 
@@ -344,6 +360,11 @@ class ExportNamespace(DomainNamespace):
                 - `"latest"`: exports the latest label for each asset
                   (deprecated, use `"latest_from_last_step"` instead).
                 - `"normal"`: exports all labels for each asset.
+            ontology_version: With ontology versioning activated for the organization, the labels
+                exported by the ontology version they were made with: `"all"`, the labels of every
+                version, or `"current"`, only those made with the project's current version. The
+                export then holds, in `ontologies/`, the ontology of each version its labels use
+                and a manifest.
 
         Returns:
             Export information or None if export failed.
@@ -360,6 +381,7 @@ class ExportNamespace(DomainNamespace):
             bbox_as=bbox_as,
             fmt="yolo",
             export_type=export_type,
+            ontology_version=ontology_version,
         )
 
     @deprecated(
@@ -704,6 +726,7 @@ class ExportNamespace(DomainNamespace):
         include_sent_back_labels: Optional[bool] = None,
         label_type_in: Optional[list[LabelType]] = None,
         export_type: Optional[ExportType] = None,
+        ontology_version: OntologyVersionFilter = "all",
     ):
         """Export project labels in Pascal VOC format.
 
@@ -737,6 +760,11 @@ class ExportNamespace(DomainNamespace):
                 - `"latest"`: exports the latest label for each asset
                   (deprecated, use `"latest_from_last_step"` instead).
                 - `"normal"`: exports all labels for each asset.
+            ontology_version: With ontology versioning activated for the organization, the labels
+                exported by the ontology version they were made with: `"all"`, the labels of every
+                version, or `"current"`, only those made with the project's current version. The
+                export then holds, in `ontologies/`, the ontology of each version its labels use
+                and a manifest.
 
         Returns:
             Export information or None if export failed.
@@ -752,6 +780,7 @@ class ExportNamespace(DomainNamespace):
             layout="merged",
             fmt="pascal_voc",
             export_type=export_type,
+            ontology_version=ontology_version,
         )
 
     def geojson(
@@ -764,6 +793,7 @@ class ExportNamespace(DomainNamespace):
         include_sent_back_labels: Optional[bool] = None,
         label_type_in: Optional[list[LabelType]] = None,
         export_type: Optional[ExportType] = None,
+        ontology_version: OntologyVersionFilter = "all",
     ):
         """Export project labels in GeoJSON format.
 
@@ -796,6 +826,11 @@ class ExportNamespace(DomainNamespace):
                 - `"latest"`: exports the latest label for each asset
                   (deprecated, use `"latest_from_last_step"` instead).
                 - `"normal"`: exports all labels for each asset.
+            ontology_version: With ontology versioning activated for the organization, the labels
+                exported by the ontology version they were made with: `"all"`, the labels of every
+                version, or `"current"`, only those made with the project's current version. The
+                export then holds, in `ontologies/`, the ontology of each version its labels use
+                and a manifest.
 
         Returns:
             Export information or None if export failed.
@@ -811,6 +846,7 @@ class ExportNamespace(DomainNamespace):
             layout="merged",
             fmt="geojson",
             export_type=export_type,
+            ontology_version=ontology_version,
         )
 
     @typechecked
@@ -882,6 +918,7 @@ class ExportNamespace(DomainNamespace):
         with_assets: Optional[bool] = True,
         export_type: Optional[ExportType] = None,
         bbox_as: YoloBoundingBoxes = "box",
+        ontology_version: OntologyVersionFilter = "all",
     ) -> Optional[list[dict[str, Union[list[str], str]]]]:
         """Export the project labels with the requested format into the requested output path.
 
@@ -913,6 +950,11 @@ class ExportNamespace(DomainNamespace):
             include_sent_back_labels: If True, the export will include the labels that have been sent back.
             bbox_as: (For YOLO only) how the bounding boxes are written: `"box"`, for Detect;
                 `"obb"`, for OBB; `"polygon"`, in Segment.
+            ontology_version: With ontology versioning activated for the organization, the labels
+                exported by the ontology version they were made with: `"all"`, the labels of every
+                version, or `"current"`, only those made with the project's current version. The
+                export then holds, in `ontologies/`, the ontology of each version its labels use
+                and a manifest.
 
         Returns:
             Export information or None if export failed.
@@ -954,4 +996,5 @@ class ExportNamespace(DomainNamespace):
             include_sent_back_labels=include_sent_back_labels,
             export_type=export_type,
             bbox_as=bbox_as,
+            ontology_version=ontology_version,
         )

@@ -8,6 +8,8 @@ from kili_formats.layout import YoloBoundingBoxes  # noqa: F401  # pylint: disab
 
 ExportType = Literal["latest", "latest_from_last_step", "latest_from_all_steps", "normal"]
 SplitOption = Literal["split", "merged"]
+# The labels an export keeps by the ontology version they were made with, as kili-formats names them
+OntologyVersionFilter = Literal["all", "current"]
 LabelFormat = Literal[
     "raw",
     "kili",
