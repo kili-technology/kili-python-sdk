@@ -23,6 +23,15 @@ def get_update_properties_in_project_mutation(fragment: str) -> str:
         """
 
 
+GQL_ONTOLOGY_VERSION_SNAPSHOTS = """
+query ontologyVersionSnapshots($projectId: ID!, $numbers: [Int!]!) {
+    data: ontologyVersionSnapshots(projectId: $projectId, numbers: $numbers) {
+        jsonInterface
+        number
+    }
+}
+"""
+
 GQL_COUNT_PROJECTS = """
 query countProjects($where: ProjectWhere!) {
     data: countProjects(where: $where)

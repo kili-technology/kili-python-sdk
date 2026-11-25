@@ -48,6 +48,7 @@ from kili.services.export.types import (
     CocoAnnotationModifier,
     ExportType,
     LabelFormat,
+    OntologyVersionFilter,
     SplitOption,
     YoloBoundingBoxes,
 )
@@ -1447,6 +1448,7 @@ class LabelClientMethods(BaseClientMethods):
         include_sent_back_labels: Optional[bool] = None,
         export_type: ExportType = "latest",
         bbox_as: YoloBoundingBoxes = "box",
+        ontology_version: OntologyVersionFilter = "all",
     ) -> Optional[list[dict[str, Union[list[str], str]]]]:
         # pylint: disable=line-too-long
         """Export the project labels with the requested format into the requested output path.
@@ -1517,6 +1519,11 @@ class LabelClientMethods(BaseClientMethods):
                 - `"obb"`: their four corners, for the OBB task: a rotated box keeps its angle.
                 - `"polygon"`: their four corners, in the Segment task, beside the polygons and
                     semantic segmentations.
+            ontology_version: With ontology versioning activated for the organization, the labels
+                exported by the ontology version they were made with: `"all"`, the labels of every
+                version, or `"current"`, only those made with the project's current version. The
+                export then holds, in `ontologies/`, the ontology of each version its labels use
+                and a manifest.
 
         Raises:
             ValueError: `step_id_in` and `step_name_in` both given in `asset_filter_kwargs`.
@@ -1635,6 +1642,7 @@ class LabelClientMethods(BaseClientMethods):
                 label_type_in=label_type_in,
                 include_sent_back_labels=include_sent_back_labels,
                 bbox_as=bbox_as,
+                ontology_version=ontology_version,
             )
         except NoCompatibleJobError as excp:
             warnings.warn(str(excp), stacklevel=2)

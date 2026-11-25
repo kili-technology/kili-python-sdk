@@ -25,6 +25,7 @@ from .operations import (
     GQL_COPY_PROJECT,
     GQL_COUNT_PROJECTS,
     GQL_CREATE_PROJECT,
+    GQL_ONTOLOGY_VERSION_SNAPSHOTS,
     get_update_properties_in_project_mutation,
 )
 from .types import CopyProjectInput, ProjectDataKiliAPIGatewayInput
@@ -84,6 +85,14 @@ class ProjectOperationMixin(BaseOperationMixin):
         if any(json_field in fields for json_field in PROJECT_JSON_FIELDS):
             projects_gen = (load_project_json_fields(project, fields) for project in projects_gen)
         return projects_gen
+
+    def list_ontology_version_snapshots(
+        self, project_id: ProjectId, numbers: ListOrTuple[int]
+    ) -> list[dict]:
+        """Return the ontology each of these versions of the project was created with."""
+        variables = {"projectId": project_id, "numbers": list(numbers)}
+        result = self.graphql_client.execute(GQL_ONTOLOGY_VERSION_SNAPSHOTS, variables)
+        return result["data"]
 
     def count_projects(self, project_filters: ProjectFilters) -> int:
         """Return the number of projects."""

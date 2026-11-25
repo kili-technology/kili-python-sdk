@@ -85,7 +85,7 @@ class YoloExporter(AbstractExporter):
         images shared: the downloaded images no label file describes are left out.
         """
         self.logger.info(f"Exporting to yolo format {self.split_option}...")
-        assets = self.preprocess_assets(assets)
+        assets = self._count_ontology_versions(self.preprocess_assets(assets))
 
         for path, folder in self.folders.items():
             class_file, content = yolo_class_file(
