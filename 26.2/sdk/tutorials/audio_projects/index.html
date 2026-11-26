@@ -2337,17 +2337,21 @@ and assigns each segment to a <em>speaker</em>.</p>
 </code></pre></div>
 <h2 id="1-setting-up-an-audio-project">1. Setting up an audio project</h2>
 <h3 id="designing-the-labeling-interface">Designing the labeling interface</h3>
-<p>An audio interface is made of two very different kinds of jobs, and it is worth understanding the
+<p>An audio interface is made of two kinds of jobs, and it is worth understanding the
 distinction before writing any code.</p>
 <p><strong>Segment-level jobs.</strong> A <code>TRANSCRIPTION</code> job that is <em>not</em> flagged as asset-level is the
 transcription job of the project. It is the job that materializes the segments drawn on the
 waveform: every segment is one annotation of that job, with a time interval, a piece of text and a
 speaker. An audio project has <strong>exactly one</strong> such job — it is what makes the waveform editable.</p>
+<p>A <code>CLASSIFICATION</code> job that is <em>not</em> flagged as asset-level is segment-level too: it is answered
+<strong>once per segment</strong>, for instance with the emotion of the speaker. Its categories take no nested
+job.</p>
 <p><strong>Asset-level jobs.</strong> Any job carrying <code>"level": "asset"</code> applies to the <em>whole recording</em> rather
 than to a segment. They are rendered in a side panel on the right of the interface and behave like
 the classification and transcription jobs you already know from image or text projects. Use them for
 metadata such as the language of the call, the audio quality, or a free-text summary.</p>
-<p>Let's build an interface with one transcription job and two asset-level classification jobs.</p>
+<p>Let's build an interface with one transcription job, one segment-level classification job and two
+asset-level classification jobs.</p>
 <div class="highlight"><pre><span></span><code><span class="n">json_interface</span> <span class="o">=</span> <span class="p">{</span>
     <span class="s2">"jobs"</span><span class="p">:</span> <span class="p">{</span>
         <span class="c1"># Segment-level job: this is the job the waveform segments belong to.</span>
@@ -2356,6 +2360,22 @@ metadata such as the language of the call, the audio quality, or a free-text sum
             <span class="s2">"mlTask"</span><span class="p">:</span> <span class="s2">"TRANSCRIPTION"</span><span class="p">,</span>
             <span class="s2">"content"</span><span class="p">:</span> <span class="p">{</span><span class="s2">"input"</span><span class="p">:</span> <span class="s2">"textField"</span><span class="p">},</span>
             <span class="s2">"instruction"</span><span class="p">:</span> <span class="s2">"Transcription"</span><span class="p">,</span>
+            <span class="s2">"required"</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span>
+            <span class="s2">"isChild"</span><span class="p">:</span> <span class="kc">False</span><span class="p">,</span>
+        <span class="p">},</span>
+        <span class="c1"># Segment-level classification: a CLASSIFICATION job without "level": "asset" is answered</span>
+        <span class="c1"># once per segment.</span>
+        <span class="s2">"EMOTION_JOB"</span><span class="p">:</span> <span class="p">{</span>
+            <span class="s2">"mlTask"</span><span class="p">:</span> <span class="s2">"CLASSIFICATION"</span><span class="p">,</span>
+            <span class="s2">"content"</span><span class="p">:</span> <span class="p">{</span>
+                <span class="s2">"categories"</span><span class="p">:</span> <span class="p">{</span>
+                    <span class="s2">"NEUTRAL"</span><span class="p">:</span> <span class="p">{</span><span class="s2">"children"</span><span class="p">:</span> <span class="p">[],</span> <span class="s2">"name"</span><span class="p">:</span> <span class="s2">"Neutral"</span><span class="p">,</span> <span class="s2">"id"</span><span class="p">:</span> <span class="s2">"category_neutral"</span><span class="p">},</span>
+                    <span class="s2">"POSITIVE"</span><span class="p">:</span> <span class="p">{</span><span class="s2">"children"</span><span class="p">:</span> <span class="p">[],</span> <span class="s2">"name"</span><span class="p">:</span> <span class="s2">"Positive"</span><span class="p">,</span> <span class="s2">"id"</span><span class="p">:</span> <span class="s2">"category_positive"</span><span class="p">},</span>
+                    <span class="s2">"NEGATIVE"</span><span class="p">:</span> <span class="p">{</span><span class="s2">"children"</span><span class="p">:</span> <span class="p">[],</span> <span class="s2">"name"</span><span class="p">:</span> <span class="s2">"Negative"</span><span class="p">,</span> <span class="s2">"id"</span><span class="p">:</span> <span class="s2">"category_negative"</span><span class="p">},</span>
+                <span class="p">},</span>
+                <span class="s2">"input"</span><span class="p">:</span> <span class="s2">"radio"</span><span class="p">,</span>
+            <span class="p">},</span>
+            <span class="s2">"instruction"</span><span class="p">:</span> <span class="s2">"Emotion of the speaker"</span><span class="p">,</span>
             <span class="s2">"required"</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span>
             <span class="s2">"isChild"</span><span class="p">:</span> <span class="kc">False</span><span class="p">,</span>
         <span class="p">},</span>
@@ -2461,7 +2481,8 @@ and local files cannot be mixed in a single call — use one call for each.</p>
 <span class="w">        </span><span class="nt">"startTime"</span><span class="p">:</span><span class="w"> </span><span class="mf">2.0</span><span class="p">,</span>
 <span class="w">        </span><span class="nt">"endTime"</span><span class="p">:</span><span class="w"> </span><span class="mf">2.3</span><span class="p">,</span>
 <span class="w">        </span><span class="nt">"speakerId"</span><span class="p">:</span><span class="w"> </span><span class="s2">"spk_customer"</span><span class="p">,</span>
-<span class="w">        </span><span class="nt">"text"</span><span class="p">:</span><span class="w"> </span><span class="s2">"Hello."</span>
+<span class="w">        </span><span class="nt">"text"</span><span class="p">:</span><span class="w"> </span><span class="s2">"Hello."</span><span class="p">,</span>
+<span class="w">        </span><span class="nt">"children"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="nt">"EMOTION_JOB"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="nt">"categories"</span><span class="p">:</span><span class="w"> </span><span class="p">[{</span><span class="nt">"name"</span><span class="p">:</span><span class="w"> </span><span class="s2">"NEUTRAL"</span><span class="p">}]}}</span>
 <span class="w">      </span><span class="p">}</span>
 <span class="w">    </span><span class="p">]</span>
 <span class="w">  </span><span class="p">},</span>
@@ -2545,6 +2566,12 @@ manually created ones.</p>
 <td>no</td>
 <td>Id of one of the entries of <code>speakers</code>. Omit it (or set it to <code>null</code>) to leave the segment unassigned — it will show up as <em>Unknown</em> in the interface.</td>
 </tr>
+<tr>
+<td><code>children</code></td>
+<td><code>dict</code></td>
+<td>no</td>
+<td>The segment's answers to the segment-level classification jobs, keyed by job name: <code>{"EMOTION_JOB": {"categories": [{"name": "NEUTRAL"}]}}</code>. Omit it for a segment that answers none.</td>
+</tr>
 </tbody>
 </table>
 <p>Times are expressed in seconds as floats, with millisecond precision — Kili stores them internally as
@@ -2563,42 +2590,47 @@ time-aligned segments, their transcription, and which speaker uttered them. Impo
     <span class="p">{</span><span class="s2">"id"</span><span class="p">:</span> <span class="s2">"spk_customer"</span><span class="p">,</span> <span class="s2">"name"</span><span class="p">:</span> <span class="s2">"Customer"</span><span class="p">,</span> <span class="s2">"color"</span><span class="p">:</span> <span class="s2">"#059669"</span><span class="p">},</span>
 <span class="p">]</span>
 
-<span class="c1"># (start, end, speaker, text) as produced by a transcription + diarization pipeline</span>
+<span class="c1"># (start, end, speaker, text, emotion) as produced by a transcription + diarization pipeline,</span>
+<span class="c1"># with an emotion model on top; None where the model gave no emotion</span>
 <span class="n">raw_segments</span> <span class="o">=</span> <span class="p">[</span>
-    <span class="p">(</span><span class="mf">2.00</span><span class="p">,</span> <span class="mf">2.30</span><span class="p">,</span> <span class="s2">"spk_customer"</span><span class="p">,</span> <span class="s2">"Hello."</span><span class="p">),</span>
-    <span class="p">(</span><span class="mf">3.90</span><span class="p">,</span> <span class="mf">5.40</span><span class="p">,</span> <span class="s2">"spk_agent"</span><span class="p">,</span> <span class="s2">"Hello, I'm speaking to Mariam."</span><span class="p">),</span>
-    <span class="p">(</span><span class="mf">6.40</span><span class="p">,</span> <span class="mf">7.50</span><span class="p">,</span> <span class="s2">"spk_customer"</span><span class="p">,</span> <span class="s2">"Yes, speaking."</span><span class="p">),</span>
-    <span class="p">(</span><span class="mf">8.20</span><span class="p">,</span> <span class="mf">9.40</span><span class="p">,</span> <span class="s2">"spk_agent"</span><span class="p">,</span> <span class="s2">"Hello, my name is Stephen."</span><span class="p">),</span>
-    <span class="p">(</span><span class="mf">9.50</span><span class="p">,</span> <span class="mf">13.30</span><span class="p">,</span> <span class="s2">"spk_agent"</span><span class="p">,</span> <span class="s2">"I'm calling you from the finance department."</span><span class="p">),</span>
+    <span class="p">(</span><span class="mf">2.00</span><span class="p">,</span> <span class="mf">2.30</span><span class="p">,</span> <span class="s2">"spk_customer"</span><span class="p">,</span> <span class="s2">"Hello."</span><span class="p">,</span> <span class="s2">"NEUTRAL"</span><span class="p">),</span>
+    <span class="p">(</span><span class="mf">3.90</span><span class="p">,</span> <span class="mf">5.40</span><span class="p">,</span> <span class="s2">"spk_agent"</span><span class="p">,</span> <span class="s2">"Hello, I'm speaking to Mariam."</span><span class="p">,</span> <span class="s2">"NEUTRAL"</span><span class="p">),</span>
+    <span class="p">(</span><span class="mf">6.40</span><span class="p">,</span> <span class="mf">7.50</span><span class="p">,</span> <span class="s2">"spk_customer"</span><span class="p">,</span> <span class="s2">"Yes, speaking."</span><span class="p">,</span> <span class="s2">"NEUTRAL"</span><span class="p">),</span>
+    <span class="p">(</span><span class="mf">8.20</span><span class="p">,</span> <span class="mf">9.40</span><span class="p">,</span> <span class="s2">"spk_agent"</span><span class="p">,</span> <span class="s2">"Hello, my name is Stephen."</span><span class="p">,</span> <span class="s2">"POSITIVE"</span><span class="p">),</span>
+    <span class="p">(</span><span class="mf">9.50</span><span class="p">,</span> <span class="mf">13.30</span><span class="p">,</span> <span class="s2">"spk_agent"</span><span class="p">,</span> <span class="s2">"I'm calling you from the finance department."</span><span class="p">,</span> <span class="kc">None</span><span class="p">),</span>
     <span class="p">(</span>
         <span class="mf">14.20</span><span class="p">,</span>
         <span class="mf">18.10</span><span class="p">,</span>
         <span class="s2">"spk_agent"</span><span class="p">,</span>
         <span class="s2">"You were speaking with Michael before, and your manager is Mr. Omar, correct?"</span><span class="p">,</span>
+        <span class="kc">None</span><span class="p">,</span>
     <span class="p">),</span>
-    <span class="p">(</span><span class="mf">19.10</span><span class="p">,</span> <span class="mf">20.10</span><span class="p">,</span> <span class="s2">"spk_customer"</span><span class="p">,</span> <span class="s2">"Okay."</span><span class="p">),</span>
+    <span class="p">(</span><span class="mf">19.10</span><span class="p">,</span> <span class="mf">20.10</span><span class="p">,</span> <span class="s2">"spk_customer"</span><span class="p">,</span> <span class="s2">"Okay."</span><span class="p">,</span> <span class="s2">"NEUTRAL"</span><span class="p">),</span>
     <span class="p">(</span>
         <span class="mf">20.10</span><span class="p">,</span>
         <span class="mf">31.40</span><span class="p">,</span>
         <span class="s2">"spk_agent"</span><span class="p">,</span>
         <span class="s2">"All right. I was calling you because we were trying to find a way to make a quick and easy withdrawal of your money back to your bank."</span><span class="p">,</span>
+        <span class="kc">None</span><span class="p">,</span>
     <span class="p">),</span>
     <span class="p">(</span>
         <span class="mf">31.70</span><span class="p">,</span>
         <span class="mf">36.30</span><span class="p">,</span>
         <span class="s2">"spk_agent"</span><span class="p">,</span>
         <span class="s2">"I think we finally found an option, and that's why I'm calling you."</span><span class="p">,</span>
+        <span class="s2">"POSITIVE"</span><span class="p">,</span>
     <span class="p">),</span>
-    <span class="p">(</span><span class="mf">36.80</span><span class="p">,</span> <span class="mf">39.70</span><span class="p">,</span> <span class="s2">"spk_agent"</span><span class="p">,</span> <span class="s2">"It will just take another five or ten minutes."</span><span class="p">),</span>
+    <span class="p">(</span><span class="mf">36.80</span><span class="p">,</span> <span class="mf">39.70</span><span class="p">,</span> <span class="s2">"spk_agent"</span><span class="p">,</span> <span class="s2">"It will just take another five or ten minutes."</span><span class="p">,</span> <span class="kc">None</span><span class="p">),</span>
     <span class="p">(</span>
         <span class="mf">40.00</span><span class="p">,</span>
         <span class="mf">44.50</span><span class="p">,</span>
         <span class="s2">"spk_agent"</span><span class="p">,</span>
         <span class="s2">"If you're available, I would like to guide you through the steps."</span><span class="p">,</span>
+        <span class="kc">None</span><span class="p">,</span>
     <span class="p">),</span>
-    <span class="p">(</span><span class="mf">48.30</span><span class="p">,</span> <span class="mf">50.40</span><span class="p">,</span> <span class="s2">"spk_agent"</span><span class="p">,</span> <span class="s2">"So are you available for me to help you with that?"</span><span class="p">),</span>
-    <span class="p">(</span><span class="mf">51.90</span><span class="p">,</span> <span class="mf">52.30</span><span class="p">,</span> <span class="s2">"spk_customer"</span><span class="p">,</span> <span class="s2">"Yes."</span><span class="p">),</span>
-    <span class="p">(</span><span class="mf">53.00</span><span class="p">,</span> <span class="mf">54.10</span><span class="p">,</span> <span class="s2">"spk_agent"</span><span class="p">,</span> <span class="s2">"Okay, wonderful."</span><span class="p">),</span>
+    <span class="p">(</span><span class="mf">48.30</span><span class="p">,</span> <span class="mf">50.40</span><span class="p">,</span> <span class="s2">"spk_agent"</span><span class="p">,</span> <span class="s2">"So are you available for me to help you with that?"</span><span class="p">,</span> <span class="kc">None</span><span class="p">),</span>
+    <span class="p">(</span><span class="mf">51.90</span><span class="p">,</span> <span class="mf">52.30</span><span class="p">,</span> <span class="s2">"spk_customer"</span><span class="p">,</span> <span class="s2">"Yes."</span><span class="p">,</span> <span class="s2">"POSITIVE"</span><span class="p">),</span>
+    <span class="p">(</span><span class="mf">53.00</span><span class="p">,</span> <span class="mf">54.10</span><span class="p">,</span> <span class="s2">"spk_agent"</span><span class="p">,</span> <span class="s2">"Okay, wonderful."</span><span class="p">,</span> <span class="s2">"POSITIVE"</span><span class="p">),</span>
 <span class="p">]</span>
 
 <span class="n">json_response</span> <span class="o">=</span> <span class="p">{</span>
@@ -2611,8 +2643,14 @@ time-aligned segments, their transcription, and which speaker uttered them. Impo
                 <span class="s2">"endTime"</span><span class="p">:</span> <span class="n">end</span><span class="p">,</span>
                 <span class="s2">"speakerId"</span><span class="p">:</span> <span class="n">speaker_id</span><span class="p">,</span>
                 <span class="s2">"text"</span><span class="p">:</span> <span class="n">text</span><span class="p">,</span>
+                <span class="c1"># segment-level classification: a segment carries its answers under "children"</span>
+                <span class="o">**</span><span class="p">(</span>
+                    <span class="p">{</span><span class="s2">"children"</span><span class="p">:</span> <span class="p">{</span><span class="s2">"EMOTION_JOB"</span><span class="p">:</span> <span class="p">{</span><span class="s2">"categories"</span><span class="p">:</span> <span class="p">[{</span><span class="s2">"name"</span><span class="p">:</span> <span class="n">emotion</span><span class="p">}]}}}</span>
+                    <span class="k">if</span> <span class="n">emotion</span>
+                    <span class="k">else</span> <span class="p">{}</span>
+                <span class="p">),</span>
             <span class="p">}</span>
-            <span class="k">for</span> <span class="n">index</span><span class="p">,</span> <span class="p">(</span><span class="n">start</span><span class="p">,</span> <span class="n">end</span><span class="p">,</span> <span class="n">speaker_id</span><span class="p">,</span> <span class="n">text</span><span class="p">)</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">raw_segments</span><span class="p">)</span>
+            <span class="k">for</span> <span class="n">index</span><span class="p">,</span> <span class="p">(</span><span class="n">start</span><span class="p">,</span> <span class="n">end</span><span class="p">,</span> <span class="n">speaker_id</span><span class="p">,</span> <span class="n">text</span><span class="p">,</span> <span class="n">emotion</span><span class="p">)</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">raw_segments</span><span class="p">)</span>
         <span class="p">]</span>
     <span class="p">},</span>
     <span class="c1"># asset-level jobs, filled in the same call</span>
@@ -2639,6 +2677,8 @@ produced it, so you can later compare several models on the same assets.</p>
 <li><strong>Overlapping segments are allowed</strong>, which matters when two people talk over each other.</li>
 <li><strong>Every <code>speakerId</code> should exist in <code>speakers</code>.</strong> A segment pointing at an unknown speaker is
   imported, but the interface will render it as <em>Unknown</em>.</li>
+<li><strong><code>children</code> only takes segment-level classification jobs.</strong> A job or a category the interface does
+  not define is refused, and so is a segment-level job answered at the root of the <code>jsonResponse</code>.</li>
 </ul>
 <p>To import ground-truth labels rather than predictions, use the very same <code>jsonResponse</code> with the
 default <code>label_type="DEFAULT"</code>.</p>
@@ -2699,8 +2739,21 @@ default <code>label_type="DEFAULT"</code>.</p>
   }
 ]
 </code></pre>
-<p><code>mid</code>, <code>startTime</code>, <code>endTime</code> and <code>text</code> come back exactly as they were imported — <code>mid</code> in
-particular is your stable join key back to your own data.</p>
+<p><code>mid</code>, <code>startTime</code>, <code>endTime</code>, <code>text</code> and <code>children</code> come back exactly as they were imported — <code>mid</code>
+in particular is your stable join key back to your own data.</p>
+<p>Labels can also be read as objects rather than as raw dictionaries, with <code>output_format="parsed_label"</code>:
+each segment then exposes its transcription, its times, its speaker and its classifications.</p>
+<div class="highlight"><pre><span></span><code><span class="n">parsed_label</span> <span class="o">=</span> <span class="n">kili</span><span class="o">.</span><span class="n">labels</span><span class="p">(</span>
+    <span class="n">project_id</span><span class="o">=</span><span class="n">project_id</span><span class="p">,</span>
+    <span class="n">asset_external_id_in</span><span class="o">=</span><span class="p">[</span><span class="s2">"support_call_en"</span><span class="p">],</span>
+    <span class="n">output_format</span><span class="o">=</span><span class="s2">"parsed_label"</span><span class="p">,</span>
+<span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
+
+<span class="n">segment</span> <span class="o">=</span> <span class="n">parsed_label</span><span class="o">.</span><span class="n">jobs</span><span class="p">[</span><span class="s2">"TRANSCRIPTION_JOB"</span><span class="p">]</span><span class="o">.</span><span class="n">annotations</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="n">segment</span><span class="o">.</span><span class="n">start_time</span><span class="p">,</span> <span class="n">segment</span><span class="o">.</span><span class="n">end_time</span><span class="p">,</span> <span class="n">segment</span><span class="o">.</span><span class="n">speaker_id</span><span class="p">,</span> <span class="n">segment</span><span class="o">.</span><span class="n">text</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">segment</span><span class="o">.</span><span class="n">children</span><span class="p">[</span><span class="s2">"EMOTION_JOB"</span><span class="p">]</span><span class="o">.</span><span class="n">category</span><span class="o">.</span><span class="n">name</span><span class="p">)</span>
+</code></pre></div>
 <h3 id="exporting-the-whole-project-to-a-file">Exporting the whole project to a file</h3>
 <p>To get every asset and every label at once, use <code>export_labels</code>. The <code>raw</code> and <code>kili</code> formats keep
 the audio <code>jsonResponse</code> untouched, <code>speakers</code> relation aside; the computer-vision formats
@@ -2721,7 +2774,7 @@ you also want the predictions.</p>
 <div class="highlight"><pre><span></span><code><span class="n">kili</span><span class="o">.</span><span class="n">delete_project</span><span class="p">(</span><span class="n">project_id</span><span class="p">)</span>
 </code></pre></div>
 <h2 id="summary">Summary</h2>
-<p>We created an audio project, learned the difference between the segment-level transcription job and
+<p>We created an audio project, learned the difference between the segment-level jobs and the
 asset-level jobs, imported audio assets from a URL and from disk, imported speaker-attributed
 predictions, and exported them back.</p>
 <p>For more on the concepts used along the way, see:</p>
