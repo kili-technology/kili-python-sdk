@@ -1,9 +1,15 @@
 """Types for the ProjectWorkflow-related Kili API gateway functions."""
 
+from collections.abc import Sequence
 from dataclasses import dataclass
 from typing import Optional
 
-from kili.domain.project import WorkflowStepCreate, WorkflowStepUpdate
+from kili.domain.project import (
+    WorkflowStepCreate,
+    WorkflowStepGroupToCreate,
+    WorkflowStepGroupToUpdate,
+    WorkflowStepUpdate,
+)
 
 
 @dataclass
@@ -11,11 +17,15 @@ class ProjectWorkflowDataKiliAPIGatewayInput:
     """ProjectWorkflow input data for Kili API Gateway."""
 
     enforce_step_separation: Optional[bool]
-    create_steps: Optional[list[WorkflowStepCreate]]
+    create_steps: Optional[Sequence[WorkflowStepCreate]]
     update_steps: Optional[list[WorkflowStepUpdate]]
     # Step ids only: names are resolved to ids before the request is built.
     delete_steps: Optional[list[str]]
     null_fields: frozenset[str] = frozenset()
+    create_step_groups: Optional[list[WorkflowStepGroupToCreate]] = None
+    update_step_groups: Optional[list[WorkflowStepGroupToUpdate]] = None
+    # Group ids only, as the steps to delete.
+    delete_step_groups: Optional[list[str]] = None
 
 
 @dataclass

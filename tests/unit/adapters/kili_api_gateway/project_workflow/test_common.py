@@ -2,7 +2,12 @@
 
 import pytest
 
-from kili.adapters.kili_api_gateway.project_workflow.common import find_step_by_name
+from kili.adapters.kili_api_gateway.project_workflow.common import (
+    find_step,
+    find_step_by_name,
+    find_step_group,
+    get_assignees_to_add_ids,
+)
 
 
 def _v3_project() -> dict:
@@ -72,3 +77,60 @@ def test_find_step_by_name_with_step_not_in_group_raises():
 
     with pytest.raises(ValueError, match="Step 'Review' not found in group 'Group 3'"):
         find_step_by_name(project, "Review", "Group 3")
+
+
+def test_find_step_group_by_id_or_by_name():
+    assert find_step_group(_v3_project(), "grp-2")["name"] == "Group 2"
+    assert find_step_group(_v3_project(), "Group 2")["id"] == "grp-2"
+
+
+def test_find_step_group_outside_the_multi_group_workflow_raises():
+    with pytest.raises(ValueError, match="only available in the multi-group workflow"):
+        find_step_group(_v2_project(), "Group 1")
+
+
+def test_get_assignees_to_add_ids_keeps_labelers_for_a_labeling_step():
+    members = [
+        {"role": "LABELER", "user": {"id": "u1", "email": "labeler@acme.com"}},
+        {"role": "REVIEWER", "user": {"id": "u2", "email": "reviewer@acme.com"}},
+    ]
+
+    with pytest.warns(UserWarning, match=r"not project members\): stranger@acme.com"):
+        ids = get_assignees_to_add_ids(
+            members,
+            ["labeler@acme.com", "reviewer@acme.com", "stranger@acme.com"],
+            exclude_labelers=False,
+        )
+
+    assert ids == ["u1", "u2"]
+
+
+@pytest.mark.parametrize(
+    ("designation", "step_id"),
+    [
+        ("s-g2-review", "s-g2-review"),
+        ({"name": "Review", "group_name": "Group 2"}, "s-g2-review"),
+        ("Unique", "s-g2-unique"),
+    ],
+)
+def test_find_step_by_id_by_name_or_by_name_and_group(designation, step_id):
+    project = _v3_project()
+    project["steps"].append(
+        {"id": "s-g2-unique", "name": "Unique", "type": "REVIEW", "stepGroupId": "grp-2"}
+    )
+
+    assert find_step(project, designation)["id"] == step_id
+
+
+def test_find_step_reads_a_string_as_an_id_before_a_name():
+    project = _v3_project()
+    project["steps"].append(
+        {"id": "s-other", "name": "s-g1-label", "type": "REVIEW", "stepGroupId": "grp-2"}
+    )
+
+    assert find_step(project, "s-g1-label")["id"] == "s-g1-label"
+
+
+def test_find_step_by_a_name_several_groups_use_raises():
+    with pytest.raises(ValueError, match="Multiple steps named 'Review'"):
+        find_step(_v3_project(), "Review")

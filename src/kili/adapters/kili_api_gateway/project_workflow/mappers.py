@@ -1,6 +1,11 @@
 """GraphQL payload data mappers for project operations."""
 
-from kili.domain.project import WorkflowStepCreate, WorkflowStepUpdate
+from kili.domain.project import (
+    WorkflowStepCreate,
+    WorkflowStepGroupToCreate,
+    WorkflowStepGroupToUpdate,
+    WorkflowStepUpdate,
+)
 
 from .types import (
     AddReviewStepInput,
@@ -14,7 +19,7 @@ from .types import (
 
 def project_input_mapper(data: ProjectWorkflowDataKiliAPIGatewayInput) -> dict:
     """Build the GraphQL ProjectWorfklowData variable to be sent in an operation."""
-    return {
+    result = {
         "enforceStepSeparation": data.enforce_step_separation,
         "steps": {
             "creates": [update_step_mapper(step, data.null_fields) for step in data.create_steps]
@@ -26,6 +31,47 @@ def project_input_mapper(data: ProjectWorkflowDataKiliAPIGatewayInput) -> dict:
             "deletes": data.delete_steps or [],
         },
     }
+    # Sent only with a group change: the server refuses `stepGroups` outside the multi-group
+    # workflow, even empty.
+    if data.create_step_groups or data.update_step_groups or data.delete_step_groups:
+        result["stepGroups"] = {
+            "creates": [
+                step_group_create_mapper(group, data.null_fields)
+                for group in data.create_step_groups or []
+            ],
+            "updates": [step_group_update_mapper(group) for group in data.update_step_groups or []],
+            "deletes": data.delete_step_groups or [],
+        }
+    return result
+
+
+def step_group_create_mapper(
+    data: WorkflowStepGroupToCreate, null_fields: frozenset[str] = frozenset()
+) -> dict:
+    """Build the GraphQL CreateStepGroupInput variable, with its steps."""
+    result: dict = {
+        "name": data["name"],
+        "steps": [update_step_mapper(step, null_fields) for step in data["steps"]],
+    }
+    group_id = data.get("id")
+    if group_id is not None:
+        result["id"] = group_id
+    allowed_job_names = data.get("allowed_job_names")
+    if allowed_job_names is not None:
+        result["allowedJobNames"] = allowed_job_names
+    return result
+
+
+def step_group_update_mapper(data: WorkflowStepGroupToUpdate) -> dict:
+    """Build the GraphQL UpdateStepGroupInput variable."""
+    result: dict = {"id": data["id"]}
+    name = data.get("name")
+    if name is not None:
+        result["name"] = name
+    allowed_job_names = data.get("allowed_job_names")
+    if allowed_job_names is not None:
+        result["allowedJobNames"] = allowed_job_names
+    return result
 
 
 def update_step_mapper(
@@ -48,6 +94,7 @@ def update_step_mapper(
         "assignees": "assignees",
         "sendBackStepId": "send_back_step_id",
         "stepGroupId": "step_group_id",
+        "useHoneypot": "use_honeypot",
     }
     return {
         gql_key: data[py_key]
