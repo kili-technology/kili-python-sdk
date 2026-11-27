@@ -1,5 +1,6 @@
 """Workflow namespaces of the projects domain, for the Kili Python SDK."""
 
+import warnings
 from functools import cached_property
 from typing import TYPE_CHECKING, Any, List, Literal, Optional, Union
 
@@ -13,16 +14,25 @@ from kili.domain.project import (
     WorkflowStepGroupToUpdate,
     WorkflowStepToCreate,
     WorkflowStepUpdate,
+    WorkflowTransitionToCreate,
+    WorkflowTransitionToUpdate,
 )
 from kili.use_cases.project_workflow import ProjectWorkflowUseCases
 from kili.use_cases.project_workflow.step_groups import WorkflowStepGroupUseCases
 from kili.use_cases.project_workflow.steps import WorkflowStepUseCases
+from kili.use_cases.project_workflow.transitions import WorkflowTransitionUseCases
 from kili.utils.logcontext import for_all_methods, log_call_in_namespace
 
 if TYPE_CHECKING:
     from kili.adapters.kili_api_gateway.kili_api_gateway import KiliAPIGateway
     from kili.client import Kili as KiliLegacy
 
+STEP_COVERAGE_DEPRECATION = (
+    "The step_coverage key of kili.projects.workflow.update() is deprecated and will be removed: a"
+    " review's percentage is set at its creation by"
+    " kili.projects.workflow.steps.create(sample_percentage=...), and changed by"
+    " kili.projects.workflow.transitions.update() on the SAMPLE transition leading to it."
+)
 WORKFLOW_LIST_DEPRECATION = (
     "kili.projects.workflow.list() is deprecated and will be removed: use"
     " kili.projects.workflow.steps.list() instead, which answers the same."
@@ -218,6 +228,7 @@ class WorkflowStepsNamespace:
         consensus_coverage: Optional[int] = None,
         number_of_expected_labels_for_consensus: Optional[int] = None,
         use_honeypot: Optional[bool] = None,
+        send_back_to_previous_step: Optional[bool] = None,
     ) -> dict[str, Any]:
         """Create a step at the end of its group.
 
@@ -244,6 +255,9 @@ class WorkflowStepsNamespace:
                 each consensus asset gets.
             use_honeypot: For a review: whether it uses honeypot. Set a labeling step's with
                 `update()` once it exists.
+            send_back_to_previous_step: For a review: whether it sends its rejected assets back
+                to the step each came from, which differs per asset where several steps lead to
+                it. Not with `send_back_to_step`.
 
         Returns:
             The created step: its `id`, `name`, `type`, `stepGroupId` and `assignees`.
@@ -268,6 +282,7 @@ class WorkflowStepsNamespace:
             consensus_coverage=consensus_coverage,
             number_of_expected_labels_for_consensus=number_of_expected_labels_for_consensus,
             use_honeypot=use_honeypot,
+            send_back_to_previous_step=send_back_to_previous_step,
         )
 
     @typechecked
@@ -280,6 +295,7 @@ class WorkflowStepsNamespace:
         number_of_expected_labels_for_consensus: Optional[int] = None,
         use_honeypot: Optional[bool] = None,
         send_back_to_step: Optional[Union[str, WorkflowStepDesignation]] = None,
+        send_back_to_previous_step: Optional[bool] = None,
     ) -> dict[str, Any]:
         """Update the properties of a step, in one call.
 
@@ -297,6 +313,10 @@ class WorkflowStepsNamespace:
             use_honeypot: Whether the step uses honeypot. One step of the project at most does.
             send_back_to_step: For a review: the step to send its rejected assets back to, by
                 id, by name, or as `{"name": ..., "group_name": ...}`.
+            send_back_to_previous_step: For a review: whether it sends its rejected assets back
+                to the step each came from, which differs per asset where several steps lead to
+                it. Naming a step in `send_back_to_step` turns it off. Not `True` with
+                `send_back_to_step`.
 
         Returns:
             The updated step: its `id`, `name`, `type`, `stepGroupId` and `assignees`.
@@ -317,6 +337,7 @@ class WorkflowStepsNamespace:
             number_of_expected_labels_for_consensus=number_of_expected_labels_for_consensus,
             use_honeypot=use_honeypot,
             send_back_to_step=send_back_to_step,
+            send_back_to_previous_step=send_back_to_previous_step,
         )
 
     @typechecked
@@ -337,6 +358,140 @@ class WorkflowStepsNamespace:
             >>> kili.projects.workflow.steps.delete(project_id="my_project", step="Second review")
         """
         return WorkflowStepUseCases(self._gateway).delete_step(ProjectId(project_id), step)
+
+
+@for_all_methods(log_call_in_namespace("projects.workflow.transitions"), exclude=["__init__"])
+class WorkflowTransitionsNamespace:
+    """Nested namespace for the transitions of a project workflow.
+
+    A transition says where an asset goes when a step completes, or when it reaches the end of a
+    group: the transitions leaving a step are tried by priority, and the first whose condition
+    holds is taken. Transitions are saved on projects of the multi-group workflow only. Saving
+    transitions that route by conditions requires the organization's conditional routing feature
+    (`lab_conditional_routing`); those keeping a chain of steps per group, such as a `SAMPLE`
+    percentage changed, need nothing.
+
+    Each method here sends every transition of the workflow, and the server then wires nothing
+    itself: see `kili.projects.workflow.update()`.
+    """
+
+    def __init__(self, gateway: "KiliAPIGateway") -> None:
+        """Initialize the transitions namespace.
+
+        Args:
+            gateway: The KiliAPIGateway instance for API operations
+        """
+        self._gateway = gateway
+
+    @typechecked
+    def list(self, project_id: str) -> list[dict[str, Any]]:
+        """List the transitions of a project workflow.
+
+        Args:
+            project_id: Id of the project.
+
+        Returns:
+            One dict per transition: its `id`, the step it leaves (`fromStepId`) or the group
+                whose end it leaves (`fromStepGroupId`), the step it leads to (`toStepId`, null
+                when the asset leaves the workflow), its `priority`, and its `condition`: `type`,
+                `percentage`, `jobName`, `categories`, `quantifier`, `value`.
+
+        Examples:
+            >>> kili.projects.workflow.transitions.list(project_id="my_project")
+        """
+        return WorkflowTransitionUseCases(self._gateway).list_transitions(ProjectId(project_id))
+
+    @typechecked
+    def create(
+        self, project_id: str, transitions: List[WorkflowTransitionToCreate]
+    ) -> dict[str, Any]:
+        """Create transitions, keeping the stored ones.
+
+        Args:
+            project_id: Id of the project.
+            transitions: The transitions to create, each from a step (`from_step`) or from the
+                end of a group (`from_step_group`), to a step (`to_step`, or none to leave the
+                workflow), with its `priority` and its `condition`, in snake_case (`type`,
+                `percentage`, `job_name`, `categories`, `quantifier`, `value`). A step is given by
+                id, by name, or as `{"name": ..., "group_name": ...}`; a group by id or name.
+
+        Returns:
+            A dict with the `transitions` of the workflow after the call, and the `warnings` of
+                the server: what the change did beyond what it asked for.
+
+        Examples:
+            >>> kili.projects.workflow.transitions.create(
+            ...     project_id="my_project",
+            ...     transitions=[
+            ...         {
+            ...             "from_step": {"name": "Labeling", "group_name": "Team"},
+            ...             "to_step": {"name": "Review", "group_name": "Experts"},
+            ...             "priority": 1,
+            ...             "condition": {
+            ...                 "type": "CLASSIFICATION_INCLUDES",
+            ...                 "job_name": "QUALITY",
+            ...                 "categories": ["DOUBTFUL"],
+            ...             },
+            ...         }
+            ...     ],
+            ... )
+        """
+        return ProjectWorkflowUseCases(self._gateway).update_project_workflow(
+            ProjectId(project_id), create_transitions=transitions
+        )
+
+    @typechecked
+    def update(
+        self, project_id: str, transitions: List[WorkflowTransitionToUpdate]
+    ) -> dict[str, Any]:
+        """Change the priority or the condition of stored transitions.
+
+        A transition keeps its source and target: to change them, delete it and create another.
+        It keeps its id too, and with it the outcomes of its samplings: an asset already drawn is
+        not drawn again. A review's percentage is changed here, on the `SAMPLE` transition leading
+        to it.
+
+        Args:
+            project_id: Id of the project.
+            transitions: The transitions to change, each given by its `id`, with its new
+                `priority` or `condition`.
+
+        Returns:
+            A dict with the `transitions` of the workflow after the call, and the `warnings` of
+                the server: what the change did beyond what it asked for.
+
+        Examples:
+            >>> kili.projects.workflow.transitions.update(
+            ...     project_id="my_project",
+            ...     transitions=[
+            ...         {"id": transition_id, "condition": {"type": "SAMPLE", "percentage": 50}}
+            ...     ],
+            ... )
+        """
+        return ProjectWorkflowUseCases(self._gateway).update_project_workflow(
+            ProjectId(project_id), update_transitions=transitions
+        )
+
+    @typechecked
+    def delete(self, project_id: str, transition_ids: List[str]) -> dict[str, Any]:
+        """Delete transitions, keeping the others.
+
+        Args:
+            project_id: Id of the project.
+            transition_ids: Ids of the transitions to delete.
+
+        Returns:
+            A dict with the `transitions` of the workflow after the call, and the `warnings` of
+                the server: what the change did beyond what it asked for.
+
+        Examples:
+            >>> kili.projects.workflow.transitions.delete(
+            ...     project_id="my_project", transition_ids=[transition_id]
+            ... )
+        """
+        return ProjectWorkflowUseCases(self._gateway).update_project_workflow(
+            ProjectId(project_id), delete_transitions=transition_ids
+        )
 
 
 @for_all_methods(log_call_in_namespace("projects.workflow"), exclude=["__init__"])
@@ -371,6 +526,48 @@ class WorkflowNamespace:
         """
         return WorkflowGroupsNamespace(self._gateway)
 
+    @cached_property
+    def transitions(self) -> WorkflowTransitionsNamespace:
+        """Access the transitions of the workflow: `kili.projects.workflow.transitions`.
+
+        Returns:
+            WorkflowTransitionsNamespace instance for transition operations
+        """
+        return WorkflowTransitionsNamespace(self._gateway)
+
+    @typechecked
+    def get(self, project_id: str) -> dict[str, Any]:
+        """Get the whole workflow of a project, in one query.
+
+        Args:
+            project_id: Id of the project.
+
+        Returns:
+            A dict with:
+
+            - `steps`: each with its `id`, `name`, `type` (`DEFAULT` for a labeling step, or
+              `REVIEW`), `stepGroupId`, `sendBackStepId`, `sendBackToPreviousStep`,
+              `stepCoverage`, `consensusCoverage`, `numberOfExpectedLabelsForConsensus`,
+              `useHoneypot` and `assignees`.
+            - `stepGroups`: each with its `id`, `name`, `order` and `allowedJobNames`.
+            - `workflowTransitions`: where an asset goes when a step completes, or when it
+              reaches the end of a group. Each has its `id`, the step it leaves (`fromStepId`) or
+              the group whose end it leaves (`fromStepGroupId`), the step it leads to
+              (`toStepId`, null when the asset leaves the workflow), its `priority`, and its
+              `condition`: `type`, `percentage`, `jobName`, `categories`, `quantifier`, `value`.
+            - `usesConditionalRouting`: whether the project routes its assets otherwise than a
+              chain of steps per group, which only a user who `canEditTransitions` edits.
+            - `canEditTransitions`: whether you can save transitions that route by conditions.
+            - `enforceStepSeparation`.
+            - `keepPathAfterSendBack`: whether an asset sent back goes again through the steps
+              it went through, whatever its new label.
+
+        Examples:
+            >>> workflow = kili.projects.workflow.get(project_id="my_project")
+            >>> workflow["workflowTransitions"]
+        """
+        return WorkflowTransitionUseCases(self._gateway).get_workflow(ProjectId(project_id))
+
     @typechecked
     def update(
         self,
@@ -382,13 +579,36 @@ class WorkflowNamespace:
         create_step_groups: Optional[list[WorkflowStepGroupToCreate]] = None,
         update_step_groups: Optional[list[WorkflowStepGroupToUpdate]] = None,
         delete_step_groups: Optional[list[str]] = None,
+        create_transitions: Optional[list[WorkflowTransitionToCreate]] = None,
+        update_transitions: Optional[list[WorkflowTransitionToUpdate]] = None,
+        delete_transitions: Optional[list[str]] = None,
+        keep_path_after_send_back: Optional[bool] = None,
     ) -> dict[str, Any]:
-        """Update properties of a project workflow, its steps and its step groups, in one call.
+        """Update a project workflow, its steps, its step groups and its transitions, in one call.
 
         The server applies the changes in this order: step deletions, group deletions, group
-        updates, step updates, group creations with their steps, step creations. It saves them all
-        or none. The labeling interface settings of the workflow (navigation, skip, automatic
-        assignment) are changed with `kili.projects.update_workflow_settings()`.
+        updates, step updates, group creations with their steps, step creations, then the
+        transitions. It saves them all or none. The labeling interface settings of the workflow
+        (navigation, skip, automatic assignment) are changed with
+        `kili.projects.update_workflow_settings()`.
+
+        A call is in one of two modes:
+
+        - Without any transition list, the server wires every step and group change itself: a
+          new review is sampled after the last step of its group, a new group is reached after
+          the last one, what followed a deleted step follows what preceded it.
+        - With one, even empty, the call is explicit for all its changes: the server wires
+          nothing, and saves the transitions as the call leaves them. The call then gives the
+          transition into each review it creates, the entry and the default (`ALWAYS`)
+          transition of each group it creates, and reconnects what followed a step it deletes.
+          It gives no `step_coverage`: a percentage is a `SAMPLE` condition. The SDK sends the
+          stored transitions with their ids, less those deleted and those leaving or entering a
+          step or group deleted, with their updates, and the created ones.
+
+        Transitions are saved on projects of the multi-group workflow only. Saving transitions
+        that route by conditions requires the organization's conditional routing feature
+        (`lab_conditional_routing`); those keeping a chain of steps per group, such as a `SAMPLE`
+        percentage changed, need nothing.
 
         Args:
             project_id: Id of the project.
@@ -399,7 +619,9 @@ class WorkflowNamespace:
                 id. In the multi-group workflow, each step gives the `step_group_id` of the group
                 to create it in, and consensus can only be set on the labeling step of the first
                 group. A step can be given an `id` (see below), for a step created after it to
-                send back to it in `send_back_step_id`.
+                send back to it in `send_back_step_id`. Its `step_coverage` is deprecated, here
+                and in `update_steps`: see `kili.projects.workflow.steps.create()` and
+                `kili.projects.workflow.transitions.update()`.
             update_steps: List of steps to update in the project workflow, each given by its `id`,
                 or by its `name` with `group_name` when several groups use that name.
             delete_steps: List of steps to delete from the project workflow, each given by its ID,
@@ -414,6 +636,17 @@ class WorkflowNamespace:
                 new `name` or `allowed_job_names`.
             delete_step_groups: List of step groups to delete with their steps, each given by its
                 id or its name.
+            create_transitions: List of transitions to create, as in
+                `kili.projects.workflow.transitions.create()`. A step or a group created in the
+                same call is named by its `id`, or by its name.
+            update_transitions: List of stored transitions to change, as in
+                `kili.projects.workflow.transitions.update()`.
+            delete_transitions: List of the ids of stored transitions to delete.
+            keep_path_after_send_back: Whether an asset sent back goes again through the steps
+                it went through, whatever its new label. On, an asset completing a step it was
+                sent back through goes where it went from there last time, while a transition of
+                the step or of its group still leads there. Off, the default of a project, the
+                transitions decide again; a `SAMPLE` replays its draw either way.
 
         The `id` given to a step or a group created is its id in Kili: it must be unique across
         Kili, and 5 to 32 characters long, such as `uuid.uuid4().hex`. Without one, the server
@@ -421,29 +654,63 @@ class WorkflowNamespace:
 
         Returns:
             A dict with the changed properties which indicates if the mutation was successful,
-                else an error message.
+                else an error message. With a transition list, it also has the `transitions` of
+                the workflow after the call, and the `warnings` of the server: what the change
+                did beyond what it asked for.
 
         Examples:
-            >>> import uuid
+            >>> # Without transitions: the server wires the changes
+            >>> kili.projects.workflow.update(
+            ...     project_id="my_project",
+            ...     update_steps=[{"id": step_id, "name": "Expert review"}],
+            ...     delete_step_groups=["Juniors"],
+            ... )
+            >>> # With them: a new group, which the end of "Experts" leads to for doubtful assets
             >>> kili.projects.workflow.update(
             ...     project_id="my_project",
             ...     create_step_groups=[
             ...         {
-            ...             "id": uuid.uuid4().hex,
-            ...             "name": "Experts",
+            ...             "name": "Audit",
             ...             "steps": [
-            ...                 {"type": "DEFAULT", "name": "Labeling", "assignees": [labeler_id]},
-            ...                 {
-            ...                     "type": "REVIEW",
-            ...                     "name": "Review",
-            ...                     "assignees": [reviewer_id],
-            ...                     "step_coverage": 100,
-            ...                 },
+            ...                 {"type": "DEFAULT", "name": "Audit labeling", "assignees": [labeler]},
+            ...                 {"type": "REVIEW", "name": "Audit review", "assignees": [reviewer]},
             ...             ],
             ...         }
             ...     ],
+            ...     update_transitions=[{"id": experts_default_transition_id, "priority": 2}],
+            ...     create_transitions=[
+            ...         {
+            ...             "from_step_group": "Experts",
+            ...             "to_step": "Audit labeling",
+            ...             "priority": 1,
+            ...             "condition": {
+            ...                 "type": "CLASSIFICATION_INCLUDES",
+            ...                 "job_name": "QUALITY",
+            ...                 "categories": ["DOUBTFUL"],
+            ...             },
+            ...         },
+            ...         {
+            ...             "from_step": "Audit labeling",
+            ...             "to_step": "Audit review",
+            ...             "priority": 1,
+            ...             "condition": {"type": "SAMPLE", "percentage": 100},
+            ...         },
+            ...         {
+            ...             "from_step_group": "Audit",
+            ...             "priority": 1,
+            ...             "condition": {"type": "ALWAYS"},
+            ...         },
+            ...     ],
             ... )
         """
+        steps_given = [
+            *(create_steps or []),
+            *(update_steps or []),
+            *(step for group in create_step_groups or [] for step in group["steps"]),
+        ]
+        if any(step.get("step_coverage") is not None for step in steps_given):
+            # Past the logging wrapper, to the caller's line
+            warnings.warn(STEP_COVERAGE_DEPRECATION, DeprecationWarning, stacklevel=3)
         return ProjectWorkflowUseCases(self._gateway).update_project_workflow(
             project_id=ProjectId(project_id),
             enforce_step_separation=enforce_step_separation,
@@ -453,6 +720,10 @@ class WorkflowNamespace:
             create_step_groups=create_step_groups,
             update_step_groups=update_step_groups,
             delete_step_groups=delete_step_groups,
+            create_transitions=create_transitions,
+            update_transitions=update_transitions,
+            delete_transitions=delete_transitions,
+            keep_path_after_send_back=keep_path_after_send_back,
         )
 
     @deprecated(WORKFLOW_LIST_DEPRECATION)
@@ -624,8 +895,8 @@ class WorkflowNamespace:
                 else an error message.
 
         Raises:
-            ValueError: If the source project has no workflow steps, or if the
-                destination project already has labels.
+            ValueError: If the source project has no workflow steps, routes its assets by
+                conditions, or if the destination project already has labels.
 
         Examples:
             >>> kili.projects.workflow.copy_from_project(

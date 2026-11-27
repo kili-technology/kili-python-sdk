@@ -85,11 +85,13 @@ class FakeWorkflowServer:
         self.answer = answer if answer is not None else {}
         self.queries: list[str] = []
         self.mutations: list[tuple[str, dict]] = []
+        self.mutation_documents: list[str] = []
 
     def execute(self, query: str, variables: Optional[dict] = None, **_) -> dict:
         if query.lstrip().startswith("mutation"):
             name = query.split("mutation ", 1)[1].split("(", 1)[0].strip()
             self.mutations.append((name, (variables or {})["input"]))
+            self.mutation_documents.append(query)
             return {"data": self.answer}
         self.queries.append(query)
         return {"data": [self.project]}

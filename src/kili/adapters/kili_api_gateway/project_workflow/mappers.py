@@ -42,6 +42,12 @@ def project_input_mapper(data: ProjectWorkflowDataKiliAPIGatewayInput) -> dict:
             "updates": [step_group_update_mapper(group) for group in data.update_step_groups or []],
             "deletes": data.delete_step_groups or [],
         }
+    # Sent only when given: without it, the server rewires the transitions around each change.
+    if data.transitions is not None:
+        result["transitions"] = data.transitions
+    # Sent only when given: a server older than the conditional routing workflow refuses it.
+    if data.keep_path_after_send_back is not None:
+        result["keepPathAfterSendBack"] = data.keep_path_after_send_back
     return result
 
 
@@ -95,6 +101,7 @@ def update_step_mapper(
         "sendBackStepId": "send_back_step_id",
         "stepGroupId": "step_group_id",
         "useHoneypot": "use_honeypot",
+        "sendBackToPreviousStep": "send_back_to_previous_step",
     }
     return {
         gql_key: data[py_key]
@@ -118,6 +125,8 @@ def add_review_step_input_mapper(data: AddReviewStepInput) -> dict:
         result["sendBackStepId"] = data.send_back_to_step
     if data.step_group_id is not None:
         result["stepGroupId"] = data.step_group_id
+    if data.send_back_to_previous_step is not None:
+        result["sendBackToPreviousStep"] = data.send_back_to_previous_step
     return result
 
 

@@ -255,8 +255,8 @@ class ProjectWorkflowClientMethods(BaseClientMethods):
                 else an error message.
 
         Raises:
-            ValueError: If the source project has no workflow steps, or if the
-                destination project already has labels.
+            ValueError: If the source project has no workflow steps, routes its assets by
+                conditions, or if the destination project already has labels.
 
         Examples:
             >>> kili.copy_workflow_from_project(

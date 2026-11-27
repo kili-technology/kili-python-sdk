@@ -2,7 +2,7 @@
 
 from dataclasses import dataclass
 from enum import Enum
-from typing import TYPE_CHECKING, Literal, NewType, Optional, TypedDict
+from typing import TYPE_CHECKING, Literal, NewType, Optional, TypedDict, Union
 
 from typing_extensions import Required
 
@@ -83,9 +83,10 @@ class WorkflowStepToCreate(WorkflowStepCreate, total=False):
 
 
 class WorkflowStepToUpdate(WorkflowStepUpdate, total=False):
-    """A step to update, honeypot included."""
+    """A step to update, honeypot and send back to the previous step included."""
 
     use_honeypot: Optional[bool]
+    send_back_to_previous_step: Optional[bool]
 
 
 class WorkflowStepGroupToCreate(TypedDict, total=False):
@@ -108,6 +109,53 @@ class WorkflowStepGroupToUpdate(TypedDict, total=False):
     id: Required[str]
     name: Optional[str]
     allowed_job_names: Optional[list[str]]
+
+
+class WorkflowTransitionCondition(TypedDict, total=False):
+    """What must hold for an asset to take a transition.
+
+    `type` is one of `ALWAYS`, `SAMPLE` (with its `percentage`), `CLASSIFICATION_INCLUDES` (with
+    its `job_name`, `categories`, and optionally a `quantifier`: `ANY`, `EVERY` or `MORE_THAN`
+    with a `value`) or `ANNOTATION_COUNT_GREATER_THAN` (with its `value`, and optionally a
+    `job_name`). Kili may add others.
+    """
+
+    type: Required[str]
+    percentage: Optional[int]
+    job_name: Optional[str]
+    categories: Optional[list[str]]
+    quantifier: Optional[str]
+    value: Optional[int]
+
+
+class WorkflowTransitionToCreate(TypedDict, total=False):
+    """A transition to create, from a step (`from_step`) or a group's end (`from_step_group`).
+
+    A step is given by its id, by its name, as `{"name": ..., "group_name": ...}`, or by the id
+    given to a step created in the same call; a group by its id or its name, or by the id given to
+    a group created in the same call. Without `to_step`, the asset leaves the workflow.
+    """
+
+    from_step: Union[str, WorkflowStepDesignation]
+    from_step_group: str
+    to_step: Optional[Union[str, WorkflowStepDesignation]]
+    priority: Required[int]
+    condition: Required[WorkflowTransitionCondition]
+
+
+class WorkflowTransitionToUpdate(TypedDict, total=False):
+    """A stored transition to change, given by its id: its priority and its condition.
+
+    A transition keeps its source and target: given, `from_step`, `from_step_group` and `to_step`
+    must name the ones it has. To change them, delete it and create another.
+    """
+
+    id: Required[str]
+    priority: Optional[int]
+    condition: Optional[WorkflowTransitionCondition]
+    from_step: Union[str, WorkflowStepDesignation]
+    from_step_group: str
+    to_step: Optional[Union[str, WorkflowStepDesignation]]
 
 
 class InputTypeEnum(str, Enum):

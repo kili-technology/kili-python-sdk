@@ -6,6 +6,7 @@ import pytest
 
 from kili.domain.label import LabelFilters
 from kili.domain.project import ProjectId
+from kili.exceptions import GraphQLError
 from kili.use_cases.project_workflow import ProjectWorkflowUseCases
 
 
@@ -460,3 +461,52 @@ def test_copy_workflow_refuses_a_source_with_several_groups(use_cases, mock_gate
             source_project_id=ProjectId("source-project"),
             destination_project_id=ProjectId("dest-project"),
         )
+
+
+class TestCopyWorkflowRoutedByConditions:
+    """The copy refuses a source whose transitions route otherwise than a chain of steps."""
+
+    def test_refuses_a_source_that_routes_by_conditions(self, use_cases, mock_gateway):
+        mock_gateway.get_steps.return_value = _make_source_steps()
+        mock_gateway.get_workflow.return_value = {"usesConditionalRouting": True}
+
+        with pytest.raises(ValueError, match="routes its assets by conditions"):
+            use_cases.copy_workflow_from_project(
+                source_project_id=ProjectId("source-project"),
+                destination_project_id=ProjectId("dest-project"),
+            )
+
+        mock_gateway.get_workflow.assert_called_once_with(
+            ProjectId("source-project"), ["usesConditionalRouting"]
+        )
+        mock_gateway.update_project_workflow.assert_not_called()
+
+    def test_copies_on_a_server_that_does_not_know_conditional_routing(
+        self, use_cases, mock_gateway
+    ):
+        mock_gateway.get_steps.side_effect = [
+            _make_source_steps(),
+            [{"id": "dest-step-old", "name": "Old Step"}],
+        ]
+        mock_gateway.get_workflow.side_effect = GraphQLError(
+            'Cannot query field "usesConditionalRouting" on type "Project".'
+        )
+        _setup_happy_path(mock_gateway)
+        mock_gateway.update_project_workflow.return_value = {"steps": []}
+
+        use_cases.copy_workflow_from_project(
+            source_project_id=ProjectId("source-project"),
+            destination_project_id=ProjectId("dest-project"),
+        )
+
+        mock_gateway.update_project_workflow.assert_called_once()
+
+    def test_lets_any_other_error_through(self, use_cases, mock_gateway):
+        mock_gateway.get_steps.return_value = _make_source_steps()
+        mock_gateway.get_workflow.side_effect = GraphQLError("Not authorized")
+
+        with pytest.raises(GraphQLError, match="Not authorized"):
+            use_cases.copy_workflow_from_project(
+                source_project_id=ProjectId("source-project"),
+                destination_project_id=ProjectId("dest-project"),
+            )

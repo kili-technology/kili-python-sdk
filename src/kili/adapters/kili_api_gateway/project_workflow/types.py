@@ -26,6 +26,9 @@ class ProjectWorkflowDataKiliAPIGatewayInput:
     update_step_groups: Optional[list[WorkflowStepGroupToUpdate]] = None
     # Group ids only, as the steps to delete.
     delete_step_groups: Optional[list[str]] = None
+    # Every transition of the workflow, as the API takes them: those not listed are removed.
+    transitions: Optional[list[dict]] = None
+    keep_path_after_send_back: Optional[bool] = None
 
 
 @dataclass
@@ -41,6 +44,7 @@ class AddReviewStepInput:
     # The group to add the step to, by name; resolved to its id before the request is built.
     group_name: str | None = None
     step_group_id: str | None = None
+    send_back_to_previous_step: bool | None = None
 
 
 @dataclass

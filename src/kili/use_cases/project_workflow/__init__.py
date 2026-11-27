@@ -19,10 +19,19 @@ from kili.domain.project import (
     WorkflowStepGroupToCreate,
     WorkflowStepGroupToUpdate,
     WorkflowStepUpdate,
+    WorkflowTransitionToCreate,
+    WorkflowTransitionToUpdate,
 )
 from kili.domain.types import ListOrTuple
 from kili.use_cases.base import BaseUseCases
 from kili.use_cases.project_workflow.copy_workflow import WorkflowCopyUseCases
+from kili.use_cases.project_workflow.helpers import conditional_routing_required
+from kili.use_cases.project_workflow.transitions import (
+    TRANSITION_FIELDS,
+    NewWorkflowParts,
+    WorkflowTransitionUseCases,
+    with_client_ids,
+)
 
 
 class ProjectWorkflowUseCases(BaseUseCases):
@@ -38,11 +47,19 @@ class ProjectWorkflowUseCases(BaseUseCases):
         create_step_groups: Optional[list[WorkflowStepGroupToCreate]] = None,
         update_step_groups: Optional[list[WorkflowStepGroupToUpdate]] = None,
         delete_step_groups: Optional[list[str]] = None,
+        create_transitions: Optional[list[WorkflowTransitionToCreate]] = None,
+        update_transitions: Optional[list[WorkflowTransitionToUpdate]] = None,
+        delete_transitions: Optional[list[str]] = None,
+        keep_path_after_send_back: Optional[bool] = None,
     ) -> dict[str, object]:
         """Update properties in a project workflow.
 
         A step to update or delete is sent by id: one given by name, with its group when several
         groups use that name, is resolved to its id first. So is a group to delete given by name.
+
+        With any transition list, even empty, the call sends every transition of the workflow:
+        the stored ones, less those deleted or leaving or entering a step or group deleted, with
+        their updates, and the created ones. The server then wires nothing itself.
         """
         for group in create_step_groups or []:
             if any(step.get("step_group_id") is not None for step in group["steps"]):
@@ -50,16 +67,52 @@ class ProjectWorkflowUseCases(BaseUseCases):
                     f"The steps of the new group '{group['name']}' are created in it: they take"
                     " no step_group_id"
                 )
+        explicit = any(
+            transitions is not None
+            for transitions in (create_transitions, update_transitions, delete_transitions)
+        )
+        if explicit:
+            create_steps, create_step_groups = with_client_ids(create_steps, create_step_groups)
+        deleted_step_ids = self._delete_steps_by_id(project_id, delete_steps)
+        deleted_group_ids = self._delete_step_groups_by_id(project_id, delete_step_groups)
         project_workflow_data = ProjectWorkflowDataKiliAPIGatewayInput(
             enforce_step_separation=enforce_step_separation,
             create_steps=create_steps,
             update_steps=self._update_steps_by_id(project_id, update_steps),
-            delete_steps=self._delete_steps_by_id(project_id, delete_steps),
+            delete_steps=deleted_step_ids,
             create_step_groups=create_step_groups,
             update_step_groups=update_step_groups,
-            delete_step_groups=self._delete_step_groups_by_id(project_id, delete_step_groups),
+            delete_step_groups=deleted_group_ids,
+            keep_path_after_send_back=keep_path_after_send_back,
         )
 
+        if explicit:
+            with conditional_routing_required("Saving the transitions"):
+                project_workflow_data.transitions = WorkflowTransitionUseCases(
+                    self._kili_api_gateway
+                ).transitions_to_save(
+                    project_id,
+                    NewWorkflowParts(
+                        steps=create_steps or [],
+                        step_groups=create_step_groups or [],
+                        deleted_step_ids=deleted_step_ids or [],
+                        deleted_group_ids=deleted_group_ids or [],
+                    ),
+                    create_transitions or [],
+                    update_transitions or [],
+                    delete_transitions or [],
+                )
+                return self._kili_api_gateway.update_project_workflow(
+                    project_id,
+                    project_workflow_data,
+                    fields=[
+                        "enforceStepSeparation",
+                        "steps{id}",
+                        "stepGroups{id}",
+                        *(f"transitions.{field}" for field in TRANSITION_FIELDS),
+                        "warnings",
+                    ],
+                )
         if not (create_step_groups or update_step_groups or delete_step_groups):
             return self._kili_api_gateway.update_project_workflow(project_id, project_workflow_data)
         return self._kili_api_gateway.update_project_workflow(

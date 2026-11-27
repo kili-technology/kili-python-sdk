@@ -97,6 +97,17 @@ class ProjectWorkflowOperationMixin(BaseOperationMixin):
 
         return project[0].get("stepGroups") or []
 
+    def get_workflow(self, project_id: str, fields: ListOrTuple[str]) -> dict:
+        """Get the given fields of a project, its workflow's ones prefixed as in `steps.id`."""
+        query = get_steps_query(fragment_builder(fields))
+        variables = {"where": {"id": project_id}, "first": 1, "skip": 0}
+        project = self.graphql_client.execute(query, variables)["data"]
+
+        if len(project) == 0:
+            raise NotFound(f"project ID: {project_id}. The project does not exist.")
+
+        return project[0]
+
     def get_project_workflow_context(
         self, project_id: str, include_assignee_emails: bool = False
     ) -> dict:
