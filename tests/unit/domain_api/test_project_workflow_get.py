@@ -40,6 +40,7 @@ def test_get_answers_the_steps_groups_and_transitions_in_one_query():
         "usesConditionalRouting": False,
         "canEditTransitions": True,
         "enforceStepSeparation": True,
+        "keepPathAfterSendBack": False,
     }
     server = FakeWorkflowServer(project)
 
@@ -51,6 +52,7 @@ def test_get_answers_the_steps_groups_and_transitions_in_one_query():
         "usesConditionalRouting",
         "canEditTransitions",
         "enforceStepSeparation",
+        "keepPathAfterSendBack",
         "sendBackToPreviousStep",
         "workflowTransitions{",
         "condition{",

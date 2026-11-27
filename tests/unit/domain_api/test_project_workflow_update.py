@@ -120,6 +120,22 @@ def test_update_without_group_change_sends_no_step_groups():
     ]
 
 
+def test_update_keeps_an_asset_s_path_after_a_send_back_when_asked():
+    server = FakeWorkflowServer(MULTI_GROUP_PROJECT, answer=ANSWER)
+
+    workflow_of(server).update(project_id="project", keep_path_after_send_back=True)
+
+    assert server.mutation[1]["keepPathAfterSendBack"] is True
+
+
+def test_update_sends_no_path_setting_when_not_given():
+    server = FakeWorkflowServer(MULTI_GROUP_PROJECT, answer=ANSWER)
+
+    workflow_of(server).update(project_id="project", enforce_step_separation=False)
+
+    assert "keepPathAfterSendBack" not in server.mutation[1]
+
+
 def test_update_refuses_a_step_of_a_new_group_given_a_group():
     server = FakeWorkflowServer(MULTI_GROUP_PROJECT, answer=ANSWER)
 
