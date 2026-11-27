@@ -559,6 +559,8 @@ class WorkflowNamespace:
               chain of steps per group, which only a user who `canEditTransitions` edits.
             - `canEditTransitions`: whether you can save transitions that route by conditions.
             - `enforceStepSeparation`.
+            - `keepPathAfterSendBack`: whether an asset sent back goes again through the steps
+              it went through, whatever its new label.
 
         Examples:
             >>> workflow = kili.projects.workflow.get(project_id="my_project")
@@ -580,6 +582,7 @@ class WorkflowNamespace:
         create_transitions: Optional[list[WorkflowTransitionToCreate]] = None,
         update_transitions: Optional[list[WorkflowTransitionToUpdate]] = None,
         delete_transitions: Optional[list[str]] = None,
+        keep_path_after_send_back: Optional[bool] = None,
     ) -> dict[str, Any]:
         """Update a project workflow, its steps, its step groups and its transitions, in one call.
 
@@ -639,6 +642,11 @@ class WorkflowNamespace:
             update_transitions: List of stored transitions to change, as in
                 `kili.projects.workflow.transitions.update()`.
             delete_transitions: List of the ids of stored transitions to delete.
+            keep_path_after_send_back: Whether an asset sent back goes again through the steps
+                it went through, whatever its new label. On, an asset completing a step it was
+                sent back through goes where it went from there last time, while a transition of
+                the step or of its group still leads there. Off, the default of a project, the
+                transitions decide again; a `SAMPLE` replays its draw either way.
 
         The `id` given to a step or a group created is its id in Kili: it must be unique across
         Kili, and 5 to 32 characters long, such as `uuid.uuid4().hex`. Without one, the server
@@ -715,6 +723,7 @@ class WorkflowNamespace:
             create_transitions=create_transitions,
             update_transitions=update_transitions,
             delete_transitions=delete_transitions,
+            keep_path_after_send_back=keep_path_after_send_back,
         )
 
     @deprecated(WORKFLOW_LIST_DEPRECATION)

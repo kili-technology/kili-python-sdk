@@ -41,6 +41,10 @@ those keeping a chain of steps per group, such as a `SAMPLE` percentage changed,
 `canEditTransitions`. A project that routes by conditions cannot be copied with
 `copy_from_project()`.
 
+After a send back, the transitions decide again each time the asset completes a step. With
+`workflow.update(keep_path_after_send_back=True)`, an asset sent back goes again through the steps
+it went through, whatever its new label, as long as a transition still leads there.
+
 `kili.assets.move_to_next_step(to_step_id=...)` moves assets by hand to any step their transitions
 lead to, whatever the conditions of these transitions.
 

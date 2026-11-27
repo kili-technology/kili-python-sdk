@@ -50,6 +50,7 @@ class ProjectWorkflowUseCases(BaseUseCases):
         create_transitions: Optional[list[WorkflowTransitionToCreate]] = None,
         update_transitions: Optional[list[WorkflowTransitionToUpdate]] = None,
         delete_transitions: Optional[list[str]] = None,
+        keep_path_after_send_back: Optional[bool] = None,
     ) -> dict[str, object]:
         """Update properties in a project workflow.
 
@@ -82,6 +83,7 @@ class ProjectWorkflowUseCases(BaseUseCases):
             create_step_groups=create_step_groups,
             update_step_groups=update_step_groups,
             delete_step_groups=deleted_group_ids,
+            keep_path_after_send_back=keep_path_after_send_back,
         )
 
         if explicit:

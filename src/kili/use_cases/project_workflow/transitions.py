@@ -35,6 +35,7 @@ TRANSITION_FIELDS = (
 
 WORKFLOW_FIELDS = (
     "enforceStepSeparation",
+    "keepPathAfterSendBack",
     "usesConditionalRouting",
     "canEditTransitions",
     "steps.id",

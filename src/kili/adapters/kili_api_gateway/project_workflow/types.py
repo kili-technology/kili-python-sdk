@@ -28,6 +28,7 @@ class ProjectWorkflowDataKiliAPIGatewayInput:
     delete_step_groups: Optional[list[str]] = None
     # Every transition of the workflow, as the API takes them: those not listed are removed.
     transitions: Optional[list[dict]] = None
+    keep_path_after_send_back: Optional[bool] = None
 
 
 @dataclass

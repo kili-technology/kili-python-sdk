@@ -45,6 +45,9 @@ def project_input_mapper(data: ProjectWorkflowDataKiliAPIGatewayInput) -> dict:
     # Sent only when given: without it, the server rewires the transitions around each change.
     if data.transitions is not None:
         result["transitions"] = data.transitions
+    # Sent only when given: a server older than the conditional routing workflow refuses it.
+    if data.keep_path_after_send_back is not None:
+        result["keepPathAfterSendBack"] = data.keep_path_after_send_back
     return result
 
 
