@@ -248,7 +248,9 @@ class WorkflowStepsNamespace:
             sample_percentage: For a review, which requires it: the percentage of the assets it
                 samples, from 0 to 100.
             send_back_to_step: For a review: the step to send its rejected assets back to, by
-                id, by name, or as `{"name": ..., "group_name": ...}`.
+                id, by name, or as `{"name": ..., "group_name": ...}`: a step of its group before
+                it, or the labeling step of another group from which the transitions lead to its
+                group.
             consensus_coverage: For a labeling step: percentage of the assets labeled for
                 consensus, from 0 to 100. Only on the labeling step of the first group.
             number_of_expected_labels_for_consensus: For a labeling step: the number of labels
@@ -312,7 +314,9 @@ class WorkflowStepsNamespace:
                 each consensus asset gets.
             use_honeypot: Whether the step uses honeypot. One step of the project at most does.
             send_back_to_step: For a review: the step to send its rejected assets back to, by
-                id, by name, or as `{"name": ..., "group_name": ...}`.
+                id, by name, or as `{"name": ..., "group_name": ...}`: a step of its group before
+                it, or the labeling step of another group from which the transitions lead to its
+                group.
             send_back_to_previous_step: For a review: whether it sends its rejected assets back
                 to the step each came from, which differs per asset where several steps lead to
                 it. Naming a step in `send_back_to_step` turns it off. Not `True` with
